@@ -86,8 +86,9 @@ package
 		private var vastMediaGenerator:VASTMediaGenerator;
 		private var playInMediaPlayer:MediaElement;
 
-		public static const VAST_1_LINEAR_FLV:String = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml";
-		public static const chosenFile:String = VAST_1_LINEAR_FLV;
+//		public static const VAST_1_LINEAR_FLV:String = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml";
+		
+//		public static const chosenAdFile:String = VAST_1_LINEAR_FLV;
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
 		public static const MAX_NUMBER_REDIRECTS:int = 5;
 
@@ -163,12 +164,6 @@ package
 			
 			configuration = injector.getInstance(PlayerConfiguration);
 
-			var vastResource:URLResource = new URLResource(chosenFile);
-			vastLoader = new VASTLoader(MAX_NUMBER_REDIRECTS);
-			vastLoadTrait = new VASTLoadTrait(vastLoader, vastResource);
-			vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onVASTLoadStateChange);
-			vastLoader.load(vastLoadTrait);
-
 			player = injector.getInstance(MediaPlayer);
 			
 			player.addEventListener(TimeEvent.COMPLETE, onComplete);
@@ -187,7 +182,9 @@ package
 			player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange);
 			
 			configurationLoader.load(parameters, configuration);	
-						
+			
+			var a:String = "aaa";
+			
 			function onConfigurationReady(event:Event):void
 			{				
 				OSMFSettings.enableStageVideo = configuration.enableStageVideo;
@@ -244,21 +241,21 @@ package
 			}
 		}
 		
-		private function onVASTLoadStateChange(event:LoaderEvent):void {
-			trace("onVASTLoadStateChange " + event.newState);
+//		private function onVASTLoadStateChange(event:LoaderEvent):void {
+//			trace("onVASTLoadStateChange " + event.newState);
 
 //			videoElement = mediaFactory.createMediaElement(new URLResource(CONTENT_VIDEO));
 			
 //			container.addMediaElement(videoElement);
 //			
-			if (event.newState == LoadState.READY) {
-				trace("VAST ready");
-
-				vastMediaGenerator = new VASTMediaGenerator(null, factory);
-				var vastElements:Vector.<MediaElement> = vastMediaGenerator.createMediaElements(vastLoadTrait.vastDocument, chosenPlacement);
+//			if (event.newState == LoadState.READY) {
+//				trace("VAST ready");
+//
+//				vastMediaGenerator = new VASTMediaGenerator(null, factory);
+//				var vastElements:Vector.<MediaElement> = vastMediaGenerator.createMediaElements(vastLoadTrait.vastDocument, chosenPlacement);
 //				
 //				
-				for each(var mediaElement:MediaElement in vastElements) {
+//				for each(var mediaElement:MediaElement in vastElements) {
 //					media = mediaElement 
 //					if (mediaElement is ProxyElement) {
 						
@@ -269,7 +266,7 @@ package
 //					}
 //					if (mediaElement is CompanionElement)
 //						trace("Found Companion Element: " + mediaElement);
-				}
+//				}
 //				
 //				if (playInMediaPlayer != null) {
 //					container.addMediaElement(playInMediaPlayer);
@@ -284,13 +281,13 @@ package
 //					trace("MediaElement not found! Check tag and placement for errors!");
 //					mediaPlayer.media = videoElement;
 //				}
-			}
-			else if (event.newState == LoadState.LOAD_ERROR) {
+//			}
+//			else if (event.newState == LoadState.LOAD_ERROR) {
 //				mediaPlayer.media = videoElement;
 //				
 //				videoElement.addEventListener(MediaElementEvent.TRAIT_ADD, onTraitAdd);
-			}
-		}
+//			}
+//		}
 
 		private function reportError(message:String):void
 		{
@@ -392,7 +389,7 @@ package
 			pluginLoader = new PluginLoader(pluginConfigurations, factory, pluginHostWhitelist);
 			pluginLoader.haltOnError = configuration.haltOnError;
 			
-			pluginLoader.addEventListener(Event.COMPLETE, loadMedia);
+			pluginLoader.addEventListener(Event.COMPLETE, loadMediaWithAd);
 			pluginLoader.addEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			pluginLoader.loadPlugins();
 		}			
@@ -526,13 +523,18 @@ package
 			onStageResize();
 		}
 		
-		/**
-		 * Loads the media or displays an error message on fail.
-		 */ 
-		public function loadMedia(..._):void
-		{	
-			trace("Load media");
+//		private function loadVASTDocument(vastURL:String):void {
+//			var vastResource:URLResource = new URLResource(chosenFile);
+//			vastLoader = new VASTLoader(MAX_NUMBER_REDIRECTS);
+//			vastLoadTrait = new VASTLoadTrait(vastLoader, vastResource);
+//			vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onVASTLoadStateChange);
+//			vastLoader.load(vastLoadTrait);
+//		}
 
+		
+		public function loadMediaWithAd(..._):void
+		{
+			trace("Load media with ad");
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase  = injector.getInstance(MediaResourceBase);
 
@@ -540,26 +542,97 @@ package
 			{
 				logger.trackObject("AssetResource", resource);		
 			}
+
+			// Loading ad
 			
-			media = factory.createMediaElement(resource);
-			if (_media == null)
+			var adFile = loaderInfo.parameters.preRoll;
+			var vastResource:URLResource = new URLResource(adFile);
+			vastLoader = new VASTLoader(MAX_NUMBER_REDIRECTS);
+			vastLoadTrait = new VASTLoadTrait(vastLoader, vastResource);
+			vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onVASTLoadStateChange);
+			vastLoader.load(vastLoadTrait);
+
+			function onVASTLoadStateChange(event:LoaderEvent):void 
 			{
-				var mediaError:MediaError
-					= new MediaError
-						( MediaErrorCodes.MEDIA_LOAD_FAILED
-						, OSMFStrings.CAPABILITY_NOT_SUPPORTED
-						);
+				if (event.newState == LoadState.READY)
+				{
+					vastLoadTrait.removeEventListener(LoadEvent.LOAD_STATE_CHANGE, onVASTLoadStateChange);
 					
-				player.dispatchEvent
-					( new MediaErrorEvent
-						( MediaErrorEvent.MEDIA_ERROR
-							, false
-							, false
-							, mediaError
-						)
-					);
+					var generator:VASTMediaGenerator = new VASTMediaGenerator();
+					var mediaElements:Vector.<MediaElement> = 
+						generator.createMediaElements(vastLoadTrait.vastDocument);
+					
+					var serialElement:SerialElement = new SerialElement();
+					
+					var adElement = mediaElements[0];
+					if (adElement != null)
+					{
+						serialElement.addChild(adElement);
+					}
+					
+					serialElement.addChild(factory.createMediaElement(resource));
+					media = serialElement; 
+
+					if (_media == null)
+					{
+						var mediaError:MediaError
+						= new MediaError
+							( MediaErrorCodes.MEDIA_LOAD_FAILED
+								, OSMFStrings.CAPABILITY_NOT_SUPPORTED
+							);
+						
+						player.dispatchEvent
+							( new MediaErrorEvent
+								( MediaErrorEvent.MEDIA_ERROR
+									, false
+									, false
+									, mediaError
+								)
+							);
+					}
+				
+				}
 			}
+			
+			
+						
+//			media = factory.createMediaElement(resource);
 		}
+
+		/**
+		 * Loads the media or displays an error message on fail.
+		 */ 
+//		public function loadMedia(..._):void
+//		{	
+//			trace("Load media");
+//
+//			// Try to load the URL set on the configuration:
+//			var resource:MediaResourceBase  = injector.getInstance(MediaResourceBase);
+//
+//			CONFIG::LOGGING
+//			{
+//				logger.trackObject("AssetResource", resource);		
+//			}
+//			
+//			media = factory.createMediaElement(resource);
+//			if (_media == null)
+//			{
+//				var mediaError:MediaError
+//					= new MediaError
+//						( MediaErrorCodes.MEDIA_LOAD_FAILED
+//						, OSMFStrings.CAPABILITY_NOT_SUPPORTED
+//						);
+//					
+//				player.dispatchEvent
+//					( new MediaErrorEvent
+//						( MediaErrorEvent.MEDIA_ERROR
+//							, false
+//							, false
+//							, mediaError
+//						)
+//					);
+//			}
+//		}
 		
 		private function processNewMedia(value:MediaElement):MediaElement
 		{

@@ -37,9 +37,9 @@
 			}
 			// Инициализация рекламы
 			if (params.ads) {
-				delete params['ads']
+				// delete params['ads']
 				// options['plugin_ads'] = BASEPATH + "plugins/AdvertisementPlugin.swf"
-				// options = $.extend({}, options, params.ads);
+				options = $.extend({}, options, params.ads);
 			}
 			PLAYER.embedPlayer(containerId, options);
 		},
