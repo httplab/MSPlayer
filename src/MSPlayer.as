@@ -52,6 +52,7 @@ package
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
 	import org.osmf.traits.PlayTrait;
+	import org.osmf.traits.LoadState;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.OSMFStrings;
 	import org.osmf.vast.loader.VASTLoadTrait;
@@ -79,7 +80,17 @@ package
 		public var configuration:PlayerConfiguration;
 		public var player:StrobeMediaPlayer;		
 		public var factory:StrobeMediaFactory;		
-		
+
+		private var vastLoader:VASTLoader;
+		private var vastLoadTrait:VASTLoadTrait;
+		private var vastMediaGenerator:VASTMediaGenerator;
+		private var playInMediaPlayer:MediaElement;
+
+		public static const VAST_1_LINEAR_FLV:String = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml";
+		public static const chosenFile:String = VAST_1_LINEAR_FLV;
+		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
+		public static const MAX_NUMBER_REDIRECTS:int = 5;
+
 		public function MSPlayer()
 		{			
 			super();
@@ -151,11 +162,21 @@ package
 			configurationLoader.addEventListener(Event.COMPLETE, onConfigurationReady);			
 			
 			configuration = injector.getInstance(PlayerConfiguration);
-			
+
+			var vastResource:URLResource = new URLResource(chosenFile);
+			vastLoader = new VASTLoader(MAX_NUMBER_REDIRECTS);
+			vastLoadTrait = new VASTLoadTrait(vastLoader, vastResource);
+			vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onVASTLoadStateChange);
+			vastLoader.load(vastLoadTrait);
+
 			player = injector.getInstance(MediaPlayer);
 			
 			player.addEventListener(TimeEvent.COMPLETE, onComplete);
 			player.addEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
+			
+			
+
+			
 			
 			// Add DRM error handler
 			var drmManager:DRMManager = DRMManager.getDRMManager();
@@ -166,7 +187,7 @@ package
 			player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange);
 			
 			configurationLoader.load(parameters, configuration);	
-			
+						
 			function onConfigurationReady(event:Event):void
 			{				
 				OSMFSettings.enableStageVideo = configuration.enableStageVideo;
@@ -223,6 +244,54 @@ package
 			}
 		}
 		
+		private function onVASTLoadStateChange(event:LoaderEvent):void {
+			trace("onVASTLoadStateChange " + event.newState);
+
+//			videoElement = mediaFactory.createMediaElement(new URLResource(CONTENT_VIDEO));
+			
+//			container.addMediaElement(videoElement);
+//			
+			if (event.newState == LoadState.READY) {
+				trace("VAST ready");
+
+				vastMediaGenerator = new VASTMediaGenerator(null, factory);
+				var vastElements:Vector.<MediaElement> = vastMediaGenerator.createMediaElements(vastLoadTrait.vastDocument, chosenPlacement);
+//				
+//				
+				for each(var mediaElement:MediaElement in vastElements) {
+//					media = mediaElement 
+//					if (mediaElement is ProxyElement) {
+						
+//						playInMediaPlayer = mediaElement;
+//						serialElement.addChild(playInMediaPlayer);
+//						serialElement.addChild(videoElement);
+//						
+//					}
+//					if (mediaElement is CompanionElement)
+//						trace("Found Companion Element: " + mediaElement);
+				}
+//				
+//				if (playInMediaPlayer != null) {
+//					container.addMediaElement(playInMediaPlayer);
+//					
+//					mediaPlayer = new MediaPlayer();
+//					mediaPlayer.autoPlay = false;
+//					mediaPlayer.volume = (volSlider.value / 10);
+//					mediaPlayer.media = serialElement;
+//					mediaPlayer.addEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
+//				}
+//				else {
+//					trace("MediaElement not found! Check tag and placement for errors!");
+//					mediaPlayer.media = videoElement;
+//				}
+			}
+			else if (event.newState == LoadState.LOAD_ERROR) {
+//				mediaPlayer.media = videoElement;
+//				
+//				videoElement.addEventListener(MediaElementEvent.TRAIT_ADD, onTraitAdd);
+			}
+		}
+
 		private function reportError(message:String):void
 		{
 			// If an alert widget is available, use it. Otherwise, trace the message:
@@ -462,6 +531,8 @@ package
 		 */ 
 		public function loadMedia(..._):void
 		{	
+			trace("Load media");
+
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase  = injector.getInstance(MediaResourceBase);
 
@@ -492,6 +563,8 @@ package
 		
 		private function processNewMedia(value:MediaElement):MediaElement
 		{
+			trace("processNewMedia");
+
 			var processedMedia:MediaElement;			
 			
 			if (value != null)
@@ -603,6 +676,12 @@ package
 				if (_media)
 				{										
 					// Add the media to the media container:
+//					var vastElements:Vector.<MediaElement> = vastMediaGenerator.createMediaElements(vastLoadTrait.vastDocument, chosenPlacement);
+					//				
+					//				
+//					for each(var mediaElement:MediaElement in vastElements) {
+//						mediaContainer.addMediaElement(mediaElement);
+//					}
 					mediaContainer.addMediaElement(_media);
 					
 					// Forward a reference to controlBar:
