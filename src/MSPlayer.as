@@ -54,7 +54,11 @@ package
 	import org.osmf.traits.PlayTrait;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.OSMFStrings;
-	
+	import org.osmf.vast.loader.VASTLoadTrait;
+	import org.osmf.vast.loader.VASTLoader;
+	import org.osmf.vast.media.CompanionElement;
+	import org.osmf.vast.media.VASTMediaGenerator;
+
 	CONFIG::LOGGING
 	{
 		import org.osmf.player.debug.DebugStrobeMediaPlayer;
