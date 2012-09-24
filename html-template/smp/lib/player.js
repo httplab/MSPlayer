@@ -4,43 +4,53 @@
 		window.PLAYER = {};
 	}
 
+	BASEPATH = 'http://httplab.ru/mediasystem/smp/';
+
 	PLAYER = {
 
 		init: function(params) {
 		    if (!params.src) {
-		    	console.log("Ошибка инициализации: не указано видео")
+		    	console.log("Ошибка инициализации: Не указано видео")
 		    	return false;
 		    }
 
 			// Формирование id контейнера для плеера
 			var containerId;
 			if (params.id) {
-				containerId = '#' + params.id
-				delete params['id']
+				containerId = 'msplayer-' + Date.now();
+				var rootContainer = $('#' + params.id);
+				rootContainer.find('[id^=msplayer]').remove();
+				rootContainer.find('object').remove();
+				$("<div id='" + containerId + "'></div>").appendTo(rootContainer);
+				delete params['id'];
+				containerId = '#' + containerId;
 			} else {
-				containerId = '#player'
-				console.log("Не указан id контейнера плеера! Используется #player")
+				console.log("Ошибка инициализации: Не указан id контейнера плеера!")
 			}
 
 			// Формирование перечня параметров плеера
 			var options = {
-				swf: 'MSPlayer.swf',
-				id: 'MSPlayerId',
+				swf: BASEPATH + 'MSPlayer.3.swf',
+				id: 'strobeMediaPlaybackId',
 				src: params.src,
+				streamType: params.streamType || 'live',
 				width: params.width || 640,
 				height:  params.height || 462,
 				enableStageVideo: true,
 				controlBarAutoHide: params.controlBarAutoHide || false,
 				playButtonOverlay: true,
-				autoPlay: params.autoPlay || true,
+				controlBarMode: params.controlBarMode || 'floating',
+				controlBarAutoHide: params.controlBarAutoHide || true,
+				autoPlay: params.autoPlay,
 				showVideoInfoOverlayOnStartUp: params.showVideoInfo || false
 			}
-			// Инициализация рекламы
-			if (params.ads) {
-				// delete params['ads']
-				// options['plugin_ads'] = BASEPATH + "plugins/AdvertisementPlugin.swf"
-				options = $.extend({}, options, params.ads);
+
+			// Принудительная инициализация рекламы
+			if (!params.preRoll) {
+		      	params["preRoll"] = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
 			}
+
+			options = $.extend({}, params, options);			
 			PLAYER.embedPlayer(containerId, options);
 		},
 

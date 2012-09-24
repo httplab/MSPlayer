@@ -12,11 +12,11 @@
         <script type="text/javascript">
         	$(document).ready(function() {
                 PLAYER.init({
+                	id: "player",
+                	autoPlay: true,
                     src: "http://players.edgesuite.net/videos/big_buck_bunny/bbb_448x252.mp4",
                     showVideoInfo: true,
-                    ads: {
-                    	preRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
-                    }
+                    preRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
                 });
         	});
         </script>
@@ -24,9 +24,7 @@
 
 	<body>
 		<h1>MSPlayer Demo</h1>
-        <div id="player">
-                Alternative content
-        </div>
+        <div id="player" />
 	</body>
 
 </html>

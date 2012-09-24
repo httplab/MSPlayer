@@ -48,11 +48,11 @@ package
 	import org.osmf.player.plugins.PluginLoader;
 	import org.osmf.player.utils.StrobeUtils;
 	import org.osmf.traits.DVRTrait;
+	import org.osmf.traits.LoadState;
 	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
 	import org.osmf.traits.PlayTrait;
-	import org.osmf.traits.LoadState;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.OSMFStrings;
 	import org.osmf.vast.loader.VASTLoadTrait;
@@ -182,9 +182,7 @@ package
 			player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange);
 			
 			configurationLoader.load(parameters, configuration);	
-			
-			var a:String = "aaa";
-			
+						
 			function onConfigurationReady(event:Event):void
 			{				
 				OSMFSettings.enableStageVideo = configuration.enableStageVideo;
@@ -544,8 +542,7 @@ package
 			}
 
 			// Loading ad
-			
-			var adFile = loaderInfo.parameters.preRoll;
+			var adFile:String = loaderInfo.parameters.preRoll;
 			var vastResource:URLResource = new URLResource(adFile);
 			vastLoader = new VASTLoader(MAX_NUMBER_REDIRECTS);
 			vastLoadTrait = new VASTLoadTrait(vastLoader, vastResource);
@@ -564,7 +561,7 @@ package
 					
 					var serialElement:SerialElement = new SerialElement();
 					
-					var adElement = mediaElements[0];
+					var adElement:MediaElement = mediaElements[0];
 					if (adElement != null)
 					{
 						serialElement.addChild(adElement);
