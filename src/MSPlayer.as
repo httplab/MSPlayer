@@ -469,7 +469,6 @@ package
 				controlBar.autoHide = configuration.controlBarAutoHide;
 				controlBar.autoHideTimeout = configuration.controlBarAutoHideTimeout * 1000;
 				controlBar.tintColor = configuration.tintColor;
-				
 				if (configuration.controlBarType == ControlBarType.SMARTPHONE) {
 					// The player starts in thumb mode for smartphones
 					controlBar.autoHide = false;
@@ -498,7 +497,6 @@ package
 				}
 				
 				mainContainer.layoutRenderer.addTarget(controlBarContainer);
-				
 				mediaContainer.layoutRenderer.addTarget(loginWindowContainer);
 			}			
 			
@@ -532,7 +530,6 @@ package
 		
 		public function loadMediaWithAd(..._):void
 		{
-			trace("Load media with ad");
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase  = injector.getInstance(MediaResourceBase);
 
@@ -568,8 +565,10 @@ package
 					}
 					
 					serialElement.addChild(factory.createMediaElement(resource));
+					serialElement.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange)
+//					player.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange);
+						
 					media = serialElement; 
-
 					if (_media == null)
 					{
 						var mediaError:MediaError
@@ -594,6 +593,10 @@ package
 			
 						
 //			media = factory.createMediaElement(resource);
+		}
+
+		public function onSerialElementChildChange(event:SerialElementEvent):void {
+			trace("serial element change");
 		}
 
 		/**

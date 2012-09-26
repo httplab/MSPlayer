@@ -4,7 +4,8 @@
         <title>MSPlayer Demo</title>
         <meta name="google" value="notranslate">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="expires" content="timestamp">
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript" src="smp/lib/jquery.strobemediaplayback.js"></script>
@@ -12,6 +13,7 @@
         <script type="text/javascript">
         	$(document).ready(function() {
                 PLAYER.init({
+                	swf: "MSPlayer.swf?nocache=" + new Date(),
                 	id: "player",
                 	autoPlay: true,
                     src: "http://players.edgesuite.net/videos/big_buck_bunny/bbb_448x252.mp4",
