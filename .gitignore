@@ -7,3 +7,6 @@ bin/
 .flexProperties
 .settings/
 .project
+.idea
+*.iml
+out

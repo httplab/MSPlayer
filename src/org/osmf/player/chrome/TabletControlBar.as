@@ -159,7 +159,12 @@ package org.osmf.player.chrome{
 			
 			highlight = new ButtonHighlight(assetManager);
 		}
-		
+
+		public function get widgets():Array{
+			trace("TabletControlBar: get widgets");
+			throw new Error("SmartphoneControlBar: get widgets not implemented yet");
+		}
+
 		// INTERNALS
 		//
 		

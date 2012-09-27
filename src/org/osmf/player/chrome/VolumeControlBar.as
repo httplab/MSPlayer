@@ -85,6 +85,12 @@ package org.osmf.player.chrome{
 			}
 		}
 		
+		public function get widgets():Array{
+			trace("SmartphoneControlBar: get widgets");
+			throw new Error("VolumeControlBar: get widgets not implemented yet");
+		}
+
+		
 		// INTERNALS
 		//
 		

@@ -29,9 +29,16 @@ package org.osmf.player.elements
 	import org.osmf.player.chrome.ControlBar;
 	import org.osmf.player.chrome.IControlBar;
 	import org.osmf.player.chrome.metadata.ChromeMetadata;
+	import org.osmf.player.chrome.widgets.PauseButton;
+	import org.osmf.player.chrome.widgets.PlayButton;
+	import org.osmf.player.chrome.widgets.ScrubBar;
+	import org.osmf.player.chrome.widgets.TimeViewWidget;
+	import org.osmf.player.chrome.widgets.Widget;
+	import org.osmf.player.chrome.widgets.WidgetIDs;
 	import org.osmf.player.configuration.ControlBarType;
 	import org.osmf.traits.DisplayObjectTrait;
 	import org.osmf.traits.MediaTraitType;
+
 		
 	/**
 	 * ControlBarElement defines a MediaElement implementation which contains the ControlBar UI.
@@ -147,6 +154,36 @@ package org.osmf.player.elements
 		
 		public function set visible(value:Boolean):void{
 			controlBar.visible = value;
+		}
+		
+		
+		// Скрыть/показать scrub bar и кнопки управления воспроизведением.
+		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
+			var timeViewWidget:TimeViewWidget = null;
+			var playButton:PlayButton = null;
+			var pauseButton:PauseButton = null;
+//			var scrubBar:ScrubBar = null;
+			var scrubBar:Widget = null;
+			
+			for each(var widget:Widget in controlBar.widgets)
+			{
+				if(widget.id == WidgetIDs.SCRUB_BAR) {
+					scrubBar = widget;
+				}
+			}
+
+//			controlBar.widgets.some();
+				
+			//[controlBar.widgets.indexOf(function(el:Widget):Boolean {  return el.id == WidgetIDs.SCRUB_BAR })];
+			
+			trace("ControlBarElement: set scrubBarAndPlaybackButtonsVisible");
+//			controlBar.scrubBarAndPlaybackButtonsVisible = value;
+		}
+
+		public function get scrubBarAndPlaybackButtonsVisible():Boolean{
+			trace("ControlBarElement: get scrubBarAndPlaybackButtonsVisible");
+			return true;
+//			return controlBar.scrubBarAndPlaybackButtonsVisible;
 		}
 		
 		// Constructor

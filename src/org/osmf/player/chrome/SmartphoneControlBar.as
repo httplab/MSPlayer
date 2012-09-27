@@ -203,6 +203,11 @@ package org.osmf.player.chrome{
 			playTrait = element.getTrait(MediaTraitType.PLAY) as PlayTrait;
 		}
 		
+		public function get widgets():Array{
+			trace("SmartphoneControlBar: get widgets");
+			throw new Error("SmartphoneControlBar: get widgets not implemented yet");
+		}
+
 		// INTERNALS
 		//
 		

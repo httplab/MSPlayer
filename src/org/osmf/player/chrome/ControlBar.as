@@ -184,19 +184,31 @@ package org.osmf.player.chrome
 			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			addChildWidget(rightMargin);				
 
-
-			configureWidgets
-				(	[ leftMargin, beforePlaySpacer, pauseButton, playButton, previousButton, nextButton, afterPlaySpacer
-					, leftControls		
-					, scrubBar, afterScrubSpacer
-					, timeViewWidget, afterTimeSpacer
-					, hdIndicator, muteButton, afterVolumeSpacer
-					, fullscreenEnterButton, fullscreenLeaveButton, afterFullscreenSpacer
-					, rightControls, rightMargin
-					]
-				);
-			
+			_widgets = [ leftMargin, beforePlaySpacer, pauseButton, playButton, previousButton, nextButton, afterPlaySpacer
+				, leftControls		
+				, scrubBar, afterScrubSpacer
+				, timeViewWidget, afterTimeSpacer
+				, hdIndicator, muteButton, afterVolumeSpacer
+				, fullscreenEnterButton, fullscreenLeaveButton, afterFullscreenSpacer
+				, rightControls, rightMargin
+			];
+ 
+			configureWidgets(_widgets);
 			measure();
+		}
+
+//		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
+//			trace("ControlBar: set scrubBarAndPlaybackButtonsVisible");
+//			return;
+//		}
+//		
+//		public function get scrubBarAndPlaybackButtonsVisible():Boolean{
+//			trace("ControlBar: get scrubBarAndPlaybackButtonsVisible");
+//			return true;
+//		}
+		public function get widgets():Array{
+			trace("ControlBar: get widgets");
+			return _widgets;
 		}
 
 		// Internals
@@ -221,6 +233,7 @@ package org.osmf.player.chrome
 		
 		private var lastWidth:Number;
 		private var lastHeight:Number;
+		private var _widgets:Array;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}

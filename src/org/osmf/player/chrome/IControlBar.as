@@ -19,7 +19,10 @@ package org.osmf.player.chrome{
 		function get media():MediaElement; function set media(value:MediaElement):void;
 		function get tintColor():uint; function set tintColor(value:uint):void;
 		function get visible():Boolean; function set visible(value:Boolean):void;
-		
+		function get widgets():Array;
+//		function get scrubBarAndPlaybackButtonsVisible():Boolean;
+//		function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void;
+
 		// FUNCTIONS
 		//
 		function configure(xml:XML, assetManager:AssetsManager):void;

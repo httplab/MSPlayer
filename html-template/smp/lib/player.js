@@ -30,7 +30,7 @@
 
 			// Формирование перечня параметров плеера
 			var options = {
-				swf: BASEPATH + 'MSPlayer.3.swf',
+				//swf: BASEPATH + 'MSPlayer.3.swf',
 				id: 'strobeMediaPlaybackId',
 				src: params.src,
 				streamType: params.streamType || 'live',

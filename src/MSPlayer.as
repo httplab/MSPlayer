@@ -567,7 +567,9 @@ package
 					serialElement.addChild(factory.createMediaElement(resource));
 					serialElement.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange)
 //					player.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange);
-						
+					
+					trace("ControlBarElement: before set scrubBarAndPlaybackButtonsVisible");
+					controlBar.scrubBarAndPlaybackButtonsVisible = false;
 					media = serialElement; 
 					if (_media == null)
 					{
