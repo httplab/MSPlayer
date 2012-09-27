@@ -110,8 +110,8 @@ package org.osmf.player.chrome.widgets
 		
 		// Overrides
 		//
-				
-		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean=true):void
+
+        override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean=true):void
 		{
 			if (availableWidth == 0.0 || availableHeight == 0.0)
 			{
@@ -168,13 +168,13 @@ package org.osmf.player.chrome.widgets
 						
 					if (_live)
 					{
-						scrubBarDVRLiveTrack.visible = true;
+						scrubBarDVRLiveTrack.visible = true && _contentVisible;
 						scrubBarDVRLiveInactiveTrack.visible = false;
 					}
 					else
 					{
 						scrubBarDVRLiveTrack.visible = false;
-						scrubBarDVRLiveInactiveTrack.visible = true;
+						scrubBarDVRLiveInactiveTrack.visible = true && _contentVisible;
 					}
 					// When the DVR is present, we need to adjusts the scrubBarWidth & scrubberEnd used for computing the cursor time 
 					// by extracting the width of the DVR bar 
@@ -212,7 +212,24 @@ package org.osmf.player.chrome.widgets
 				updateState();
 			}
 		}		
-		
+
+        public function set contentVisible(value:Boolean):void {
+            _contentVisible = value;
+
+            scrubBarTrack.visible = value;
+            scrubBarLoadedTrack.visible = value;
+            scrubBarLoadedTrackEnd.visible = value;
+            scrubBarPlayedTrack.visible = value;
+            scrubBarPlayedTrackSeeking.visible = value;
+            scrubBarTrackLeft.visible = value;
+            scrubBarTrackRight.visible = value;
+            scrubBarDVRLiveTrack.visible = value;
+            scrubBarDVRLiveInactiveTrack.visible = value;
+            scrubBarLiveOnlyTrack.visible = value;
+            scrubBarLiveOnlyInactiveTrack.visible = value;
+
+        }
+
 		override public function configure(xml:XML, assetManager:AssetsManager):void
 		{
 			super.configure(xml, assetManager);
@@ -434,13 +451,13 @@ package org.osmf.player.chrome.widgets
 				if (playing)
 				{
 					setChildIndex(scrubBarLiveOnlyTrack, 10);
-					scrubBarLiveOnlyTrack.visible = true;
-					scrubBarLiveOnlyInactiveTrack.visible = false;
+					scrubBarLiveOnlyTrack.visible = true && _contentVisible;
+					scrubBarLiveOnlyInactiveTrack.visible = false && _contentVisible;
 				}
 				else
 				{
 					scrubBarLiveOnlyTrack.visible = false;
-					scrubBarLiveOnlyInactiveTrack.visible = true;					
+					scrubBarLiveOnlyInactiveTrack.visible = true && _contentVisible;
 				}
 			}	
 			else
@@ -449,8 +466,8 @@ package org.osmf.player.chrome.widgets
 				scrubBarLiveOnlyInactiveTrack.visible = false;	
 				if (playing)
 				{
-					scrubBarPlayedTrack.visible = true;
-					scrubBarLoadedTrackEnd.visible = true;
+					scrubBarPlayedTrack.visible = true && _contentVisible;
+					scrubBarLoadedTrackEnd.visible = true && _contentVisible;
 				}
 			}
 		}
@@ -466,13 +483,13 @@ package org.osmf.player.chrome.widgets
 			}
 			else
 			{							
-				scrubBarLoadedTrack.visible = media ? media.hasTrait(MediaTraitType.LOAD) : false;
-				scrubBarLoadedTrackEnd.visible = media ? media.hasTrait(MediaTraitType.LOAD) : false;
-				scrubBarPlayedTrack.visible = media ? media.hasTrait(MediaTraitType.PLAY) : false;
+				scrubBarLoadedTrack.visible = media ? media.hasTrait(MediaTraitType.LOAD) && _contentVisible : false;
+				scrubBarLoadedTrackEnd.visible = media ? media.hasTrait(MediaTraitType.LOAD) && _contentVisible : false;
+				scrubBarPlayedTrack.visible = media ? media.hasTrait(MediaTraitType.PLAY) && _contentVisible : false;
 				if (scrubber)
 				{
 					scrubber.enabled = media ? media.hasTrait(MediaTraitType.SEEK) : false;
-					scrubber.visible = true;
+					scrubber.visible = true && _contentVisible;
 				}	
 			}
 			updateTimerState();
@@ -797,13 +814,13 @@ package org.osmf.player.chrome.widgets
 			_live = value;
 			if (_live)
 			{
-				scrubBarDVRLiveTrack.visible = true;
+				scrubBarDVRLiveTrack.visible = true && _contentVisible;
 				scrubBarDVRLiveInactiveTrack.visible = false;
 			}
 			else
 			{
 				scrubBarDVRLiveTrack.visible = false;
-				scrubBarDVRLiveInactiveTrack.visible = true;
+				scrubBarDVRLiveInactiveTrack.visible = true && _contentVisible;
 			}
 			
 			// WORKARROUND: In a playlist the childIndex of the dvrLive bar gets bigger then the scrubBarPlayed track, 
@@ -867,8 +884,9 @@ package org.osmf.player.chrome.widgets
 		
 		private var seekToTime:Number;
 		private var started:Boolean;
-		
-		/**
+        private var _contentVisible:Boolean = true;
+
+        /**
 		 * Cache the scrubBarLiveTrackWidth as a workarround for the SWF symbols getting resized when added to stage.
 		 */
 		private var scrubBarLiveTrackWidth:Number;

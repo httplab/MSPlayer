@@ -159,33 +159,23 @@ package org.osmf.player.elements
 		
 		// Скрыть/показать scrub bar и кнопки управления воспроизведением.
 		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
-			var timeViewWidget:TimeViewWidget = null;
-			var playButton:PlayButton = null;
-			var pauseButton:PauseButton = null;
-//			var scrubBar:ScrubBar = null;
-			var scrubBar:Widget = null;
-			
 			for each(var widget:Widget in controlBar.widgets)
 			{
-				if(widget.id == WidgetIDs.SCRUB_BAR) {
-					scrubBar = widget;
-				}
-			}
-
-//			controlBar.widgets.some();
-				
-			//[controlBar.widgets.indexOf(function(el:Widget):Boolean {  return el.id == WidgetIDs.SCRUB_BAR })];
-			
-			trace("ControlBarElement: set scrubBarAndPlaybackButtonsVisible");
-//			controlBar.scrubBarAndPlaybackButtonsVisible = value;
+				if(widget.id == WidgetIDs.TIME_VIEW_WIDGET) {
+                    widget.visible = value;
+                }
+                else if (widget.id == WidgetIDs.SCRUB_BAR) {
+                    ScrubBar(widget).contentVisible = value;
+                }
+                else if (widget.id == WidgetIDs.PLAY_BUTTON){
+                    PlayButton(widget).contentVisible = value;
+                }
+                else if (widget.id == WidgetIDs.PAUSE_BUTTON){
+                    PauseButton(widget).contentVisible = value;
+                }
+            }
 		}
 
-		public function get scrubBarAndPlaybackButtonsVisible():Boolean{
-			trace("ControlBarElement: get scrubBarAndPlaybackButtonsVisible");
-			return true;
-//			return controlBar.scrubBarAndPlaybackButtonsVisible;
-		}
-		
 		// Constructor
 		
 		public function ControlBarElement(type:String = ControlBarType.DESKTOP){

@@ -26,8 +26,9 @@ package
 	import flash.system.Capabilities;
 	import flash.ui.Mouse;
 	import flash.utils.Timer;
-	
-	import org.osmf.containers.MediaContainer;
+    import flash.utils.Dictionary;
+
+    import org.osmf.containers.MediaContainer;
 	import org.osmf.elements.*;
 	import org.osmf.events.*;
 	import org.osmf.layout.*;
@@ -168,12 +169,13 @@ package
 			
 			player.addEventListener(TimeEvent.COMPLETE, onComplete);
 			player.addEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
-			
-			
+            player.addEventListener(BufferEvent.BUFFERING_CHANGE, onBufferChange);
 
-			
-			
-			// Add DRM error handler
+
+
+
+
+            // Add DRM error handler
 			var drmManager:DRMManager = DRMManager.getDRMManager();
 			drmManager.addEventListener(DRMErrorEvent.DRM_ERROR, onDRMError);
 			
@@ -238,7 +240,21 @@ package
 				mediaPlayerJSBridge = new JavaScriptBridge(this, player, StrobeMediaPlayer, configuration.javascriptCallbackFunction);			
 			}
 		}
-		
+        /**
+         * Display the pre-roll advertisement.
+         */
+        private function onBufferChange(event:BufferEvent):void
+        {
+            if (event.buffering)
+            {
+                player.removeEventListener(BufferEvent.BUFFERING_CHANGE, onBufferChange);
+
+                // Do not pre-buffer the ad if playing a pre-roll ad.
+                // Let the main content pre-buffer while the ad is playing instead.
+                displayAd(adElement, true, true, false, null);
+            }
+        }
+
 //		private function onVASTLoadStateChange(event:LoaderEvent):void {
 //			trace("onVASTLoadStateChange " + event.newState);
 
@@ -486,8 +502,8 @@ package
 				layout();
 				
 				controlBarContainer.layoutMetadata.height = controlBar.height;
-				controlBarContainer.addMediaElement(controlBar);
-				
+                controlBarContainer.addMediaElement(controlBar);
+
 				if (configuration.controlBarType == ControlBarType.SMARTPHONE) {
 					controlBarContainer.addEventListener(WidgetEvent.REQUEST_FULL_SCREEN, onFitToScreenRequest);
 					controlBarContainer.addEventListener(WidgetEvent.REQUEST_FULL_SCREEN_FORCE_FIT, onFitToScreenRequest);
@@ -497,8 +513,9 @@ package
 				}
 				
 				mainContainer.layoutRenderer.addTarget(controlBarContainer);
+//                controlBarContainer.visible = false;
 				mediaContainer.layoutRenderer.addTarget(loginWindowContainer);
-			}			
+            }
 			
 			mainContainer.layoutRenderer.addTarget(mediaContainer);
 
@@ -558,19 +575,18 @@ package
 					
 					var serialElement:SerialElement = new SerialElement();
 					
-					var adElement:MediaElement = mediaElements[0];
-					if (adElement != null)
-					{
-						serialElement.addChild(adElement);
-					}
+					adElement = mediaElements[0];
+//					if (adElement != null)
+//					{
+//						serialElement.addChild(adElement);
+//					}
 					
 					serialElement.addChild(factory.createMediaElement(resource));
 					serialElement.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange)
 //					player.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange);
 					
 					trace("ControlBarElement: before set scrubBarAndPlaybackButtonsVisible");
-					controlBar.scrubBarAndPlaybackButtonsVisible = false;
-					media = serialElement; 
+					media = serialElement;
 					if (_media == null)
 					{
 						var mediaError:MediaError
@@ -598,7 +614,8 @@ package
 		}
 
 		public function onSerialElementChildChange(event:SerialElementEvent):void {
-			trace("serial element change");
+            controlBar.scrubBarAndPlaybackButtonsVisible = true;
+            trace("serial element change");
 		}
 
 		/**
@@ -722,8 +739,165 @@ package
 				}
 			}
 		}
-		
-		private function set media(value:MediaElement):void
+
+    private function displayAd(adMediaElement:MediaElement,
+                               //url:String,
+                               pauseMainMediaWhilePlayingAd:Boolean = true,
+                               resumePlaybackAfterAd:Boolean = true,
+                               preBufferAd:Boolean = true,
+                               layoutInfo:Object = null):void
+    {
+        // Set up the ad
+//        var adMediaElement:MediaElement = factory.createMediaElement(new URLResource(url));
+
+        // Set the layout metadata, if present
+        if (layoutInfo != null)
+        {
+            var layoutMetadata:LayoutMetadata = new LayoutMetadata();
+            for (var key:String in layoutInfo)
+            {
+                layoutMetadata[key] = layoutInfo[key];
+            }
+
+            if (!layoutInfo.hasOwnProperty("index"))
+            {
+                // Make sure we add the last ad on top of any others
+                layoutMetadata.index = adPlayerCount + 100;
+            }
+
+            adMediaElement.metadata.addValue(LayoutMetadata.LAYOUT_NAMESPACE, layoutMetadata);
+        }
+
+        var adMediaPlayer:MediaPlayer =  new MediaPlayer();
+        adMediaPlayer.media = adMediaElement;
+
+        // Save the reference to the ad player, so that we can adjust the volume/mute of all the ads
+        // whenever the volume or mute values change in the video player.
+        adPlayers[adMediaPlayer] = true;
+        adPlayerCount++;
+
+        adMediaPlayer.addEventListener(TimeEvent.COMPLETE, onAdComplete);
+
+        if (preBufferAd)
+        {
+            // Wait until the ad fills the buffer and is ready to be played.
+            adMediaPlayer.muted = true;
+            adMediaPlayer.addEventListener(BufferEvent.BUFFERING_CHANGE, onBufferingChange);
+            function onBufferingChange(event:BufferEvent):void
+            {
+                if (event.buffering == false)
+                {
+                    adMediaPlayer.removeEventListener(BufferEvent.BUFFERING_CHANGE, onBufferingChange);
+                    playAd();
+                }
+            }
+        }
+        else
+        {
+            playAd();
+        }
+
+        function playAd():void
+        {
+            controlBar.scrubBarAndPlaybackButtonsVisible = false;
+
+            // Copy the player's current volume values
+            adMediaPlayer.volume = player.volume;
+            adMediaPlayer.muted = player.muted;
+
+            if (pauseMainMediaWhilePlayingAd)
+            {
+                // Indicates to the player that we currently are playing an ad,
+                // so the player can adjust its UI.
+                // FIXME: Скорее всего комментировать не нужно.
+                //player.media.metadata.addValue("Advertisement", url);
+
+                // TODO: We assume that playback pauses immediately,
+                // but this is not the case for all types of content.
+                // The linear ads should be inserted only after the player state becomes 'paused'.
+                player.pause();
+
+                // If we are playing a linear ad, we need to remove it from the media container.
+                if (mediaContainer.containsMediaElement(player.media))
+                {
+                    mediaContainer.removeMediaElement(player.media);
+                }
+                else
+                {
+                    // Wait until the media gets added to the container, so that we can remove it
+                    // immediately afterwards.
+                    player.media.addEventListener(ContainerChangeEvent.CONTAINER_CHANGE, onContainerChange);
+                    function onContainerChange(event:ContainerChangeEvent):void
+                    {
+                        if (mediaContainer.containsMediaElement(player.media))
+                        {
+                            player.media.removeEventListener(ContainerChangeEvent.CONTAINER_CHANGE, onContainerChange);
+                            mediaContainer.removeMediaElement(player.media);
+                        }
+                    }
+                }
+            }
+
+            // Add the ad to the container
+            mediaContainer.addMediaElement(adMediaElement);
+        }
+
+
+        function onAdComplete(event:Event):void
+        {
+            var adMediaPlayer:MediaPlayer = event.target as MediaPlayer;
+            adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, onAdComplete);
+
+            // Romove the ad from the media container
+            mediaContainer.removeMediaElement(adMediaPlayer.media);
+
+            // Remove the saved references
+            adPlayerCount--;
+            delete adPlayers[adMediaPlayer];
+
+            if (pauseMainMediaWhilePlayingAd)
+            {
+                // Remove the metadata that indicates that we are playing a linear ad.
+                player.media.metadata.removeValue("Advertisement");
+
+                // Add the main video back to the container.
+                mediaContainer.addMediaElement(player.media);
+            }
+
+            if (pauseMainMediaWhilePlayingAd && resumePlaybackAfterAd)
+            {
+
+                // WORKAROUND: http://bugs.adobe.com/jira/browse/ST-397 - GPU Decoding issue on stagevideo: Win7, Flash Player version WIN 10,2,152,26 (debug)
+// Возможно закоментировано зря.
+//                if (seekWorkaround && player.canSeek)
+//                {
+//                    player.seek(player.currentTime);
+//                }
+
+                // Resume playback
+                controlBar.scrubBarAndPlaybackButtonsVisible = true;
+                player.play();
+            }
+        }
+    }
+
+    /**
+     * Displays a linear advertisement.
+     *
+     * The method does not check if an ad is currently being played or not.
+     * This is up to the caller to check.
+     *
+     * The ad will use the same layout as the main media.
+     *
+     * @param url - the path to the ad media to be displayed.
+     * @resumePlaybackAfterAd - indicates if the playback of the main media should resume after the playback of the ad.
+     */
+    public function displayLinearAd(adElement:MediaElement, resumePlaybackAfterAd:Boolean = true):void
+    {
+        displayAd(adElement, true, resumePlaybackAfterAd, true, null);
+    }
+
+    private function set media(value:MediaElement):void
 		{
 			if (alert && mediaContainer.containsMediaElement(alert))
 			{				
@@ -764,8 +938,9 @@ package
 					{
 						controlBar.target = _media;
 					}
-					
-					// Forward a reference to the play overlay:
+                    controlBar.scrubBarAndPlaybackButtonsVisible = false;
+
+                    // Forward a reference to the play overlay:
 					if (playOverlay != null)
 					{
 						playOverlay.media = _media;
@@ -1306,8 +1481,16 @@ package
 		// used for DVR rolling window
 		private static const DEFAULT_FRAGMENT_SIZE:Number = 4;
 		private static const DEFAULT_SEGMENT_SIZE:Number = 16;
-		
-		private static const EXTERNAL_INTERFACE_ERROR_CALL:String
+
+
+        private var adPlayerCount:int = 0;
+
+        var adElement:MediaElement = null;
+
+        // Weak references for the currently playing ads
+        private var adPlayers:Dictionary = new Dictionary(true);
+
+        private static const EXTERNAL_INTERFACE_ERROR_CALL:String
 		 	= "function(playerId, code, message, detail)"
 			+ "{"
 			+ "	if (onMediaPlaybackError != null)"

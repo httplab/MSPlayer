@@ -81,12 +81,14 @@ package org.osmf.player.chrome
 			
 			// Play/pause
 			var playButton:PlayButton = new PlayButton();
+            playButton.id = WidgetIDs.PLAY_BUTTON;
 			playButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE
 			playButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			leftControls.addChildWidget(playButton);
 			
 			var pauseButton:PauseButton = new PauseButton();
-			pauseButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE
+            pauseButton.id = WidgetIDs.PAUSE_BUTTON;
+            pauseButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE
 			pauseButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			leftControls.addChildWidget(pauseButton);
 			
@@ -131,6 +133,7 @@ package org.osmf.player.chrome
 			
 			// Time view
 			var timeViewWidget:TimeViewWidget = new TimeViewWidget();
+            timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
 			timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
 			rightControls.addChildWidget(timeViewWidget);
