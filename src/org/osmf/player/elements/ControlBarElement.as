@@ -161,10 +161,10 @@ package org.osmf.player.elements
 		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
 			for each(var widget:Widget in controlBar.widgets)
 			{
-				if(widget.id == WidgetIDs.TIME_VIEW_WIDGET) {
-                    widget.visible = value;
-                }
-                else if (widget.id == WidgetIDs.SCRUB_BAR) {
+//				if(widget.id == WidgetIDs.TIME_VIEW_WIDGET) {
+//                    widget.visible = value;
+//                }
+                if (widget.id == WidgetIDs.SCRUB_BAR) {
                     ScrubBar(widget).contentVisible = value;
                 }
                 else if (widget.id == WidgetIDs.PLAY_BUTTON){

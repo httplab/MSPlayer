@@ -251,7 +251,7 @@ package
 
                 // Do not pre-buffer the ad if playing a pre-roll ad.
                 // Let the main content pre-buffer while the ad is playing instead.
-                displayAd(adElement, true, true, false, null);
+//                displayAd(adElement, true, true, false, null);
             }
         }
 
@@ -576,18 +576,20 @@ package
 					var serialElement:SerialElement = new SerialElement();
 					
 					adElement = mediaElements[0];
-//					if (adElement != null)
-//					{
-//						serialElement.addChild(adElement);
-//					}
+					if (adElement != null)
+					{
+						serialElement.addChild(adElement);
+					}
 					
 					serialElement.addChild(factory.createMediaElement(resource));
 					serialElement.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange)
 //					player.addEventListener(SerialElementEvent.CURRENT_CHILD_CHANGE, onSerialElementChildChange);
 					
 					trace("ControlBarElement: before set scrubBarAndPlaybackButtonsVisible");
+//					media = factory.createMediaElement(resource);
+                    controlBar.scrubBarAndPlaybackButtonsVisible = false;
 					media = serialElement;
-					if (_media == null)
+                    if (_media == null)
 					{
 						var mediaError:MediaError
 						= new MediaError
@@ -799,7 +801,7 @@ package
 
         function playAd():void
         {
-            controlBar.scrubBarAndPlaybackButtonsVisible = false;
+//            controlBar.scrubBarAndPlaybackButtonsVisible = false;
 
             // Copy the player's current volume values
             adMediaPlayer.volume = player.volume;
@@ -862,6 +864,8 @@ package
 
                 // Add the main video back to the container.
                 mediaContainer.addMediaElement(player.media);
+//                media = factory.createMediaElement(injector.getInstance(MediaResourceBase));
+
             }
 
             if (pauseMainMediaWhilePlayingAd && resumePlaybackAfterAd)
@@ -875,7 +879,7 @@ package
 //                }
 
                 // Resume playback
-                controlBar.scrubBarAndPlaybackButtonsVisible = true;
+//                controlBar.scrubBarAndPlaybackButtonsVisible = true;
                 player.play();
             }
         }
@@ -894,7 +898,7 @@ package
      */
     public function displayLinearAd(adElement:MediaElement, resumePlaybackAfterAd:Boolean = true):void
     {
-        displayAd(adElement, true, resumePlaybackAfterAd, true, null);
+//        displayAd(adElement, true, resumePlaybackAfterAd, true, null);
     }
 
     private function set media(value:MediaElement):void
