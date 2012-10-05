@@ -46,11 +46,11 @@
 			}
 
 			// Принудительная инициализация рекламы
-			if (!params.preRoll) {
-		      	params["preRoll"] = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
-			}
+		// 	if (!params.preRoll) {
+		//       	params["preRoll"] = "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
+		// 	}
 
-			options = $.extend({}, params, options);			
+			options = $.extend({}, params, options);
 			PLAYER.embedPlayer(containerId, options);
 		},
 
