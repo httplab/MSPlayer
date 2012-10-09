@@ -256,8 +256,9 @@ package org.osmf.player.configuration
 		private function load():void
 		{
 			strobeMediaPlayback.removePoster();
-			strobeMediaPlayback.loadMediaWithAd();		
-		}
+//			strobeMediaPlayback.loadMediaWithAd();
+			strobeMediaPlayback.loadMedia();
+        }
 		
 		private function onMediaPlayerStateChange(event:MediaPlayerStateChangeEvent):void
 		{
