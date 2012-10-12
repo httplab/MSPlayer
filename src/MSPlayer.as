@@ -565,7 +565,6 @@ package
 //            trace("serial element change");
 //		}
 
-
         public function displayPreRollAdAndPlayMedia(adMediaElement:MediaElement, mediaElement:MediaElement):void {
 	        var adMediaPlayer:MediaPlayer = new MediaPlayer();
 	        adMediaPlayer.media = adMediaElement;
@@ -575,11 +574,14 @@ package
 
             mediaContainer.addMediaElement(adMediaElement);
 
+//            player.media.metadata.addValue("Advertisement", "1");
 
             function onAdComplete(event:Event):void
             {
                 var adMediaPlayer:MediaPlayer = event.target as MediaPlayer;
                 adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, onAdComplete);
+
+//                player.media.metadata.removeValue("Advertisement");
 
                 // Romove the ad from the media container
                 mediaContainer.removeMediaElement(adMediaPlayer.media);
@@ -647,21 +649,23 @@ package
             }
 
             if (loaderInfo.parameters.streamType != "live" && loaderInfo.parameters.pauseRoll) {
-                player.addEventListener(MediaPlayerStateChangeEvent.MEDIA_PLAYER_STATE_CHANGE,
-                        onMediaPlayerStateChange);
 
 
-                function onMediaPlayerStateChange(event:MediaPlayerStateChangeEvent):void {
-                    var a:String = "helllo";
-                    if (player.currentTime > 0)
-                    {
-                        a = "ppppp";
-                        trace(a);
-//                        player.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, onMidrollCurrentTimeChange);
-//                        displayLinearAd(loaderInfo.parameters.midRoll);
-                    }
+                controlBar.addEventListener("playButtonClick", onPlayButtonClick);
+                function onPlayButtonClick(evt:Event):void {
+                    controlBar.removeEventListener("playButtonClick", onPlayButtonClick);
+                    displayLinearAd(loaderInfo.parameters.pauseRoll);
                 }
             }
+
+            if (loaderInfo.parameters.streamType == "recorded" && loaderInfo.parameters.postRoll) {
+                player.addEventListener(TimeEvent.COMPLETE, onMediaComplete);
+                function onMediaComplete(evt:Event):void {
+                    player.removeEventListener(TimeEvent.COMPLETE, onMediaComplete);
+                    displayLinearAd(loaderInfo.parameters.postRoll, false);
+                }
+            }
+
         }
 
 		private function processNewMedia(value:MediaElement):MediaElement
@@ -815,6 +819,8 @@ package
             // Copy the player's current volume values
             adMediaPlayer.volume = player.volume;
             adMediaPlayer.muted = player.muted;
+
+            player.media.metadata.addValue("Advertisement", "1");
 
             if (pauseMainMediaWhilePlayingAd)
             {

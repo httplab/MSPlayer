@@ -5,9 +5,9 @@
  * The contents of this file are subject to the Berkeley Software Distribution (BSD) Licence
  * (the "License"); you may not use this file except in
  * compliance with the License. 
- *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ *
  * License for the specific language governing rights and limitations
  * under the License.
  *
@@ -45,7 +45,8 @@ package org.osmf.player.chrome.widgets
 		{
 			var playable:PlayTrait = media.getTrait(MediaTraitType.PLAY) as PlayTrait;
 			playable.play();
-			event.stopImmediatePropagation();
+            // Отменяем, т.к. хорошо бы этот евент перехватить в контрол-баре
+//			event.stopImmediatePropagation();
 		}
 		
 		override protected function visibilityDeterminingEventHandler(event:Event = null):void

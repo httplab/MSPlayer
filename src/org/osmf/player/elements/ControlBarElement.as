@@ -21,8 +21,10 @@
 package org.osmf.player.elements 
 {
 	import flash.display.DisplayObject;
-	
-	import org.osmf.layout.LayoutMetadata;
+import flash.events.Event;
+import flash.events.MouseEvent;
+
+import org.osmf.layout.LayoutMetadata;
 	import org.osmf.media.MediaElement;
 	import org.osmf.metadata.Metadata;
 	import org.osmf.player.chrome.ChromeProvider;
@@ -211,10 +213,21 @@ package org.osmf.player.elements
 			// Additionally, use its current width and height for the trait's mediaWidth
 			// and mediaHeight properties:
 			var viewable:DisplayObjectTrait = new DisplayObjectTrait(DisplayObject(controlBar));
-			// Add the trait:
+
+            for each(var widget:Widget in controlBar.widgets)
+            {
+                if (widget.id == WidgetIDs.PLAY_BUTTON){
+                    PlayButton(widget).addEventListener(MouseEvent.CLICK, function(evt:MouseEvent) {
+                        trace("play button click");
+                        dispatchEvent(new Event("playButtonClick"));
+//                        evt.stopImmediatePropagation();
+                    });
+                    break;
+                }
+            }
+
+            // Add the trait:
 			addTrait(MediaTraitType.DISPLAY_OBJECT, viewable);
-			
-			super.setupTraits();	
 		}
 		
 		// Internals
