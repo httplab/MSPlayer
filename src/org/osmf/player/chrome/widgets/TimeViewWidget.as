@@ -259,13 +259,19 @@ package org.osmf.player.chrome.widgets
 			
 			if (event.seeking)
 			{
-				updateValues(event.time, timeTrait.duration, live);
-				timer.stop();				
+                if (timeTrait) {
+                    updateValues(event.time, timeTrait.duration, live);
+    				timer.stop();
+                }
 			}
 			else
 			{
-				updateValues(event.time, timeTrait.duration, live);
-				timer.start();
+                // FIXME: В случае live, после воспроизведения рекламы timeTrait == null
+                // Почему не ясно, пока добавляем такую вот проверку.
+                if (timeTrait) {
+                    updateValues(event.time, timeTrait.duration, live);
+                    timer.start();
+                }
 			}
 		}	
 	}

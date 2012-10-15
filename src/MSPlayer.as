@@ -46,7 +46,8 @@ package
 	import org.osmf.player.elements.playlistClasses.*;
 	import org.osmf.player.errors.*;
 	import org.osmf.player.media.*;
-	import org.osmf.player.plugins.PluginLoader;
+import org.osmf.player.metadata.MediaMetadata;
+import org.osmf.player.plugins.PluginLoader;
 	import org.osmf.player.utils.StrobeUtils;
 	import org.osmf.traits.DVRTrait;
 	import org.osmf.traits.LoadState;
@@ -566,25 +567,34 @@ package
 //		}
 
         public function displayPreRollAdAndPlayMedia(adMediaElement:MediaElement, mediaElement:MediaElement):void {
-	        var adMediaPlayer:MediaPlayer = new MediaPlayer();
+	        var adMediaPlayer:StrobeMediaPlayer = new StrobeMediaPlayer();
 	        adMediaPlayer.media = adMediaElement;
             adMediaPlayer.volume = player.volume;
             adMediaPlayer.muted = player.muted;
             adMediaPlayer.addEventListener(TimeEvent.COMPLETE, onAdComplete);
 
             mediaContainer.addMediaElement(adMediaElement);
+            adMediaElement.metadata.addValue("Advertisement", "Advertisement");
 
-//            player.media.metadata.addValue("Advertisement", "1");
+
+            var mediaMetadata = new MediaMetadata();
+            mediaMetadata.mediaPlayer = adMediaPlayer;
+            adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
+
+            if (controlBar != null)
+            {
+                controlBar.target = adMediaElement;
+            }
+            adMediaPlayer.play();
 
             function onAdComplete(event:Event):void
             {
-                var adMediaPlayer:MediaPlayer = event.target as MediaPlayer;
+                var adMediaPlayer:StrobeMediaPlayer = event.target as StrobeMediaPlayer;
                 adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, onAdComplete);
-
-//                player.media.metadata.removeValue("Advertisement");
 
                 // Romove the ad from the media container
                 mediaContainer.removeMediaElement(adMediaPlayer.media);
+                adMediaPlayer.media.metadata.removeValue("Advertisement");
                 media = mediaElement;
             }
         }
@@ -783,7 +793,7 @@ package
             adMediaElement.metadata.addValue(LayoutMetadata.LAYOUT_NAMESPACE, layoutMetadata);
         }
 
-        var adMediaPlayer:MediaPlayer =  new MediaPlayer();
+        var adMediaPlayer:StrobeMediaPlayer =  new StrobeMediaPlayer();
         adMediaPlayer.media = adMediaElement;
 
         // Save the reference to the ad player, so that we can adjust the volume/mute of all the ads
@@ -820,7 +830,7 @@ package
             adMediaPlayer.volume = player.volume;
             adMediaPlayer.muted = player.muted;
 
-            player.media.metadata.addValue("Advertisement", "1");
+            adMediaPlayer.media.metadata.addValue("Advertisement", "1");
 
             if (pauseMainMediaWhilePlayingAd)
             {
@@ -855,15 +865,27 @@ package
                 }
             }
 
+
+            var mediaMetadata = new MediaMetadata();
+            mediaMetadata.mediaPlayer = adMediaPlayer;
+            adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
+
+            if (controlBar != null)
+            {
+                controlBar.target = adMediaElement;
+            }
+
             // Add the ad to the container
             mediaContainer.addMediaElement(adMediaElement);
+            adMediaPlayer.play();
         }
 
 
         function onAdComplete(event:Event):void
         {
-            var adMediaPlayer:MediaPlayer = event.target as MediaPlayer;
+            var adMediaPlayer:StrobeMediaPlayer = event.target as StrobeMediaPlayer;
             adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, onAdComplete);
+            adMediaPlayer.media.metadata.removeValue("Advertisement");
 
             // Romove the ad from the media container
             mediaContainer.removeMediaElement(adMediaPlayer.media);
@@ -875,7 +897,6 @@ package
             if (pauseMainMediaWhilePlayingAd)
             {
                 // Remove the metadata that indicates that we are playing a linear ad.
-                player.media.metadata.removeValue("Advertisement");
 
                 // Add the main video back to the container.
                 mediaContainer.addMediaElement(player.media);
@@ -894,6 +915,10 @@ package
                 // Resume playback
 //                controlBar.scrubBarAndPlaybackButtonsVisible = true;
                 player.play();
+                if (controlBar != null)
+                {
+                    controlBar.target = player.media;
+                }
             }
         }
     }

@@ -45,7 +45,6 @@ package org.osmf.player.chrome.widgets
 		{
 			var playable:PlayTrait = media.getTrait(MediaTraitType.PLAY) as PlayTrait;
 			playable.play();
-            // Отменяем, т.к. хорошо бы этот евент перехватить в контрол-баре
 //			event.stopImmediatePropagation();
 		}
 		

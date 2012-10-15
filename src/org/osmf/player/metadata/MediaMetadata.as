@@ -21,7 +21,10 @@
 package org.osmf.player.metadata
 {
 	import flash.net.NetConnection;
-	CONFIG::FLASH_10_1	
+
+import org.osmf.media.MediaPlayer;
+
+CONFIG::FLASH_10_1
 	{	
 		import flash.net.NetGroup;
 	}
@@ -38,7 +41,7 @@ package org.osmf.player.metadata
 		public static const ID:String = "org.osmf.player.metadata.MediaMetadata";
 		
 		public var mediaPlayer:StrobeMediaPlayer;
-		public var resourceMetadata:ResourceMetadata = new ResourceMetadata();
+        public var resourceMetadata:ResourceMetadata = new ResourceMetadata();
 
 	}
 }

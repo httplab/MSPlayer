@@ -60,7 +60,7 @@ package org.osmf.player.chrome.widgets
 	import org.osmf.traits.PlayTrait;
 	import org.osmf.traits.SeekTrait;
 	import org.osmf.traits.TimeTrait;
-	
+
 	
 	/**
 	 * ScrubBar widget is responsible for setting up the scrub bar UI and behaviour.
@@ -336,6 +336,17 @@ package org.osmf.player.chrome.widgets
 		
 		override protected function onMediaElementTraitAdd(event:MediaElementEvent):void
 		{
+            // Возможно это и не правильно, но функция срабатывает каждый раз, когда скраб-бару
+            // задается mediaElement. Ставим тут обработчик -- если медиаэлемент рекламный
+            // скрываем контент, в противном случае показываем.
+            if (media.metadata.getValue("Advertisement") == null) {
+                contentVisible = true;
+            }
+            else {
+                contentVisible = false;
+            }
+
+
 			if (event.traitType == MediaTraitType.PLAY)
 			{
 				// Prepare for getting the player to the Live content directly (UX rule)
@@ -391,7 +402,12 @@ package org.osmf.player.chrome.widgets
 				var traitAddEvent:MediaElementEvent = new MediaElementEvent(MediaElementEvent.TRAIT_ADD, false, false, traitType);						
 				onMediaElementTraitAdd(traitAddEvent);
 			}
-			media.metadata.addEventListener(MetadataEvent.VALUE_CHANGE, onMetadataValueChange);			
+			media.metadata.addEventListener(MetadataEvent.VALUE_CHANGE, onMetadataValueChange);
+
+            if (media && media.metadata)
+            {
+                contentVisible = media.metadata.getValue("Advertisement") == null;
+            }
 		}
 		
 		// Internals
@@ -562,7 +578,8 @@ package org.osmf.player.chrome.widgets
 
 		private function seekToX(relativePositition:Number):void
 		{
-			if (!started)
+			// Если не начали воспроизведение, либо контент скраб-бара скрыт -- ничего не делаем.
+            if (!started || !_contentVisible)
 			{
 				return;
 			}
@@ -615,6 +632,11 @@ package org.osmf.player.chrome.widgets
 		
 		private function onSeekingChange(event:SeekEvent):void
 		{
+            // Если скрываем конетнт, не нужно реагировать на события мыши.
+            if (!_contentVisible) {
+                return;
+            }
+
 			if (event.seeking == false)
 			{
 				var seekTrait:SeekTrait = event.target as SeekTrait;
@@ -727,7 +749,9 @@ package org.osmf.player.chrome.widgets
 		
 		private function showTimeHint():void
 		{
-			if (streamType == StreamType.LIVE)
+            // В случае лайва, либо в случае отображения рекламы (элементы управления скраб-бара не отображаются)
+            // не нужно рисовать time hint.
+			if (streamType == StreamType.LIVE || !_contentVisible)
 			{
 				// Don't show the time hint for the LIVE streams.
 				return;
