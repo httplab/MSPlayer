@@ -238,24 +238,6 @@ import org.osmf.player.plugins.PluginLoader;
 				mediaPlayerJSBridge = new JavaScriptBridge(this, player, StrobeMediaPlayer, configuration.javascriptCallbackFunction);
 			}
 		}
-        /**
-         * Display the pre-roll advertisement.
-         */
-//        private function onBufferChange(event:BufferEvent):void
-//        {
-//            if (event.buffering)
-//            {
-//                // Do not pre-buffer the ad if playing a pre-roll ad.
-//                // Let the main content pre-buffer while the ad is playing instead.
-//                player.removeEventListener(BufferEvent.BUFFERING_CHANGE, onBufferChange);
-////                player.pause();
-////                player.play();
-////                adMediaPlayer.addEventListener(BufferEvent.BUFFERING_CHANGE, onBufferingChange);
-//
-//                displayLinearAd(loaderInfo.parameters.preRoll, true);
-////                displayAd(adElement, true, true, false, null);
-//            }
-//        }
 
 		private function reportError(message:String):void
 		{
@@ -576,6 +558,7 @@ import org.osmf.player.plugins.PluginLoader;
             mediaContainer.addMediaElement(adMediaElement);
             adMediaElement.metadata.addValue("Advertisement", "Advertisement");
 
+            displayNonLinearAd();
 
             var mediaMetadata = new MediaMetadata();
             mediaMetadata.mediaPlayer = adMediaPlayer;
@@ -956,6 +939,25 @@ import org.osmf.player.plugins.PluginLoader;
             }
         }
     }
+
+//    public function displayNonLinearAd(url:String, layoutInfo:Object):void
+    public function displayNonLinearAd():void
+    {
+        var overlayMetadata:Object = {
+            right: 10,
+            bottom: 10,
+            width: 200,
+            height: 140,
+            scaleMode: ScaleMode.STRETCH
+        };
+
+        var overlayUrl:String = "http://gcdn.2mdn.net/MotifFiles/html/1379578/PID_938961_1237818260000_women.flv";
+        var adMediaElement:MediaElement = factory.createMediaElement(new URLResource(overlayUrl));
+
+        displayAd(adMediaElement, false, false, true, overlayMetadata);
+    }
+
+
 
     private function set media(value:MediaElement):void
 		{
