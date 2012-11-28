@@ -22,7 +22,8 @@ package
 	import flash.display.*;
 	import flash.events.*;
 	import flash.external.ExternalInterface;
-	import flash.net.drm.DRMManager;
+import flash.net.SharedObject;
+import flash.net.drm.DRMManager;
 	import flash.system.Capabilities;
 	import flash.ui.Mouse;
 	import flash.utils.Timer;
@@ -181,7 +182,12 @@ import org.osmf.player.plugins.PluginLoader;
 			// TODO: Add this event only when the resource is DVR rolling window not all the time
 			player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChange);
 
-			configurationLoader.load(parameters, configuration);
+            var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+            if (sharedObj.data.currentVolume) {
+                player.volume = sharedObj.data.currentVolume;
+            }
+
+            configurationLoader.load(parameters, configuration);
 
 			function onConfigurationReady(event:Event):void
 			{
@@ -560,7 +566,7 @@ import org.osmf.player.plugins.PluginLoader;
 
             displayNonLinearAd();
 
-            var mediaMetadata = new MediaMetadata();
+            var mediaMetadata:MediaMetadata = new MediaMetadata();
             mediaMetadata.mediaPlayer = adMediaPlayer;
             adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
 
@@ -592,7 +598,7 @@ import org.osmf.player.plugins.PluginLoader;
 
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase  = injector.getInstance(MediaResourceBase);
-            var mediaElement = factory.createMediaElement(resource);
+            var mediaElement:MediaElement = factory.createMediaElement(resource);
 
             CONFIG::LOGGING
 			{
@@ -849,7 +855,7 @@ import org.osmf.player.plugins.PluginLoader;
             }
 
 
-            var mediaMetadata = new MediaMetadata();
+            var mediaMetadata:MediaMetadata = new MediaMetadata();
             mediaMetadata.mediaPlayer = adMediaPlayer;
             adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
 
@@ -984,7 +990,10 @@ import org.osmf.player.plugins.PluginLoader;
 				// Set the new main media element:
 				_media = player.media = value;
 
-				if (_media)
+
+
+
+                if (_media)
 				{
 					// Add the media to the media container:
 //					var vastElements:Vector.<MediaElement> = vastMediaGenerator.createMediaElements(vastLoadTrait.vastDocument, chosenPlacement);
@@ -995,7 +1004,13 @@ import org.osmf.player.plugins.PluginLoader;
 //					}
 					mediaContainer.addMediaElement(_media);
 
-					// Forward a reference to controlBar:
+                    player.addEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
+                    function onVolumeChange (event:AudioEvent = null):void {
+                        var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                        sharedObj.data.currentVolume = event.volume;
+                    }
+
+                    // Forward a reference to controlBar:
 					if (controlBar != null)
 					{
 						controlBar.target = _media;

@@ -217,7 +217,7 @@ import org.osmf.layout.LayoutMetadata;
             for each(var widget:Widget in controlBar.widgets)
             {
                 if (widget.id == WidgetIDs.PLAY_BUTTON){
-                    PlayButton(widget).addEventListener(MouseEvent.CLICK, function(evt:MouseEvent) {
+                    PlayButton(widget).addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void {
                         trace("play button click");
                         dispatchEvent(new Event("playButtonClick"));
 //                        evt.stopImmediatePropagation();
