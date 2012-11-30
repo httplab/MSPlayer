@@ -56,7 +56,8 @@ import org.osmf.player.plugins.PluginLoader;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
 	import org.osmf.traits.PlayTrait;
-	import org.osmf.utils.OSMFSettings;
+import org.osmf.traits.SeekTrait;
+import org.osmf.utils.OSMFSettings;
 	import org.osmf.utils.OSMFStrings;
 	import org.osmf.vast.loader.VASTLoadTrait;
 	import org.osmf.vast.loader.VASTLoader;
@@ -185,6 +186,27 @@ import org.osmf.player.plugins.PluginLoader;
             var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
             if (sharedObj.data.currentVolume) {
                 player.volume = sharedObj.data.currentVolume;
+            }
+            if (sharedObj.data.mutedState) {
+                player.muted = sharedObj.data.mutedState;
+            }
+
+//            var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+            player.addEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
+            function onVolumeChange (event:AudioEvent = null):void {
+//                var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                sharedObj.data.currentVolume = event.volume;
+            }
+            player.addEventListener(AudioEvent.MUTED_CHANGE, onMutedChange);
+            function onMutedChange (event:AudioEvent = null):void {
+//                var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                sharedObj.data.mutedState = event.muted;
+            }
+
+            player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChangeForSaveState);
+            function onCurrentTimeChangeForSaveState(event:TimeEvent):void
+            {
+                sharedObj.data.currentTimePosition = event.time;
             }
 
             configurationLoader.load(parameters, configuration);
@@ -576,6 +598,20 @@ import org.osmf.player.plugins.PluginLoader;
             }
             adMediaPlayer.play();
 
+            adMediaPlayer.addEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
+            function onVolumeChange (event:AudioEvent = null):void {
+                var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                sharedObj.data.currentVolume = event.volume;
+            }
+
+            adMediaPlayer.addEventListener(AudioEvent.MUTED_CHANGE, onMutedChange);
+            function onMutedChange (event:AudioEvent = null):void {
+                var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                sharedObj.data.mutedState = event.muted;
+            }
+
+
+
             function onAdComplete(event:Event):void
             {
                 var adMediaPlayer:StrobeMediaPlayer = event.target as StrobeMediaPlayer;
@@ -628,6 +664,26 @@ import org.osmf.player.plugins.PluginLoader;
             }
             else {
                 media = mediaElement;
+            }
+
+            player.addEventListener(BufferEvent.BUFFERING_CHANGE, onBufferingChange);
+            function onBufferingChange(event:BufferEvent):void
+            {
+                if (event.buffering == false)
+                {
+                    var currentSrc:String  = loaderInfo.parameters.src;
+                    var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
+                    if (sharedObj.data.src && sharedObj.data.src == currentSrc) {
+                        if (sharedObj.data.currentTimePosition && player.canSeek) {
+                            player.removeEventListener(BufferEvent.BUFFERING_CHANGE, onBufferingChange);
+                            player.seek(sharedObj.data.currentTimePosition);
+                        }
+                    }
+                    else {
+                        sharedObj.data.src = currentSrc;
+                    }
+
+                }
             }
 
 
@@ -1004,12 +1060,6 @@ import org.osmf.player.plugins.PluginLoader;
 //					}
 					mediaContainer.addMediaElement(_media);
 
-                    player.addEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
-                    function onVolumeChange (event:AudioEvent = null):void {
-                        var sharedObj:SharedObject = SharedObject.getLocal("MSPlayer");
-                        sharedObj.data.currentVolume = event.volume;
-                    }
-
                     // Forward a reference to controlBar:
 					if (controlBar != null)
 					{
@@ -1034,7 +1084,7 @@ import org.osmf.player.plugins.PluginLoader;
 					{
 						loginWindow.target = _media;
 					}
-				}
+                }
 				else
 				{
 					if (playOverlay != null)

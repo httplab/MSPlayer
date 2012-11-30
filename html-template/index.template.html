@@ -13,22 +13,25 @@
         <script type="text/javascript">
         	$(document).ready(function() {
                 PLAYER.init({
+
                 	swf: "${swf}.swf?nocache=" + new Date(),
-                    streamType: "live",
+//                    streamType: "live",
 //                    streamType: "recorded",
+                    streamType: "liveOrRecorded",
                     id: "player",
                 	autoPlay: true,
-//                    src: "http://v.cdn.tvhello.ru/conv/Roliki/tv_tnt_rstv/tv_tnt_rstv_480p.mp4",
+                    src: "rtmp://live.tvhello.ru/vod/mp4:conv/Ya-Pohudey/pohudeyu_12/pohudeyu_12_480p.mp4",
+                    //src: "http://v.cdn.tvhello.ru/conv/Roliki/tv_tnt_rstv/tv_tnt_rstv_480p.mp4",
 //                    src: "http://players.edgesuite.net/videos/big_buck_bunny/bbb_448x252.mp4",
 //                    src: "http://193.34.211.18:1935/dvr/dw-europe.360kbps.stream/manifest.f4m?DVR",
 //                    src: "http://osmf.org/videos/cathy2.flv",
-                    src: "rtmp://flideo-wn0.infox.ru/o2tv/o2tv720",
-                    showVideoInfo: true,
-                    preRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
-                    midRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
-                    midRollTime: 10,
-                    pauseRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
-                    postRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
+//                    src: "rtmp://flideo-wn0.infox.ru/o2tv/o2tv720",
+                    showVideoInfo: true
+//                    preRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
+//                    midRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
+//                    midRollTime: 10,
+//                    pauseRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
+//                    postRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml"
                 });
         	});
         </script>
