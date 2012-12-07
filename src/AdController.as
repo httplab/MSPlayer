@@ -45,6 +45,8 @@ package {
 		private var _factory:StrobeMediaFactory;
 		private var _loaderParams:Object;
 		private var posterImage:ImageElement;
+		private var _linearAdsQueue:Array = [];
+		private var _linearSlotBusy:Boolean = false;
 		
 		public function AdController(
 			player:StrobeMediaPlayer, 
@@ -66,7 +68,7 @@ package {
                 _player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, checkForMidrollNeed);
             }
             if (_loaderParams.streamType != "live" && _loaderParams.pauseRoll) {
-                _viewHelper.controlBar.addEventListener("playButtonClick", planPauseRoll);
+				_viewHelper.controlBar.addEventListener("playButtonClick", planPauseRoll);
 			}
             if (_loaderParams.streamType == "recorded" && _loaderParams.postRoll) {
                 _player.addEventListener(TimeEvent.COMPLETE, planPostRoll);
@@ -86,7 +88,8 @@ package {
 					var mediaElements:Vector.<MediaElement> = generator.createMediaElements(
 						_vastLoadTrait.vastDocument
 					);
-					displayAd(mediaElements[0], true, resumePlaybackAfterAd, interruptInterval);
+					_linearAdsQueue.push([mediaElements[0], true, resumePlaybackAfterAd, interruptInterval]);
+					continueAdvertising();
 				}
 			}
 		}
@@ -203,12 +206,15 @@ package {
 		private function adCompleteHandler(e:Event):void {
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
 			var adMediaPlayer:StrobeMediaPlayer = e.currentTarget as StrobeMediaPlayer;
+			adMediaPlayer.playing && adMediaPlayer.pause();
 			adMediaPlayer.media.metadata.removeValue("Advertisement");
 			_viewHelper.mediaContainer.removeMediaElement(adMediaPlayer.media);
 			if (adPlayers[adMediaPlayer].pauseMainMediaWhilePlayingAd) {
 				dispatchEvent(new Event(RESTORE_MAIN_VIDEO_REQUEST));
 				if (adPlayers[adMediaPlayer].resumePlaybackAfterAd) {
-					dispatchEvent(new Event(RESUME_MAIN_VIDEO_REQUEST));
+					_linearSlotBusy = false;
+					_viewHelper.passAdOverlay.kill();
+					continueAdvertising();
 				}
 			}
 			delete adPlayers[adMediaPlayer];
@@ -220,9 +226,17 @@ package {
 			for each(var obj:Object in adPlayers) {
 				var mp:StrobeMediaPlayer = obj.mediaPlayer as StrobeMediaPlayer;
 				mp && mp.dispatchEvent(new TimeEvent(TimeEvent.COMPLETE));
-				if (mp.playing) {
-					mp.pause();
-				}
+			}
+		}
+		
+		private function continueAdvertising():void {
+			if (_linearSlotBusy) { return; }
+			if (_linearAdsQueue.length) {
+				_linearSlotBusy = true;
+				var delayedLinearAd:Array = _linearAdsQueue.shift();
+				displayAd(delayedLinearAd[0] as MediaElement, delayedLinearAd[1], delayedLinearAd[2], delayedLinearAd[3]);
+			} else {
+				dispatchEvent(new Event(RESUME_MAIN_VIDEO_REQUEST));
 			}
 		}
 		
@@ -236,7 +250,7 @@ package {
 		
 		private function planPauseRoll(e:Event):void {
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
-			prepareLinearAd(_loaderParams.pauseRoll, false);
+			prepareLinearAd(_loaderParams.pauseRoll);
 		}
 		
 		private function planPostRoll(e:TimeEvent):void {
