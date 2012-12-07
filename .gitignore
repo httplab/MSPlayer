@@ -8,5 +8,7 @@ bin/
 .settings/
 .project
 .idea
+*.as3proj
+obj/
 *.iml
 out
