@@ -39,7 +39,7 @@ package {
 		private var _controlBar:ControlBarElement;
 		private var _qosOverlay:VideoInfoOverlay;
 		private var _player:StrobeMediaPlayer;
-		private var _passAdOverlay:PassAdOverlay;
+		private var _adBlockHeader:AdBlockHeader;
 		
 		public function ViewHelper(configuration:PlayerConfiguration, player:StrobeMediaPlayer) {
 			_configuration = configuration;
@@ -65,7 +65,7 @@ package {
             }
 			mainContainer.layoutRenderer.addTarget(mediaContainer);
 			initQosOverlay();
-			initPassAdOverlay();
+			initAdBlockHeader();
 		}
 		
 		private function initMainContainer():void {
@@ -162,9 +162,9 @@ package {
 			}
 		}
 		
-		private function initPassAdOverlay():void {
-			_passAdOverlay = new PassAdOverlay();
-			_passAdOverlay.register(_mainContainer);
+		private function initAdBlockHeader():void {
+			_adBlockHeader = new AdBlockHeader();
+			_adBlockHeader.register(_mainContainer);
 		}
 		
 		
@@ -246,8 +246,8 @@ package {
 			return _qosOverlay;
 		}
 		
-		public function get passAdOverlay():PassAdOverlay {
-			return _passAdOverlay;
+		public function get adBlockHeader():AdBlockHeader {
+			return _adBlockHeader;
 		}
 	}
 }

@@ -138,10 +138,8 @@ package {
 			_viewHelper.controlBar && (_viewHelper.controlBar.target = adMediaElement);
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();
-			if (interruptInterval) {
-				_viewHelper.passAdOverlay.addEventListener(PassAdOverlay.PASS_AD_REQUEST, interruptAllRolls);
-				_viewHelper.passAdOverlay.startCountdown(interruptInterval * 1000);
-			}
+			_viewHelper.adBlockHeader.startCountdown(interruptInterval * 1000);
+			_viewHelper.adBlockHeader.addEventListener(AdBlockHeader.PASS_AD_REQUEST, interruptAllRolls);
 		}
 		
 		public function processPoster(posterUrl:String, scaleMode:String):void {
@@ -213,7 +211,8 @@ package {
 				dispatchEvent(new Event(RESTORE_MAIN_VIDEO_REQUEST));
 				if (adPlayers[adMediaPlayer].resumePlaybackAfterAd) {
 					_linearSlotBusy = false;
-					_viewHelper.passAdOverlay.kill();
+					_viewHelper.adBlockHeader.removeEventListener(AdBlockHeader.PASS_AD_REQUEST, interruptAllRolls);
+					_viewHelper.adBlockHeader.kill();
 					continueAdvertising();
 				}
 			}
@@ -221,8 +220,6 @@ package {
 		}
 		
 		private function interruptAllRolls(e:Event):void {
-			e.currentTarget.removeEventListener(e.type, arguments.callee);
-			_viewHelper.passAdOverlay.kill();
 			for each(var obj:Object in adPlayers) {
 				var mp:StrobeMediaPlayer = obj.mediaPlayer as StrobeMediaPlayer;
 				mp && mp.dispatchEvent(new TimeEvent(TimeEvent.COMPLETE));
