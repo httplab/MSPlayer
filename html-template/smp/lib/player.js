@@ -9,8 +9,8 @@
 	PLAYER = {
 
 		init: function(params) {
-		    if (!params.src) {
-		    	console.log("Ошибка инициализации: Не указано видео")
+		    if (!params.srcId) {
+		    	console.log("Ошибка инициализации: Не указан Id видео")
 		    	return false;
 		    }
 
@@ -32,7 +32,7 @@
 			var options = {
 				//swf: BASEPATH + 'MSPlayer.3.swf',
 				id: 'strobeMediaPlaybackId',
-				src: params.src,
+				srcId: params.srcId,
 				streamType: params.streamType || 'live',
 				width: params.width || 640,
 				height:  params.height || 462,
