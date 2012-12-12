@@ -9,6 +9,9 @@ package {
 	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
 	import com.adobe.serialization.json.JSON;
+	import org.osmf.player.chrome.ControlBar;
+	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
+	import org.osmf.player.elements.ControlBarElement;
 	
 	/**
 	 * ...
@@ -43,7 +46,11 @@ package {
 		private function parseLoadedData(e:Event):void {
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
 			versionsArray = [];
-			for each (var versionData:Object in data.versions) {
+			var versionsContainer:Object = data;
+			if (streamType == StreamType.RECORDED) {
+				versionsContainer = data.versions;
+			}
+			for each (var versionData:Object in versionsContainer) {
 				var version:Object = { };
 				for (var key:String in versionData) {
 					version[key] =versionData[key];
@@ -56,7 +63,7 @@ package {
 		private function loadStream(e:Event = null):void {
 			var versionIdx:Number = 0;
 			if (e) {
-				versionIdx = (e.currentTarget as StreamQualitySwitcher).currentStreamIdx;
+				versionIdx = e.currentTarget.currentStreamIdx;
 			}
 			for (var key:String in versionsArray[versionIdx]) {
 				addMetadataValue(key, versionsArray[versionIdx][key]);
@@ -69,18 +76,17 @@ package {
 			trace("Sry, guys, i tried to do my best");
 		}
 		
-		public function registerOwnButton(streamQualitySwitcher:StreamQualitySwitcher):void {
-			streamQualitySwitcher.addEventListener(StreamQualitySwitcher.STREAM_SWITCHED, loadStream);
-			versionsArray.reverse();
-			var qualities:Object = { };
+		public function registerOwnButton(controlBar:ControlBarElement):void {
+			controlBar.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, loadStream);
+			var qualities:Array = [];
 			for each (var version:Object in versionsArray) {
 				if (version.resolution) {
-					qualities[version.resolution.split("x")[1]] = versionsArray.indexOf(version);
+					qualities.push(version.resolution.split("x")[1]);
+				} else if (version.quality) {
+					qualities.push(version.quality);
 				}
 			}
-			streamQualitySwitcher.registerButtons(qualities);
-			streamQualitySwitcher.show();
-			versionsArray.reverse();
+			controlBar.configureStreamQualitySwitcher(qualities);
 		}
 		
 		override public function get url():String {

@@ -1,12 +1,9 @@
 package {
-	import flash.events.EventDispatcher;
-	import flash.events.MouseEvent;
 	import org.osmf.containers.MediaContainer;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.ChromeProvider;
-	import org.osmf.player.chrome.events.WidgetEvent;
 	import org.osmf.player.chrome.widgets.BufferingOverlay;
 	import org.osmf.player.chrome.widgets.PlayButtonOverlay;
 	import org.osmf.player.chrome.widgets.VideoInfoOverlay;
@@ -40,7 +37,6 @@ package {
 		private var _qosOverlay:VideoInfoOverlay;
 		private var _player:StrobeMediaPlayer;
 		private var _adBlockHeader:AdBlockHeader;
-		private var _streamQualitySwitcher:StreamQualitySwitcher;
 		
 		public function ViewHelper(configuration:PlayerConfiguration, player:StrobeMediaPlayer) {
 			_configuration = configuration;
@@ -67,7 +63,6 @@ package {
 			mainContainer.layoutRenderer.addTarget(mediaContainer);
 			initQosOverlay();
 			initAdBlockHeader();
-			initStreamQualitySwitcher();
 		}
 		
 		private function initMainContainer():void {
@@ -204,11 +199,6 @@ package {
 			}
 		}
 		
-		private function initStreamQualitySwitcher():void {
-			_streamQualitySwitcher = new StreamQualitySwitcher();
-			_streamQualitySwitcher.register(_mainContainer);
-		}
-		
 		/**
 		* Getters
 		*/
@@ -255,10 +245,6 @@ package {
 		
 		public function get adBlockHeader():AdBlockHeader {
 			return _adBlockHeader;
-		}
-		
-		public function get streamQualitySwitcher():StreamQualitySwitcher {
-			return _streamQualitySwitcher;
 		}
 	}
 }

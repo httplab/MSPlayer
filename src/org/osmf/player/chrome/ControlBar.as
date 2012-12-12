@@ -21,6 +21,7 @@
 package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
+	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
@@ -144,6 +145,13 @@ package org.osmf.player.chrome
 			hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.addChildWidget(hdIndicator);
 			
+			// Quality switcher
+			var qualitySwitcherWidget:QualitySwitcherContainer = new QualitySwitcherContainer();
+			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			qualitySwitcherWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
+			rightControls.addChildWidget(qualitySwitcherWidget);
+			
 			// Spacer
 			var afterTimeSpacer:Widget = new Widget();
 			afterTimeSpacer.width = 5;
@@ -179,23 +187,37 @@ package org.osmf.player.chrome
 			var afterFullscreenSpacer:Widget = new Widget();
 			afterFullscreenSpacer.layoutMetadata.width = 13;
 			addChildWidget(afterFullscreenSpacer);
-
+			
 			var filler:Widget = new Widget();
-
+			
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
 			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			addChildWidget(rightMargin);				
-
-			_widgets = [ leftMargin, beforePlaySpacer, pauseButton, playButton, previousButton, nextButton, afterPlaySpacer
-				, leftControls		
-				, scrubBar, afterScrubSpacer
-				, timeViewWidget, afterTimeSpacer
-				, hdIndicator, muteButton, afterVolumeSpacer
-				, fullscreenEnterButton, fullscreenLeaveButton, afterFullscreenSpacer
-				, rightControls, rightMargin
+			
+			_widgets = [ 
+				leftMargin, 
+				beforePlaySpacer, 
+				pauseButton, 
+				playButton, 
+				previousButton, 
+				nextButton, 
+				afterPlaySpacer, 
+				leftControls,
+				scrubBar, 
+				afterScrubSpacer,
+				timeViewWidget,
+				afterTimeSpacer,
+				hdIndicator, 
+				qualitySwitcherWidget, 
+				muteButton, 
+				afterVolumeSpacer,
+				fullscreenEnterButton,
+				fullscreenLeaveButton, 
+				afterFullscreenSpacer, 
+				rightControls, 
+				rightMargin
 			];
- 
 			configureWidgets(_widgets);
 			measure();
 		}

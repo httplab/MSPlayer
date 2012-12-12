@@ -223,6 +223,11 @@ package org.osmf.player.chrome
 			
 			// Buffering overlay:
 			addEmbeddedSymbol(AssetIDs.BUFFERING_OVERLAY, ASSET_BufferingOverlay);
+			
+			// QualitySwitcher overlay:
+			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_UP, ASSET_QualitySwitcherElement_up);
+			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_OVER, ASSET_QualitySwitcherElement_over);
+
 		}
 		
 		private function onAssetsManagerComplete(event:Event):void

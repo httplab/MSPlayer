@@ -129,5 +129,8 @@ package org.osmf.player.chrome.assets
 		public static const BUTTON_SEPARATOR:String = "buttonSeparator";
 		
 		public static const BUTTON_HIGHLIGHT:String = "buttonHighlight";
+		
+		public static const QUALITY_SWITCHER_ELEMENT_UP:String = "qualitySwitcherElementUp";
+		public static const QUALITY_SWITCHER_ELEMENT_OVER:String = "qualitySwitcherElementOver";
 	}
 }

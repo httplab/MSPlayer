@@ -43,6 +43,6 @@ package org.osmf.player.chrome.widgets
         public static const TIME_VIEW_WIDGET:String = "timeViewWidget";
         public static const PLAY_BUTTON:String = "playButton";
         public static const PAUSE_BUTTON:String = "pauseButton";
-
+		public static const QUALITY_SWITCHER_WIDGET:String = "qualitySwitcherWidget";
     }
 }

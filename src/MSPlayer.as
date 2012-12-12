@@ -326,7 +326,7 @@ package {
 				e.currentTarget.removeEventListener(e.type, arguments.callee);
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
-				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.streamQualitySwitcher);
+				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
