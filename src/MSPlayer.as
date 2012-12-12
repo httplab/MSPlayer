@@ -312,6 +312,22 @@ package {
 			trace("Load media");
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase = injector.getInstance(MediaResourceBase);
+			if (resource is MultiQualityStreamingResource) {
+				(resource as MultiQualityStreamingResource).addEventListener(MultiQualityStreamingResource.STREAM_CHANGED, continueMediaLoad);
+				(resource as MultiQualityStreamingResource).initialize();
+				return;
+			} else {
+				continueMediaLoad(null, resource);
+			}
+        }
+		
+		private function continueMediaLoad(e:Event = null, resource:MediaResourceBase = null):void {
+			if (e) {
+				e.currentTarget.removeEventListener(e.type, arguments.callee);
+				resource = (e.currentTarget as MultiQualityStreamingResource);
+				e.currentTarget.addEventListener(e.type, changeStreamQuality);
+				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.streamQualitySwitcher);
+			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
 			}
@@ -321,7 +337,14 @@ package {
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
 			_adController.checkForAd(loaderInfo.parameters);
-        }
+		}
+		
+		private function changeStreamQuality(e:Event):void {
+			var resource:MultiQualityStreamingResource = (e.currentTarget as MultiQualityStreamingResource);
+			_mainVideoTimeSetted = false;
+			player.addEventListener(BufferEvent.BUFFERING_CHANGE, setCurrentVideoTime);
+			media = factory.createMediaElement(resource);
+		}
 		
 		/**
 		* Run-time handlers
@@ -638,7 +661,7 @@ package {
 			}
 			if (value != _media) {
 				// Remove the current media from the container:
-				if (_media) {
+				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
 					viewHelper.mediaContainer.removeMediaElement(_media);
 				}
 				processNewMedia(value);

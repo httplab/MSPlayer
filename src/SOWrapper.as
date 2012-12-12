@@ -27,13 +27,13 @@ package {
 		}
 		
 		static public function setCurrentVideoTime(player:StrobeMediaPlayer, parameters:Object):void {
-			var currentSrc:String = parameters.src;
-			if (sharedObject.data.src && sharedObject.data.src == currentSrc) {
+			var currentSrc:String = parameters.srcId;
+			if (sharedObject.data.srcId && sharedObject.data.srcId == currentSrc) {
 				if (sharedObject.data.currentTimePosition && player.canSeek) {
 					player.seek(sharedObject.data.currentTimePosition);
 				}
 			} else {
-				sharedObject.data.src = currentSrc;
+				sharedObject.data.srcId = currentSrc;
 			}
 		}
 		
@@ -46,7 +46,10 @@ package {
 		}
 		
 		private static function onCurrentTimeChangeForSaveState(event:TimeEvent):void {
-			sharedObject.data.currentTimePosition = event.time;
+			//TODO: Temporary condition: while we have no own multi-quality Media
+			if (event.time) {
+				sharedObject.data.currentTimePosition = event.time;
+			}
 		}
 	}
 }

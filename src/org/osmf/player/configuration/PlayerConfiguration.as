@@ -18,8 +18,7 @@
  * 
  **********************************************************/
 
-package org.osmf.player.configuration
-{
+package org.osmf.player.configuration {
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.media.MediaResourceBase;
 	import org.osmf.media.URLResource;
@@ -31,16 +30,15 @@ package org.osmf.player.configuration
 	/**
 	 * Player configuration data model
 	 */ 		
-	public class PlayerConfiguration
-	{
+	public class PlayerConfiguration {
 		/** The location of the mediafile. */
 		public var src:String = "";
 		
 		/** Contains the asset metadata */
-		public var metadata:Object = {};
+		public var metadata:Object = { };
 		
-		public var resource:Object = {streamType:StreamType.LIVE_OR_RECORDED};
-		public var player:Object = {};
+		public var resource:Object = { streamType:StreamType.LIVE_OR_RECORDED };
+		public var player:Object = { };
 		// StreamingURLResource properties 		
 		/** Defines the stream type */
 		//public var streamType:String = StreamType.LIVE_OR_RECORDED;		
@@ -92,7 +90,7 @@ package org.osmf.player.configuration
 		
 		/** Defines the path to the image to show at the end of the content */
 		public var endOfVideoOverlay:String = "";
-	
+		
 		/** Defines if the play button overlay appears */
 		public var playButtonOverlay:Boolean = true;
 		
@@ -110,37 +108,33 @@ package org.osmf.player.configuration
 		
 		/** Defines the optimizeInitialIndex flag */ 
 		public var optimizeInitialIndex:Boolean = true
-			
+		
 		/** Defines the optimized buffering flag */
 		public var optimizeBuffering:Boolean = true;
-	
+		
 		/** Defines the initial buffer time for video content */
 		public var initialBufferTime:Number = 0.1;		
 		
 		/** Defines the expanded buffer time for video content */
 		public var expandedBufferTime:Number = 10;	
 		
-	
 		/** Defines the minimal continuous playback time */
 		public var minContinuousPlaybackTime:Number = 30;
 		
 		/** Defines the collection of plug-in configurations */		
 		public var plugins:Object = {};
 		
-		
 		public var haltOnError:Boolean = false;
-				
 		public var javascriptCallbackFunction:String = "";
-		
 		public var rtmpNetConnectionFactoryTimeout:Number = 10;
 		public var multicastNetConnectionFactoryTimeout:Number = 60;
-		
 		public var showVideoInfoOverlayOnStartUp:Boolean = false;
-		
 		public var enableStageVideo:Boolean = true;
 		
 		// Debug configuration setting
 		public var removeContentFromStageOnFullScreenWithStageVideo:Boolean = false;
 		public var useFullScreenSourceRectOnFullScreenWithStageVideo:Boolean = false;
+		public var srcId:int;
+		public var type:String;
 	}
 }
