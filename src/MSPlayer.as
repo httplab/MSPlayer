@@ -368,6 +368,7 @@ package {
 			if (e.buffering) { return; }
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
 			SOWrapper.setCurrentVideoTime(player, loaderInfo.parameters);
+			SOWrapper.processPlayer(player);
 			_mainVideoTimeSetted = true;
 		}
 		
@@ -669,6 +670,7 @@ package {
 				}
 				processNewMedia(value);
 				// Set the new main media element:
+				SOWrapper.releasePlayer(player);
 				_media = player.media = value;
                 if (_media) {
 					viewHelper.mediaContainer.addMediaElement(_media);

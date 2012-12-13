@@ -18,12 +18,16 @@ package {
 			} else {
 				sharedObject.data.mutedState = player.muted;
 			}
-			player.removeEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
-			player.removeEventListener(AudioEvent.MUTED_CHANGE, onMutedChange);
-			player.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChangeForSaveState);
+			releasePlayer(player);
 			player.addEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
 			player.addEventListener(AudioEvent.MUTED_CHANGE, onMutedChange);
 			isSavePosition && player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChangeForSaveState);
+		}
+		
+		static public function releasePlayer(player:StrobeMediaPlayer):void {
+			player.removeEventListener(AudioEvent.VOLUME_CHANGE, onVolumeChange);
+			player.removeEventListener(AudioEvent.MUTED_CHANGE, onMutedChange);
+			player.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, onCurrentTimeChangeForSaveState);
 		}
 		
 		static public function setCurrentVideoTime(player:StrobeMediaPlayer, parameters:Object):void {
