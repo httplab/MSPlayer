@@ -28,6 +28,12 @@ package org.osmf.player.chrome.widgets {
 			super.configure(xml, assetManager);
 			over = assetManager.getDisplayObject(overFace);
 			addEventListener(MouseEvent.CLICK, onMouseClick);
+			addEventListener(MouseEvent.ROLL_OUT, removeSelectBox);
+		}
+		
+		private function removeSelectBox(e:MouseEvent):void {
+			up && up.parent && (up.parent == this) && removeChild(up);
+			e.updateAfterEvent();
 		}
 		
 		public function registerQualities(availableStreams:Array):void {
@@ -53,17 +59,17 @@ package org.osmf.player.chrome.widgets {
 				option['tf'].text = _availableStreams[idx];
 				option['id'] = int(idx);
 				option.y = up.height;
-				option.addEventListener(MouseEvent.MOUSE_DOWN, selectQuality);
+				option.addEventListener(MouseEvent.CLICK, selectQuality);
 				(up as DisplayObjectContainer).addChild(option);
 			}
 			//TODO: Fix block jumping
-			up.y = option.height*(1 - _availableStreams.length) / 2;
+			up.y = -up.height;
 		}
 		
 		private function selectQuality(e:MouseEvent):void {
-			setFace(over);
+			up && up.parent && (up.parent == this) && removeChild(up);
 			e.updateAfterEvent();
-			if (currentIdx == int(e.currentTarget.id)) { return; }
+			if (currentIdx == int(e.currentTarget.id)) { e.preventDefault(); e.stopImmediatePropagation(); return; }
 			currentIdx = int(e.currentTarget.id);
 			over['tf'].text = _availableStreams[currentIdx];
 			dispatchEvent(new Event(STREAM_SWITCHED));
@@ -71,7 +77,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function onMouseClick(event:MouseEvent):void {
 			recreateUpFace();
-			setFace(up);
+			addChild(up);
 			event.updateAfterEvent();
 		}
 		

@@ -352,6 +352,7 @@ package {
 		
 		private function resumeMainVideoAfterAd(e:Event):void {
 			// WORKAROUND: http://bugs.adobe.com/jira/browse/ST-397 - GPU Decoding issue on stagevideo: Win7, Flash Player version WIN 10,2,152,26 (debug)
+			viewHelper.controlBar.enableMultiQualityButton();
 			player.play();
 			if (viewHelper.controlBar) {
 				viewHelper.controlBar.target = player.media;
@@ -386,6 +387,8 @@ package {
 			if (e) {
 				e.currentTarget.removeEventListener(e.type, arguments.callee);
 			}
+			//TODO: Remove, when we will have own Media and Traits for multi-quality streaming:
+			viewHelper.controlBar.disableMultiQualityButton();
 			if (viewHelper.mediaContainer.containsMediaElement(player.media)) {
 				viewHelper.mediaContainer.removeMediaElement(player.media);
 			} else {

@@ -210,22 +210,34 @@ package org.osmf.player.elements {
 		
 		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource
 		public function configureStreamQualitySwitcher(availableStreams:Array):void {
+			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
+			if (!widget) { return; }
+			widget.registerQualities(availableStreams);
+			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
+		}
+		
+		private function getQualitySwitcherWidget():QualitySwitcherContainer {
 			for each(var widget:Widget in controlBar.widgets) {
 				if (widget is QualitySwitcherContainer) {
-					(widget as QualitySwitcherContainer).registerQualities(availableStreams);
-					widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
-					break;
+					return (widget as QualitySwitcherContainer);
 				}
 			}
+			return null;
+		}
+		
+		public function disableMultiQualityButton():void {
+			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
+			widget && (widget.visible = false);
+		}
+		
+		public function enableMultiQualityButton():void {
+			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
+			widget && (widget.visible = true);
 		}
 		
 		public function get currentStreamIdx():int {
-			for each(var widget:Widget in controlBar.widgets) {
-				if (widget is QualitySwitcherContainer) {
-					return (widget as QualitySwitcherContainer).currentStreamIdx;
-				}
-			}
-			return 0;
+			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
+			return (widget) ? (widget.currentStreamIdx) : (0);
 		}
 	}
 }
