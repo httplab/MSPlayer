@@ -418,6 +418,7 @@ package {
 				if (
 					player &&
 					player.media && 
+					(player.media.getTrait(MediaTraitType.PLAY) as PlayTrait) &&
 					(player.media.getTrait(MediaTraitType.PLAY) as PlayTrait).playState != PlayState.PLAYING
 				) {
 					viewHelper.controlBar.visible = !viewHelper.controlBar.visible;

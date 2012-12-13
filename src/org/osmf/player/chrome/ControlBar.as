@@ -21,6 +21,7 @@
 package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
+	import org.osmf.layout.ScaleMode;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	
 	import org.osmf.layout.HorizontalAlign;
@@ -149,6 +150,7 @@ package org.osmf.player.chrome
 			var qualitySwitcherWidget:QualitySwitcherContainer = new QualitySwitcherContainer();
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			qualitySwitcherWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			

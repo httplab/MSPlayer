@@ -5,6 +5,8 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import org.osmf.layout.ScaleMode;
+	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.assets.AssetsManager;
 
 	public class QualitySwitcherContainer extends Widget {
