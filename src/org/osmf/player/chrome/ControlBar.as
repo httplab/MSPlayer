@@ -68,6 +68,7 @@ package org.osmf.player.chrome
 			var leftMargin:Widget = new Widget();
 			leftMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_LEFT;
 			leftMargin.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
+			leftMargin.width = 8;
 			
 			addChildWidget(leftMargin);
 			
@@ -195,6 +196,7 @@ package org.osmf.player.chrome
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
 			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			rightMargin.width = 8;
 			addChildWidget(rightMargin);				
 			
 			_widgets = [ 
