@@ -78,6 +78,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function onMouseClick(event:MouseEvent):void {
+			if (up && up.parent) { return; }
 			recreateUpFace();
 			addChild(up);
 			event.updateAfterEvent();
