@@ -303,6 +303,8 @@ package org.osmf.player.chrome.widgets
 			scrubber.addEventListener(ScrubberEvent.SCRUB_UPDATE, onScrubberUpdate);
 			scrubber.addEventListener(ScrubberEvent.SCRUB_END, onScrubberEnd);
 			
+			//TODO: We disable scrubber itself until there are no renewed asset for.
+			scrubber.alpha = 0;
 			addChild(scrubber);
 			
 			highlight = new ButtonHighlight(assetManager);
