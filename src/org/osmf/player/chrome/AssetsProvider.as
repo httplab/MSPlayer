@@ -117,8 +117,8 @@ package org.osmf.player.chrome
 				);
 			
 			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP, ASSET_backDrop_center);
-			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_LEFT, ASSET_backDrop_left);
-			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_RIGHT, ASSET_backDrop_right);
+			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_LEFT, ASSET_backDrop_left_wrapper);
+			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_RIGHT, ASSET_backDrop_right_wrapper);
 			
 			// Scrub bar:
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK, ASSET_scrub_no_load);

@@ -29,7 +29,7 @@ package org.osmf.player.chrome.widgets {
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			super.configure(xml, assetManager);
 			over = assetManager.getDisplayObject(overFace);
-			addEventListener(MouseEvent.CLICK, onMouseClick);
+			addEventListener(MouseEvent.ROLL_OVER, onHover);
 			addEventListener(MouseEvent.ROLL_OUT, removeSelectBox);
 		}
 		
@@ -77,7 +77,7 @@ package org.osmf.player.chrome.widgets {
 			dispatchEvent(new Event(STREAM_SWITCHED));
 		}
 		
-		private function onMouseClick(event:MouseEvent):void {
+		private function onHover(event:MouseEvent):void {
 			if (up && up.parent) { return; }
 			recreateUpFace();
 			addChild(up);
