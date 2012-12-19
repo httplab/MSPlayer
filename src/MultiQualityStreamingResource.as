@@ -32,6 +32,7 @@ package {
 			super('', streamType);
 			dispatcher = new EventDispatcher(this);
 			_srcId = srcId;
+			addMetadataValue('srcId', srcId);
 		}
 		
 		public function initialize():void {

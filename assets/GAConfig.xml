@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<value key="reTrackConfig" type="class">
+	<account><![CDATA[UA-37171858-1]]></account>
+	<url><![CDATA[http://flashader.ru]]></url>
+	<event name="percentWatched" category="Video" action="percentWatched">
+		<marker percent="0" label="start" />
+		<marker percent="25" label="view" />
+		<marker percent="50" label="view" />
+		<marker percent="75" label="view" />
+	</event>
+	<event name="complete" category="Video" action="complete" label="trackingTesting" value="1" />
+	<event name="pageView" />
+	<event name="autoSwitchChange" category="Video" action="autoSwitchChange" />
+	<event name="bufferingChange" category="Video" action="bufferingChange" />
+	<event name="bufferTimeChange" category="Video" action="bufferTimeChange" />
+	<event name="bytesTotalChange" category="Video" action="bytesTotalChange" />
+	<event name="canPauseChange" category="Video" action="canPauseChange" />
+	<event name="displayObjectChange" category="Video" action="displayObjectChange" />
+	<event name="durationChange" category="Video" action="durationChange" />
+	<event name="loadStateChange" category="Video" action="loadStateChange" />
+	<event name="mediaSizeChange" category="Video" action="mediaSizeChange" />
+	<event name="mutedChange" category="Video" action="mutedChange" />
+	<event name="numDynamicStreamsChange" category="Video" action="numDynamicStreamsChange" />
+	<event name="panChange" category="Video" action="panChange" />
+	<event name="playStateChange" category="Video" action="playStateChange" />
+	<event name="seekingChange" category="Video" action="seekingChange" />
+	<event name="switchingChange" category="Video" action="switchingChange" />
+	<event name="traitAdd" category="Video" action="traitAdd" />
+	<event name="traitRemove" category="Video" action="traitRemove" />
+	<event name="volumeChange" category="Video" action="volumeChange" />
+	<event name="recordingChange" category="dvr" action="recordingChange" />
+	
+	<event name="timeWatched" category="Video" action="timeWatched">
+			<marker time="5" label="start" />
+			<marker time="10" label="start" />
+			<marker time="20" label="start" />
+	</event>
+	
+	<debug><![CDATA[true]]></debug>
+	<updateInterval><![CDATA[250]]></updateInterval>
+	<event name="complete" category="Video" action="complete" label="trackingTesting" value="1" />
+
+</value>

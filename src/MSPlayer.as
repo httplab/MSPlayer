@@ -23,6 +23,7 @@ package {
 	import flash.net.drm.DRMManager;
 	import flash.system.Capabilities;
 	import flash.ui.Mouse;
+	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 	import org.osmf.elements.*;
 	import org.osmf.events.*;
@@ -65,6 +66,11 @@ package {
 	*/
 	[SWF(frameRate="25", backgroundColor="#000000")]
 	public class MSPlayer extends Sprite {
+			
+			
+		[Embed(source='../assets/GAConfig.xml', mimeType="application/octet-stream")]
+			private static const GAConfigClass:Class;
+			
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
 		private static const MAX_OVER_WIDTH:int = 400;
 		private static const MAX_OVER_WIDTH_SMARTPHONE:int = 550;
@@ -237,7 +243,12 @@ package {
 		
 		private function initPlugins():Vector.<MediaResourceBase> {
 			var pluginConfigurations:Vector.<MediaResourceBase> = ConfigurationUtils.transformDynamicObjectToMediaResourceBases(configuration.plugins);
-			var pluginResource:MediaResourceBase;
+			var pluginResource:MediaResourceBase;	
+			pluginResource = new URLResource('GTrackPlugin.swf');
+			var contentFile:ByteArray = new GAConfigClass();
+			var contentStr:String = contentFile.readUTFBytes( contentFile.length );
+			pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
+			pluginConfigurations.push(pluginResource);
 			CONFIG::LOGGING {
 				var p:uint = 0;
 				for each(pluginResource in pluginConfigurations) {
@@ -331,6 +342,7 @@ package {
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
 			}
+			resource.addMetadataValue("timeWatched", { pageURL: "Analytics Test Video" } );
 			_adController = new AdController(player, viewHelper, factory);
 			media = factory.createMediaElement(resource);
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
