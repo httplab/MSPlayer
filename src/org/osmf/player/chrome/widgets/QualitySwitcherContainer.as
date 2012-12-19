@@ -12,15 +12,18 @@ package org.osmf.player.chrome.widgets {
 	public class QualitySwitcherContainer extends Widget {
 		private var upFace:String = "qualitySwitcherElementUp";
 		private var overFace:String = "qualitySwitcherElementOver";
+		private var backFace:String = "qualitySwitcherElementBack";
 		
 		private var currentFace:DisplayObject;
 		private var mouseOver:Boolean;
 		private var up:DisplayObject;
 		private var over:DisplayObject;
+		private var back:DisplayObject;
 		private var currentIdx:int = 0;
 		
 		static public const STREAM_SWITCHED:String = "streamSwitched";
 		private var _availableStreams:Array;
+		
 		
 		public function QualitySwitcherContainer() {
 			super();
@@ -28,7 +31,8 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			super.configure(xml, assetManager);
-			over = assetManager.getDisplayObject(overFace);
+			over = assetManager.getDisplayObject(upFace);
+			back = assetManager.getDisplayObject(backFace);
 			addEventListener(MouseEvent.ROLL_OVER, onHover);
 			addEventListener(MouseEvent.ROLL_OUT, removeSelectBox);
 		}
@@ -51,6 +55,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function recreateUpFace():void {
 			up = new Sprite();
+			back = assetManager.getDisplayObject(backFace);
 			for (var idx:String in _availableStreams) {
 				var option:DisplayObject;
 				if (int(idx) == currentIdx) {
@@ -65,6 +70,8 @@ package org.osmf.player.chrome.widgets {
 				(up as DisplayObjectContainer).addChild(option);
 			}
 			//TODO: Fix block jumping
+			(up as DisplayObjectContainer).addChildAt(back,0);
+			back.height = up.height + 2;
 			up.y = -up.height;
 		}
 		

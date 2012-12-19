@@ -227,6 +227,7 @@ package org.osmf.player.chrome
 			// QualitySwitcher overlay:
 			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_UP, ASSET_QualitySwitcherElement_up);
 			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_OVER, ASSET_QualitySwitcherElement_over);
+			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_BACK, ASSET_QualitySwitcherElement_back);
 
 		}
 		

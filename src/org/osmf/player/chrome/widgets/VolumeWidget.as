@@ -41,8 +41,8 @@ package org.osmf.player.chrome.widgets
 		public var sliderUpFace:String = AssetIDs.VOLUME_BAR_SLIDER_NORMAL;
 		public var sliderDownFace:String = AssetIDs.VOLUME_BAR_SLIDER_DOWN;
 		
-		public var sliderStart:Number = 10.0;
-		public var sliderEnd:Number = 83.0;
+		public var sliderStart:Number = 9.0;
+		public var sliderEnd:Number = 92.0;
 		
 
 		public function VolumeWidget()
