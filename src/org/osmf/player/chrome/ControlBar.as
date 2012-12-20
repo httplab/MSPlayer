@@ -21,11 +21,9 @@
 package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
-	import org.osmf.layout.ScaleMode;
-	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
-	
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
+	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -38,8 +36,8 @@ package org.osmf.player.chrome
 	import org.osmf.player.chrome.widgets.PlaylistNextButton;
 	import org.osmf.player.chrome.widgets.PlaylistPreviousButton;
 	import org.osmf.player.chrome.widgets.QualityIndicator;
+	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.chrome.widgets.ScrubBar;
-	import org.osmf.player.chrome.widgets.TimeViewWidget;
 	import org.osmf.player.chrome.widgets.Widget;
 	import org.osmf.player.chrome.widgets.WidgetIDs;
 	import org.osmf.traits.MediaTraitType;
@@ -121,11 +119,11 @@ package org.osmf.player.chrome
 			addChildWidget(scrubBar);
 			
 			// Right side
-			var rightControls:Widget = new Widget();
+ 			var rightControls:Widget = new Widget();
 			rightControls.layoutMetadata.percentHeight = 100;
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;			
+			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
 			var afterScrubSpacer:Widget = new Widget();
@@ -133,11 +131,11 @@ package org.osmf.player.chrome
 			rightControls.addChildWidget(afterScrubSpacer);
 			
 			// Time view
-			var timeViewWidget:TimeViewWidget = new TimeViewWidget();
-            timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
-			timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
-			rightControls.addChildWidget(timeViewWidget);
+			//var timeViewWidget:TimeViewWidget = new TimeViewWidget();
+            //timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
+			//timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
+			//rightControls.addChildWidget(timeViewWidget);
 			
 			// HD indicator
 			var hdIndicator:QualityIndicator = new QualityIndicator();
@@ -207,7 +205,7 @@ package org.osmf.player.chrome
 				leftControls,
 				scrubBar, 
 				afterScrubSpacer,
-				timeViewWidget,
+				//timeViewWidget,
 				afterTimeSpacer,
 				hdIndicator, 
 				qualitySwitcherWidget, 

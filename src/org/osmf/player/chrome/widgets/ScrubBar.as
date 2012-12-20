@@ -30,6 +30,8 @@ package org.osmf.player.chrome.widgets
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Timer;
+	import org.osmf.layout.HorizontalAlign;
+	import org.osmf.layout.LayoutMode;
 	
 	import org.osmf.events.MediaElementEvent;
 	import org.osmf.events.MetadataEvent;
@@ -211,6 +213,7 @@ package org.osmf.player.chrome.widgets
 				updateState();
 				//For now, assets are InteractiveObjects, so we should refine, that mouse catcher is highest child.
 				addChild(scrubBarClickArea);
+				timeRemainedWidget.layout(availableWidth, availableHeight, deep);
 			}
 		}		
 
@@ -320,8 +323,13 @@ package org.osmf.player.chrome.widgets
 				scrubBarHint.tintColor = tintColor;
 				scrubBarHint.configure(<default/>, assetManager);
 			}
+			timeRemainedWidget = new TimeRemainingWidget();
+			timeRemainedWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			timeRemainedWidget.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
+			addChildWidget(timeRemainedWidget);
+			timeRemainedWidget.configure(<default/>, assetManager);
 		}
-				
+		
 		override protected function get requiredTraits():Vector.<String>
 		{
 			return _requiredTraits;
@@ -925,6 +933,7 @@ package org.osmf.player.chrome.widgets
 		
 		private static const CURRENT_POSITION_UPDATE_INTERVAL:int = 100;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
+		private var timeRemainedWidget:TimeRemainingWidget;
 		_requiredTraits[0] = MediaTraitType.TIME;
 		_requiredTraits[1] = MediaTraitType.DVR;
 		
