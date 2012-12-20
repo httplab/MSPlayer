@@ -204,12 +204,13 @@ package org.osmf.player.chrome.widgets
 				scrubBarClickArea.x = scrubBarTrack.x;
 				scrubBarClickArea.y = scrubber.height > scrubBarTrack.height ? scrubber.y : scrubBarTrack.y;
 				scrubBarClickArea.graphics.clear();
-				scrubBarClickArea.graphics.beginFill(0xFFFFFF, 0.0);
+				scrubBarClickArea.graphics.beginFill(0xFFFFFF, 0);
 				scrubBarClickArea.graphics.drawRect(0.0, 0.0, scrubBarTrack.width, Math.max(scrubBarTrack.height, scrubber.height));
 				scrubBarClickArea.graphics.endFill();
-				
 				updateScrubberPosition();
 				updateState();
+				//For now, assets are InteractiveObjects, so we should refine, that mouse catcher is highest child.
+				addChild(scrubBarClickArea);
 			}
 		}		
 

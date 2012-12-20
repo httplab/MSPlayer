@@ -68,8 +68,6 @@ package org.osmf.player.chrome
 			var leftMargin:Widget = new Widget();
 			leftMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_LEFT;
 			leftMargin.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
-			leftMargin.width = 8;
-			
 			addChildWidget(leftMargin);
 			
 			// Spacer
@@ -196,7 +194,6 @@ package org.osmf.player.chrome
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
 			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightMargin.width = 8;
 			addChildWidget(rightMargin);				
 			
 			_widgets = [ 
@@ -224,6 +221,19 @@ package org.osmf.player.chrome
 			];
 			configureWidgets(_widgets);
 			measure();
+		}
+		
+		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
+			super.layout(availableWidth, availableHeight, deep);
+			for each (var widget:Widget in widgets) {
+				if (
+					widget.face == AssetIDs.CONTROL_BAR_BACKDROP_LEFT ||
+					widget.face == AssetIDs.CONTROL_BAR_BACKDROP_RIGHT
+				) {
+					widget.height = height;
+				}
+			}
+			
 		}
 
 //		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
