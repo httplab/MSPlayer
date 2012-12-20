@@ -38,7 +38,7 @@ package org.osmf.player.chrome.widgets
 			if (value != text)
 			{
 				super.text = value;	
-				
+				y = 10;
 				// center the text horizontally
 				// and vertically within the bubble area
 				textField.width = textField.textWidth;
@@ -54,7 +54,7 @@ package org.osmf.player.chrome.widgets
 		
 		// TODO: need to make these publicly available for future skins that 
 		// need different spacing and propagate the properties in xml skin file
-		private var _topPaddings:uint = 2;
+		private var _topPaddings:Number = -3;
 		private var _availableBubbleHeight:uint = 19;
 	}
 }

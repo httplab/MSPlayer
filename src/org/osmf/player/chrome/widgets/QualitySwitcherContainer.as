@@ -8,6 +8,8 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.assets.AssetsManager;
+	import org.osmf.traits.MediaTraitType;
+	import org.osmf.traits.PlayTrait;
 
 	public class QualitySwitcherContainer extends Widget {
 		private var upFace:String = "qualitySwitcherElementUp";
@@ -86,6 +88,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function onHover(event:MouseEvent):void {
 			if (up && up.parent) { return; }
+			if (!media || !(media.getTrait(MediaTraitType.PLAY) as PlayTrait)) { return; }
 			recreateUpFace();
 			addChild(up);
 			event.updateAfterEvent();
