@@ -138,7 +138,9 @@ package org.osmf.player.chrome.widgets
 			textField.width = autoSize 
 				? Math.min(availableWidth, textField.textWidth) 
 				: availableWidth;
-			textField.height = availableHeight;
+			textField.height = autoSize ?
+				Math.min(availableHeight, textField.textHeight):
+				availableHeight;
 		}
 		
 		

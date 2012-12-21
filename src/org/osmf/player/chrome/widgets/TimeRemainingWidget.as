@@ -27,7 +27,6 @@ package org.osmf.player.chrome.widgets {
 			text = "-" + (hours != "0" ? (hours + ":") : "") + minutes + ":" + seconds;
 			width = textField.textWidth;
 			height = textField.textHeight;
-			validateNow();
 			if (parent) {
 				parent.addChild(this);
 			}
