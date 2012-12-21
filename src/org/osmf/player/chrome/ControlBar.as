@@ -21,10 +21,12 @@
 package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
+	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.widgets.AutoHideWidget;
@@ -35,7 +37,6 @@ package org.osmf.player.chrome
 	import org.osmf.player.chrome.widgets.PlayButton;
 	import org.osmf.player.chrome.widgets.PlaylistNextButton;
 	import org.osmf.player.chrome.widgets.PlaylistPreviousButton;
-	import org.osmf.player.chrome.widgets.QualityIndicator;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.chrome.widgets.ScrubBar;
 	import org.osmf.player.chrome.widgets.Widget;
@@ -127,7 +128,7 @@ package org.osmf.player.chrome
 			
 			// Spacer
 			var afterScrubSpacer:Widget = new Widget();
-			afterScrubSpacer.width = 5;
+			afterScrubSpacer.width = 15;
 			rightControls.addChildWidget(afterScrubSpacer);
 			
 			// Time view
@@ -138,22 +139,21 @@ package org.osmf.player.chrome
 			//rightControls.addChildWidget(timeViewWidget);
 			
 			// HD indicator
-			var hdIndicator:QualityIndicator = new QualityIndicator();
-			hdIndicator.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.addChildWidget(hdIndicator);
+			//var hdIndicator:QualityIndicator = new QualityIndicator();
+			//hdIndicator.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			//rightControls.addChildWidget(hdIndicator);
 			
 			// Quality switcher
-			var qualitySwitcherWidget:QualitySwitcherContainer = new QualitySwitcherContainer();
-			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			qualitySwitcherWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			qualitySwitcherWidget = new QualitySwitcherContainer();
 			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
+			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
 			// Spacer
 			var afterTimeSpacer:Widget = new Widget();
-			afterTimeSpacer.width = 5;
+			afterTimeSpacer.width = 10;
 			rightControls.addChildWidget(afterTimeSpacer);
 			
 			// Mute/unmute
@@ -166,7 +166,7 @@ package org.osmf.player.chrome
 			
 			// Spacer
 			var afterVolumeSpacer:Widget = new Widget();
-			afterVolumeSpacer.width = 11;
+			afterVolumeSpacer.width = 10;
 			rightControls.addChildWidget(afterVolumeSpacer);
 			
 			// FullScreen			
@@ -207,7 +207,7 @@ package org.osmf.player.chrome
 				afterScrubSpacer,
 				//timeViewWidget,
 				afterTimeSpacer,
-				hdIndicator, 
+				//hdIndicator, 
 				qualitySwitcherWidget, 
 				muteButton, 
 				afterVolumeSpacer,
@@ -231,9 +231,22 @@ package org.osmf.player.chrome
 					widget.height = height;
 				}
 			}
-			
 		}
-
+		
+		override public function get height():Number {
+			var toReturn:Number;
+			var _parent:DisplayObjectContainer;
+			if (qualitySwitcherWidget && qualitySwitcherWidget.parent){
+				_parent = qualitySwitcherWidget.parent;
+				_parent.removeChild(qualitySwitcherWidget);
+			}
+			toReturn = super.height;
+			if (_parent) {
+				_parent.addChild(qualitySwitcherWidget);
+			}
+			return toReturn;
+		}
+		
 //		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
 //			trace("ControlBar: set scrubBarAndPlaybackButtonsVisible");
 //			return;
@@ -262,6 +275,16 @@ package org.osmf.player.chrome
 			}
 		}		
 		
+		override protected function processRequiredTraitsAvailable(element:MediaElement):void {
+			super.processRequiredTraitsAvailable(element);
+			visible = true;
+		}
+		
+		override protected function processRequiredTraitsUnavailable(element:MediaElement):void {
+			super.processRequiredTraitsUnavailable(element);
+			visible = false;
+		}
+		
 		private var fullscreenEnterButton:FullScreenEnterButton = new FullScreenEnterButton();
 		
 		private var playTrait:PlayTrait;
@@ -272,6 +295,7 @@ package org.osmf.player.chrome
 		private var lastHeight:Number;
 		private var _widgets:Array;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
+		private var qualitySwitcherWidget:QualitySwitcherContainer;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}
 }
