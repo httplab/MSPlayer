@@ -98,9 +98,9 @@ package org.osmf.player.chrome.widgets
 			scrubBarClickArea = new Sprite();
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_DOWN, onTrackMouseDown);
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_UP, onTrackMouseUp);
-			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_OVER, onTrackMouseOver);
+			scrubBarClickArea.addEventListener(MouseEvent.ROLL_OVER, onTrackMouseOver);
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_MOVE, onTrackMouseMove);
-			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_OUT, onTrackMouseOut);
+			scrubBarClickArea.addEventListener(MouseEvent.ROLL_OUT, onTrackMouseOut);
 			
 			addChild(scrubBarClickArea);
 			
@@ -745,6 +745,7 @@ package org.osmf.player.chrome.widgets
 		{
 			try
 			{
+				throw new Error('FakeError'); //There is no need in any checks
 				if (event.relatedObject != scrubber && (event.relatedObject is DisplayObject) && !contains(event.relatedObject) || event.relatedObject == this)
 				{
 					WidgetHint.getInstance(this, true).hide();			

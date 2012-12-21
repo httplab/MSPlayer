@@ -24,7 +24,7 @@ package {
 		
 		//TODO: Embed these fonts into assets.swc with only needed glyphs and re-embed here.
 		[Embed(source='../assets/font/tahoma.ttf', fontName = "EmbeddedTahoma")]
-			private var TahomaRegular:Class;		
+		private var TahomaRegular:Class;		
 		
 		[Embed(source='../assets/font/tahomabd.ttf', fontName = "EmbeddedTahomaBold")]
 			private var TahomaBold:Class;	

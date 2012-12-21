@@ -2,6 +2,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.text.TextFormatAlign;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	public class TimeRemainingWidget extends TimeLabelWidget {
+		private var _isFixedPosition:Boolean;
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			mouseChildren = mouseEnabled = false;
@@ -9,13 +10,13 @@ package org.osmf.player.chrome.widgets {
 			selectable = false;
 			multiline = false;
 			textColor = "0xffffff";
+			fontSize = 12;
 			super.configure(xml, assetManager);
 			
 		}
 		
 		override internal function updateValues(currentTimePosition:Number, totalDuration:Number, isLive:Boolean):void {	
 			timeLabel.text = '';
-			//timeLabel.width = timeLabel.height = 1;
 			var remained:Number = totalDuration - currentTimePosition;
 			var hours:String = String(int(remained / 3600));
 			remained %= 3600;
@@ -27,6 +28,10 @@ package org.osmf.player.chrome.widgets {
 			text = "-" + (hours != "0" ? (hours + ":") : "") + minutes + ":" + seconds;
 			width = textField.textWidth;
 			height = textField.textHeight;
+			if (!_isFixedPosition) {
+				_isFixedPosition = true;
+				validateNow();
+			}
 			if (parent) {
 				parent.addChild(this);
 			}
@@ -35,6 +40,7 @@ package org.osmf.player.chrome.widgets {
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
 			super.layout(availableWidth, availableHeight, deep);
 			x = availableWidth - textField.width;
+			y = (availableHeight - textField.height) / 2;
 		}
 	}
 }

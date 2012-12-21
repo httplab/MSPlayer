@@ -10,6 +10,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayTrait;
+	import org.osmf.traits.SeekTrait;
 
 	public class QualitySwitcherContainer extends Widget {
 		private var upFace:String = "qualitySwitcherElementUp";
@@ -88,7 +89,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function onHover(event:MouseEvent):void {
 			if (up && up.parent) { return; }
-			if (!media || !(media.getTrait(MediaTraitType.PLAY) as PlayTrait)) { return; }
+			if (!media || !(media.getTrait(MediaTraitType.SEEK) as SeekTrait)) { return; }
 			recreateUpFace();
 			addChild(up);
 			event.updateAfterEvent();
