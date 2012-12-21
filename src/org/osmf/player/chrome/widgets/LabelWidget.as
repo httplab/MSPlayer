@@ -46,6 +46,7 @@ package org.osmf.player.chrome.widgets
 		public var multiline:Boolean;
 		public var textColor:String;
 		public var defaultText:String = "";
+		public var bold:Boolean;
 		
 		public function LabelWidget()
 		{
@@ -111,6 +112,8 @@ package org.osmf.player.chrome.widgets
 			{
 				format.align = align;
 			}
+			
+			format.bold = bold;
 			
 			textField.defaultTextFormat = format;
 			textField.embedFonts = true;

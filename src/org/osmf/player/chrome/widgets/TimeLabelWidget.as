@@ -89,18 +89,18 @@ package org.osmf.player.chrome.widgets
 			layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Current time
-			timeLabel = new LabelWidget();			
-			timeLabel.autoSize = true;
-			timeLabel.fontSize = fontSize;
-			timeLabel.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			timeLabel.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			addChildWidget(timeLabel);
+			//timeLabel = new LabelWidget();			
+			//timeLabel.autoSize = true;
+			//timeLabel.fontSize = fontSize;
+			//timeLabel.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//timeLabel.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			//addChildWidget(timeLabel);
 			
-			timeLabel.configure(xml, assetManager);
+			//timeLabel.configure(xml, assetManager);
 			
 			super.configure(xml, assetManager);	
 			
-			timeLabel.text = TIME_ZERO;
+			//timeLabel.text = TIME_ZERO;
 			measure();
 		}
 		

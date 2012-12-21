@@ -21,6 +21,7 @@
 package org.osmf.player.chrome.widgets
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -213,10 +214,12 @@ package org.osmf.player.chrome.widgets
 				updateState();
 				//For now, assets are InteractiveObjects, so we should refine, that mouse catcher is highest child.
 				addChild(scrubBarClickArea);
-				timeRemainedWidget.layout(availableWidth, availableHeight, deep);
 			}
+			//But timeRemained is highest anyway
+			timeRemainedWidget.layout(availableWidth, availableHeight, deep);
+			addChild(timeRemainedWidget);
 		}		
-
+		
         public function set contentVisible(value:Boolean):void {
             _contentVisible = value;
 
@@ -233,7 +236,11 @@ package org.osmf.player.chrome.widgets
             scrubBarLiveOnlyInactiveTrack.visible = value;
 
         }
-
+		
+		override public function set y(value:Number):void {
+			super.y = (parent.height - height) / 2;
+		}
+		
 		override public function configure(xml:XML, assetManager:AssetsManager):void
 		{
 			super.configure(xml, assetManager);
@@ -324,10 +331,9 @@ package org.osmf.player.chrome.widgets
 				scrubBarHint.configure(<default/>, assetManager);
 			}
 			timeRemainedWidget = new TimeRemainingWidget();
-			timeRemainedWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			timeRemainedWidget.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
-			addChildWidget(timeRemainedWidget);
+			addChild(timeRemainedWidget);
 			timeRemainedWidget.configure(<default/>, assetManager);
+			addChildWidget(timeRemainedWidget);
 		}
 		
 		override protected function get requiredTraits():Vector.<String>
@@ -885,8 +891,8 @@ package org.osmf.player.chrome.widgets
 			return media ? media.getTrait(MediaTraitType.DVR) as DVRTrait : null;
 		}
 		
-		override public function get height():Number{
-			return scrubBarTrack ? scrubBarTrack.height : super.height; 
+		override public function get height():Number {
+			return scrubBarTrack ? scrubBarTrack.height : super.height;
 		}
 		
 		private var _live:Boolean = false;
