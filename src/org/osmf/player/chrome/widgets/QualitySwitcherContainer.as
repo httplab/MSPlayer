@@ -30,6 +30,7 @@ package org.osmf.player.chrome.widgets {
 		
 		public function QualitySwitcherContainer() {
 			super();
+			buttonMode = useHandCursor = true;
 		}
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
@@ -42,18 +43,17 @@ package org.osmf.player.chrome.widgets {
 		
 		private function removeSelectBox(e:MouseEvent):void {
 			up && up.parent && (up.parent == this) && removeChild(up);
-			e.updateAfterEvent();
+			e && e.updateAfterEvent();
 		}
 		
 		public function registerQualities(availableStreams:Array):void {
 			_availableStreams = availableStreams.concat();
 			recreateUpFace();
 			over['tf'].text = _availableStreams[currentIdx];
+			over['tf'].mouseEnabled = false;
 			setFace(over);
 			over.visible = true;
 			enabled = true;
-			useHandCursor = true;
-			buttonMode = true;
 		}
 		
 		private function recreateUpFace():void {
@@ -67,6 +67,7 @@ package org.osmf.player.chrome.widgets {
 					option = assetManager.getDisplayObject(upFace);
 				}
 				option['tf'].text = _availableStreams[idx];
+				option['tf'].mouseEnabled = false;
 				option['id'] = int(idx);
 				option.y = up.height;
 				option.addEventListener(MouseEvent.CLICK, selectQuality);
@@ -79,8 +80,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function selectQuality(e:MouseEvent):void {
-			up && up.parent && (up.parent == this) && removeChild(up);
-			e.updateAfterEvent();
+			removeSelectBox(e);
 			if (currentIdx == int(e.currentTarget.id)) { e.preventDefault(); e.stopImmediatePropagation(); return; }
 			currentIdx = int(e.currentTarget.id);
 			over['tf'].text = _availableStreams[currentIdx];
@@ -90,7 +90,7 @@ package org.osmf.player.chrome.widgets {
 		private function onHover(event:MouseEvent):void {
 			if (up && up.parent) { return; }
 			if (!media || !(media.getTrait(MediaTraitType.SEEK) as SeekTrait)) { return; }
-			recreateUpFace();
+				recreateUpFace();
 			addChild(up);
 			event.updateAfterEvent();
 		}
@@ -107,6 +107,21 @@ package org.osmf.player.chrome.widgets {
 					height = currentFace.height;
 				}
 			}
+		}
+		
+		override public function set y(value:Number):void {
+			if (value > 0) {
+				super.y = value;
+			}
+		}
+		
+		override public function measure(deep:Boolean = true):void {
+			removeSelectBox(null);
+			super.measure();
+		}
+		
+		override public function get height():Number {
+			return over.height;
 		}
 		
 		public function get currentStreamIdx():int {
