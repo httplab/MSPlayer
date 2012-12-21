@@ -350,7 +350,7 @@ package org.osmf.player.chrome.widgets
             // Возможно это и не правильно, но функция срабатывает каждый раз, когда скраб-бару
             // задается mediaElement. Ставим тут обработчик -- если медиаэлемент рекламный
             // скрываем контент, в противном случае показываем.
-            if (media.metadata.getValue("Advertisement") == null) {
+            if (media.metadata.getValue("Advertisement") == null && media.getTrait(MediaTraitType.SEEK) as SeekTrait) {
                 contentVisible = true;
             }
             else {
@@ -400,6 +400,9 @@ package org.osmf.player.chrome.widgets
 		 
 		override protected function onMediaElementTraitRemove(event:MediaElementEvent):void
 		{
+			if (!(media.getTrait(MediaTraitType.SEEK) as SeekTrait)) {
+                contentVisible = false;
+            }
 			updateState();
 		}
 		
