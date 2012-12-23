@@ -161,7 +161,6 @@ package org.osmf.player.elements {
             }
 		}
 		
-		
 		public function ControlBarElement(type:String = ControlBarType.DESKTOP):void {
 			_type = type;
 			super();
@@ -216,7 +215,8 @@ package org.osmf.player.elements {
 			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
 		}
 		
-		private function getQualitySwitcherWidget():QualitySwitcherContainer {
+		//TODO: Close interface, when channels list has own show button
+		public function getQualitySwitcherWidget():QualitySwitcherContainer {
 			for each(var widget:Widget in controlBar.widgets) {
 				if (widget is QualitySwitcherContainer) {
 					return (widget as QualitySwitcherContainer);

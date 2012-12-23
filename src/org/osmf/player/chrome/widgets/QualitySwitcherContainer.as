@@ -25,6 +25,7 @@ package org.osmf.player.chrome.widgets {
 		private var currentIdx:int = 0;
 		
 		static public const STREAM_SWITCHED:String = "streamSwitched";
+		static public const LIST_CALL:String = "listCall";
 		private var _availableStreams:Array;
 		
 		
@@ -81,7 +82,13 @@ package org.osmf.player.chrome.widgets {
 		
 		private function selectQuality(e:MouseEvent):void {
 			removeSelectBox(e);
-			if (currentIdx == int(e.currentTarget.id)) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+			if (currentIdx == int(e.currentTarget.id)) { 
+				e.preventDefault(); 
+				e.stopImmediatePropagation(); 
+				//FIX: Temporary caller for the channels list.
+				dispatchEvent(new Event(LIST_CALL));
+				return; 
+			}
 			currentIdx = int(e.currentTarget.id);
 			over['tf'].text = _availableStreams[currentIdx];
 			dispatchEvent(new Event(STREAM_SWITCHED));

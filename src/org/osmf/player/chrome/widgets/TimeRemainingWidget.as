@@ -3,6 +3,8 @@ package org.osmf.player.chrome.widgets {
 	import flash.text.TextFormatAlign;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
+	import org.osmf.traits.MediaTraitType;
+	import org.osmf.traits.SeekTrait;
 	public class TimeRemainingWidget extends TimeLabelWidget {
 		private var _isFixedPosition:Boolean;
 		
@@ -24,6 +26,10 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override internal function updateValues(currentTimePosition:Number, totalDuration:Number, isLive:Boolean):void {	
+			if (!media || !(media.getTrait(MediaTraitType.SEEK) as SeekTrait)) { 
+				text = '';
+				return;
+			}
 			var remained:Number = totalDuration - currentTimePosition;
 			var hours:String = String(int(remained / 3600));
 			remained %= 3600;
