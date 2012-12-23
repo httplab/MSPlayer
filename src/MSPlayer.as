@@ -34,6 +34,7 @@ package {
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.configuration.ConfigurationUtils;
 	import org.osmf.player.chrome.events.WidgetEvent;
+	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.configuration.*;
 	import org.osmf.player.debug.LogHandler;
 	import org.osmf.player.debug.StrobeLogger;
@@ -338,6 +339,7 @@ package {
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
 				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
+				viewHelper.controlBar.getQualitySwitcherWidget().addEventListener(QualitySwitcherContainer.LIST_CALL, addList);
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
@@ -349,6 +351,15 @@ package {
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
 			_adController.checkForAd(loaderInfo.parameters);
+			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
+			viewHelper.channelList.addEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
+			
+		}
+		
+		private function addList(e:Event):void {
+			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) && 
+					viewHelper.mainContainer.removeMediaElement(viewHelper.channelList);
+			viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
 		}
 		
 		private function changeStreamQuality(e:Event):void {
@@ -681,6 +692,8 @@ package {
 				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
 					viewHelper.mediaContainer.removeMediaElement(_media);
 				}
+				viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) && 
+					viewHelper.mainContainer.removeMediaElement(viewHelper.channelList);
 				processNewMedia(value);
 				// Set the new main media element:
 				SOWrapper.releasePlayer(player);

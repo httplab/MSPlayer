@@ -13,6 +13,7 @@ package {
 	import org.osmf.player.containers.StrobeMediaContainer;
 	import org.osmf.player.elements.AlertDialogElement;
 	import org.osmf.player.elements.AuthenticationDialogElement;
+	import org.osmf.player.elements.ChannelListDialogElement;
 	import org.osmf.player.elements.ControlBarElement;
 	import org.osmf.player.media.StrobeMediaPlayer;
 
@@ -37,6 +38,7 @@ package {
 		private var _qosOverlay:VideoInfoOverlay;
 		private var _player:StrobeMediaPlayer;
 		private var _adBlockHeader:AdBlockHeader;
+		private var _channelList:ChannelListDialogElement;
 		
 		public function ViewHelper(configuration:PlayerConfiguration, player:StrobeMediaPlayer) {
 			_configuration = configuration;
@@ -63,6 +65,7 @@ package {
 			mainContainer.layoutRenderer.addTarget(mediaContainer);
 			initQosOverlay();
 			initAdBlockHeader();
+			initChanneList();
 		}
 		
 		private function initMainContainer():void {
@@ -164,6 +167,11 @@ package {
 			_adBlockHeader.register(_mainContainer);
 		}
 		
+		private function initChanneList():void {
+			_channelList = new ChannelListDialogElement(_configuration);
+			_channelList.renewContent(ChannelListDialogElement.DEFAULT_CHANNELS_LIST_URL);
+		}
+		
 		
 		//I really can't understand what is it, and why it is `layout`
 		public function layout():void {
@@ -245,6 +253,10 @@ package {
 		
 		public function get adBlockHeader():AdBlockHeader {
 			return _adBlockHeader;
+		}
+		
+		public function get channelList():ChannelListDialogElement {
+			return _channelList;
 		}
 	}
 }
