@@ -146,15 +146,15 @@ package org.osmf.player.chrome
 			
 			// Quality switcher
 			qualitySwitcherWidget = new QualitySwitcherContainer();
-			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
+			qualitySwitcherWidget.layoutMetadata.percentWidth = 10;
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
 			// Spacer
-			var afterTimeSpacer:Widget = new Widget();
-			afterTimeSpacer.width = 10;
-			rightControls.addChildWidget(afterTimeSpacer);
+			//var afterTimeSpacer:Widget = new Widget();
+			//afterTimeSpacer.width = 10;
+			//rightControls.addChildWidget(afterTimeSpacer);
 			
 			// Mute/unmute
 			var muteButton:MuteButton = new MuteButton();
@@ -206,11 +206,11 @@ package org.osmf.player.chrome
 				scrubBar, 
 				afterScrubSpacer,
 				//timeViewWidget,
-				afterTimeSpacer,
+				//afterTimeSpacer,
 				//hdIndicator, 
 				qualitySwitcherWidget, 
 				muteButton, 
-				afterVolumeSpacer,
+				//afterVolumeSpacer,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
 				afterFullscreenSpacer, 

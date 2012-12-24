@@ -234,7 +234,7 @@ package org.osmf.player.chrome.widgets
             scrubBarDVRLiveInactiveTrack.visible = value;
             scrubBarLiveOnlyTrack.visible = value;
             scrubBarLiveOnlyInactiveTrack.visible = value;
-
+			timeRemainedWidget.visible = value;
         }
 		
 		override public function set y(value:Number):void {
