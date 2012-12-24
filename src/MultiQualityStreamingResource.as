@@ -48,9 +48,7 @@ package {
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
 			versionsArray = [];
 			var versionsContainer:Object = data;
-			if (streamType == StreamType.RECORDED) {
-				versionsContainer = data.versions;
-			}
+			versionsContainer = data.versions;
 			for each (var versionData:Object in versionsContainer) {
 				var version:Object = { };
 				for (var key:String in versionData) {

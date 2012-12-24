@@ -21,12 +21,12 @@
 package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
-	import org.osmf.layout.ScaleMode;
-	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
-	
+	import flash.display.DisplayObjectContainer;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
+	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
+	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.widgets.AutoHideWidget;
@@ -37,9 +37,8 @@ package org.osmf.player.chrome
 	import org.osmf.player.chrome.widgets.PlayButton;
 	import org.osmf.player.chrome.widgets.PlaylistNextButton;
 	import org.osmf.player.chrome.widgets.PlaylistPreviousButton;
-	import org.osmf.player.chrome.widgets.QualityIndicator;
+	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.chrome.widgets.ScrubBar;
-	import org.osmf.player.chrome.widgets.TimeViewWidget;
 	import org.osmf.player.chrome.widgets.Widget;
 	import org.osmf.player.chrome.widgets.WidgetIDs;
 	import org.osmf.traits.MediaTraitType;
@@ -121,42 +120,41 @@ package org.osmf.player.chrome
 			addChildWidget(scrubBar);
 			
 			// Right side
-			var rightControls:Widget = new Widget();
+ 			var rightControls:Widget = new Widget();
 			rightControls.layoutMetadata.percentHeight = 100;
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;			
+			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
 			var afterScrubSpacer:Widget = new Widget();
-			afterScrubSpacer.width = 5;
+			afterScrubSpacer.width = 15;
 			rightControls.addChildWidget(afterScrubSpacer);
 			
 			// Time view
-			var timeViewWidget:TimeViewWidget = new TimeViewWidget();
-            timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
-			timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
-			rightControls.addChildWidget(timeViewWidget);
+			//var timeViewWidget:TimeViewWidget = new TimeViewWidget();
+            //timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
+			//timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
+			//rightControls.addChildWidget(timeViewWidget);
 			
 			// HD indicator
-			var hdIndicator:QualityIndicator = new QualityIndicator();
-			hdIndicator.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.addChildWidget(hdIndicator);
+			//var hdIndicator:QualityIndicator = new QualityIndicator();
+			//hdIndicator.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			//rightControls.addChildWidget(hdIndicator);
 			
 			// Quality switcher
-			var qualitySwitcherWidget:QualitySwitcherContainer = new QualitySwitcherContainer();
+			qualitySwitcherWidget = new QualitySwitcherContainer();
+			qualitySwitcherWidget.layoutMetadata.percentWidth = 10;
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			qualitySwitcherWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
 			// Spacer
-			var afterTimeSpacer:Widget = new Widget();
-			afterTimeSpacer.width = 5;
-			rightControls.addChildWidget(afterTimeSpacer);
+			//var afterTimeSpacer:Widget = new Widget();
+			//afterTimeSpacer.width = 10;
+			//rightControls.addChildWidget(afterTimeSpacer);
 			
 			// Mute/unmute
 			var muteButton:MuteButton = new MuteButton();
@@ -168,7 +166,7 @@ package org.osmf.player.chrome
 			
 			// Spacer
 			var afterVolumeSpacer:Widget = new Widget();
-			afterVolumeSpacer.width = 11;
+			afterVolumeSpacer.width = 10;
 			rightControls.addChildWidget(afterVolumeSpacer);
 			
 			// FullScreen			
@@ -207,12 +205,12 @@ package org.osmf.player.chrome
 				leftControls,
 				scrubBar, 
 				afterScrubSpacer,
-				timeViewWidget,
-				afterTimeSpacer,
-				hdIndicator, 
+				//timeViewWidget,
+				//afterTimeSpacer,
+				//hdIndicator, 
 				qualitySwitcherWidget, 
 				muteButton, 
-				afterVolumeSpacer,
+				//afterVolumeSpacer,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
 				afterFullscreenSpacer, 
@@ -233,9 +231,22 @@ package org.osmf.player.chrome
 					widget.height = height;
 				}
 			}
-			
 		}
-
+		
+		override public function get height():Number {
+			var toReturn:Number;
+			var _parent:DisplayObjectContainer;
+			if (qualitySwitcherWidget && qualitySwitcherWidget.parent){
+				_parent = qualitySwitcherWidget.parent;
+				_parent.removeChild(qualitySwitcherWidget);
+			}
+			toReturn = super.height;
+			if (_parent) {
+				_parent.addChild(qualitySwitcherWidget);
+			}
+			return toReturn;
+		}
+		
 //		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
 //			trace("ControlBar: set scrubBarAndPlaybackButtonsVisible");
 //			return;
@@ -264,6 +275,16 @@ package org.osmf.player.chrome
 			}
 		}		
 		
+		override protected function processRequiredTraitsAvailable(element:MediaElement):void {
+			super.processRequiredTraitsAvailable(element);
+			visible = true;
+		}
+		
+		override protected function processRequiredTraitsUnavailable(element:MediaElement):void {
+			super.processRequiredTraitsUnavailable(element);
+			visible = false;
+		}
+		
 		private var fullscreenEnterButton:FullScreenEnterButton = new FullScreenEnterButton();
 		
 		private var playTrait:PlayTrait;
@@ -274,6 +295,7 @@ package org.osmf.player.chrome
 		private var lastHeight:Number;
 		private var _widgets:Array;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
+		private var qualitySwitcherWidget:QualitySwitcherContainer;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}
 }
