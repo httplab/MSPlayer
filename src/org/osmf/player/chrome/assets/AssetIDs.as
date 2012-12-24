@@ -25,6 +25,8 @@ package org.osmf.player.chrome.assets
 		
 		public static const DEFAULT_FONT:String = "defaultFont";
 		public static const DEFAULT_FONT_BOLD:String = "defaultFontBold";
+		public static const TAHOMA:String = "tahoma";
+		public static const TAHOMA_BOLD:String = "tahomaBold";
 		
 		public static const CONTROL_BAR_BACKDROP:String = "controlBarBackdrop";
 		public static const CONTROL_BAR_BACKDROP_LEFT:String = "controlBarBackdropLeft";

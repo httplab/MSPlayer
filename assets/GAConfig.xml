@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <value key="reTrackConfig" type="class">
-	<account><![CDATA[UA-37171858-1]]></account>
-	<url><![CDATA[http://flashader.ru]]></url>
+	<account><![CDATA[UA-36367358-1]]></account>
+	<url><![CDATA[http://www.tvbreak.ru]]></url>
 	<event name="percentWatched" category="Video" action="percentWatched">
 		<marker percent="0" label="start" />
 		<marker percent="25" label="view" />

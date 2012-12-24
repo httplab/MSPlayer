@@ -10,6 +10,9 @@ package {
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	import flash.utils.Timer;
+	import org.osmf.player.chrome.assets.AssetIDs;
+	import org.osmf.player.chrome.assets.AssetsManager;
+	import org.osmf.player.chrome.assets.FontAsset;
 	
 	public class AdBlockHeader extends Sprite {	
 		static public const PASS_AD_REQUEST:String = "passAdRequest";
@@ -22,18 +25,13 @@ package {
 		static public const READY_SECONDS_TEXT:String = "Пропустить";
 		static public const AD_BLOCK_TEXT:String = "Р Е К Л А М А";
 		
-		//TODO: Embed these fonts into assets.swc with only needed glyphs and re-embed here.
-		[Embed(source='../assets/font/tahoma.ttf', fontName = "EmbeddedTahoma")]
-			private var TahomaRegular:Class;		
-		
-		[Embed(source='../assets/font/tahomabd.ttf', fontName = "EmbeddedTahomaBold")]
-			private var TahomaBold:Class;	
-		
 		private var _container:Sprite;
 		private var _timer:Timer;
 		private var secondsLeft:int;
 		private var secondsTF:TextField;
 		private var adBlockTF:TextField;
+		private var boldFormat:TextFormat;
+		private var regularFormat:TextFormat;
 		
 		/**
 		* Init-time methods
@@ -41,23 +39,39 @@ package {
 		
 		public function register(container:Sprite):void {
 			_container = container;
-			_timer = new Timer(1,1);
+			_timer = new Timer(1, 1);
+			initTextFormats();
 			initMainTextField();
+		}
+		
+		private function initTextFormats():void {
+			var assetsManager:AssetsManager = new AssetsManager();
+			var fontAsset:FontAsset = assetsManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
+			regularFormat = fontAsset ? fontAsset.format : new TextFormat();
+			regularFormat.size = 12;
+			regularFormat.color = 0xffffff;
+			regularFormat.align = TextFormatAlign.CENTER;
+			fontAsset = assetsManager.getAsset(AssetIDs.TAHOMA_BOLD) as FontAsset;
+			boldFormat = fontAsset ? fontAsset.format : new TextFormat();
+			boldFormat.color = 0xffffff;
+			boldFormat.align = TextFormatAlign.CENTER;
+			boldFormat.size = 12;
 		}
 		
 		private function initMainTextField():void {
 			adBlockTF = new TextField();
-			adBlockTF.defaultTextFormat = new TextFormat("EmbeddedTahomaBold", 12, 0xffffff, true, null, null, null, null, TextFormatAlign.CENTER);
+			adBlockTF.defaultTextFormat = boldFormat;
 			adBlockTF.background = true;
 			adBlockTF.backgroundColor = AD_BLOCK_BGCOLOR;
 			adBlockTF.text = AD_BLOCK_TEXT;
 			adBlockTF.alpha = .8;
 			adBlockTF.selectable = false;
 		}
+		
 		private function initNewSecondsTextField():void {
 			secondsTF = new TextField();
 			secondsTF.alpha = .8;
-			secondsTF.defaultTextFormat = new TextFormat("EmbeddedTahoma", 12, 0xffffff, null, null, null, null, null, TextFormatAlign.CENTER);
+			secondsTF.defaultTextFormat = regularFormat;
 			secondsTF.height = adBlockTF.height = HEIGHT;
 			secondsTF.width = WIDTH;
 			secondsTF.background = true;

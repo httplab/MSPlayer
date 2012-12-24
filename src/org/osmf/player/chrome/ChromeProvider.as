@@ -26,6 +26,7 @@ package org.osmf.player.chrome
 	import flash.text.TextFormatAlign;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
+	import org.osmf.player.chrome.widgets.ChannelListDialog;
 	
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
@@ -239,6 +240,20 @@ package org.osmf.player.chrome
 			configureWidgets([closeButton, captionLabel, messageLabel, alertDialog]);
 
 			return alertDialog;
+		}
+		
+		public function createChannelListDialog():ChannelListDialog {
+			var channelListDialog:ChannelListDialog = new ChannelListDialog();
+			channelListDialog.id = WidgetIDs.CHANNEL_LIST_DIALOG;
+			var closeButton:ButtonWidget = new ButtonWidget();
+			closeButton.id = WidgetIDs.CHANNEL_LIST_CLOSE_BUTTON;
+			channelListDialog.addChildWidget(closeButton);
+			closeButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			closeButton.layoutMetadata.verticalAlign = VerticalAlign.TOP;
+			
+			configureWidgets([closeButton, channelListDialog]);
+			
+			return channelListDialog;
 		}
 		
 		public function createErrorWidget():ErrorWidget

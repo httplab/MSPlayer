@@ -21,6 +21,7 @@
 package org.osmf.player.chrome.widgets
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -30,6 +31,8 @@ package org.osmf.player.chrome.widgets
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Timer;
+	import org.osmf.layout.HorizontalAlign;
+	import org.osmf.layout.LayoutMode;
 	
 	import org.osmf.events.MediaElementEvent;
 	import org.osmf.events.MetadataEvent;
@@ -96,9 +99,9 @@ package org.osmf.player.chrome.widgets
 			scrubBarClickArea = new Sprite();
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_DOWN, onTrackMouseDown);
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_UP, onTrackMouseUp);
-			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_OVER, onTrackMouseOver);
+			scrubBarClickArea.addEventListener(MouseEvent.ROLL_OVER, onTrackMouseOver);
 			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_MOVE, onTrackMouseMove);
-			scrubBarClickArea.addEventListener(MouseEvent.MOUSE_OUT, onTrackMouseOut);
+			scrubBarClickArea.addEventListener(MouseEvent.ROLL_OUT, onTrackMouseOut);
 			
 			addChild(scrubBarClickArea);
 			
@@ -212,8 +215,11 @@ package org.osmf.player.chrome.widgets
 				//For now, assets are InteractiveObjects, so we should refine, that mouse catcher is highest child.
 				addChild(scrubBarClickArea);
 			}
+			//But timeRemained is highest anyway
+			timeRemainedWidget.layout(availableWidth, availableHeight, deep);
+			addChild(timeRemainedWidget);
 		}		
-
+		
         public function set contentVisible(value:Boolean):void {
             _contentVisible = value;
 
@@ -228,9 +234,13 @@ package org.osmf.player.chrome.widgets
             scrubBarDVRLiveInactiveTrack.visible = value;
             scrubBarLiveOnlyTrack.visible = value;
             scrubBarLiveOnlyInactiveTrack.visible = value;
-
+			timeRemainedWidget.visible = value;
         }
-
+		
+		override public function set y(value:Number):void {
+			super.y = (parent.height - height) / 2;
+		}
+		
 		override public function configure(xml:XML, assetManager:AssetsManager):void
 		{
 			super.configure(xml, assetManager);
@@ -320,8 +330,12 @@ package org.osmf.player.chrome.widgets
 				scrubBarHint.tintColor = tintColor;
 				scrubBarHint.configure(<default/>, assetManager);
 			}
+			timeRemainedWidget = new TimeRemainingWidget();
+			addChild(timeRemainedWidget);
+			timeRemainedWidget.configure(<default/>, assetManager);
+			addChildWidget(timeRemainedWidget);
 		}
-				
+		
 		override protected function get requiredTraits():Vector.<String>
 		{
 			return _requiredTraits;
@@ -342,7 +356,7 @@ package org.osmf.player.chrome.widgets
             // Возможно это и не правильно, но функция срабатывает каждый раз, когда скраб-бару
             // задается mediaElement. Ставим тут обработчик -- если медиаэлемент рекламный
             // скрываем контент, в противном случае показываем.
-            if (media.metadata.getValue("Advertisement") == null) {
+            if (media.metadata.getValue("Advertisement") == null && media.getTrait(MediaTraitType.SEEK) as SeekTrait) {
                 contentVisible = true;
             }
             else {
@@ -392,6 +406,9 @@ package org.osmf.player.chrome.widgets
 		 
 		override protected function onMediaElementTraitRemove(event:MediaElementEvent):void
 		{
+			if (!(media.getTrait(MediaTraitType.SEEK) as SeekTrait)) {
+                contentVisible = false;
+            }
 			updateState();
 		}
 		
@@ -737,6 +754,7 @@ package org.osmf.player.chrome.widgets
 		{
 			try
 			{
+				throw new Error('FakeError'); //There is no need in any checks
 				if (event.relatedObject != scrubber && (event.relatedObject is DisplayObject) && !contains(event.relatedObject) || event.relatedObject == this)
 				{
 					WidgetHint.getInstance(this, true).hide();			
@@ -873,8 +891,8 @@ package org.osmf.player.chrome.widgets
 			return media ? media.getTrait(MediaTraitType.DVR) as DVRTrait : null;
 		}
 		
-		override public function get height():Number{
-			return scrubBarTrack ? scrubBarTrack.height : super.height; 
+		override public function get height():Number {
+			return scrubBarTrack ? scrubBarTrack.height : super.height;
 		}
 		
 		private var _live:Boolean = false;
@@ -925,6 +943,7 @@ package org.osmf.player.chrome.widgets
 		
 		private static const CURRENT_POSITION_UPDATE_INTERVAL:int = 100;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
+		private var timeRemainedWidget:TimeRemainingWidget;
 		_requiredTraits[0] = MediaTraitType.TIME;
 		_requiredTraits[1] = MediaTraitType.DVR;
 		

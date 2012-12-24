@@ -115,6 +115,32 @@ package org.osmf.player.chrome
 					)
 					, new AssetLoader()
 				);
+				
+			_assetsManager.addAsset(
+				new FontResource(
+					AssetIDs.TAHOMA,
+					getQualifiedClassName(ASSET_Tahoma),
+					true,
+					AssetIDs.TAHOMA,
+					9,
+					0xFFFFFF,
+					true
+				),
+				new AssetLoader()
+			);
+			
+			_assetsManager.addAsset(
+				new FontResource(
+					AssetIDs.TAHOMA_BOLD,
+					getQualifiedClassName(ASSET_TahomaBold),
+					true,
+					AssetIDs.TAHOMA_BOLD,
+					9,
+					0xFFFFFF,
+					true
+				),
+				new AssetLoader()
+			);
 			
 			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP, ASSET_backDrop_center);
 			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_LEFT, ASSET_backDrop_left_wrapper);
