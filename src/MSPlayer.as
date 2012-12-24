@@ -245,11 +245,13 @@ package {
 		private function initPlugins():Vector.<MediaResourceBase> {
 			var pluginConfigurations:Vector.<MediaResourceBase> = ConfigurationUtils.transformDynamicObjectToMediaResourceBases(configuration.plugins);
 			var pluginResource:MediaResourceBase;	
-			pluginResource = new URLResource('GTrackPlugin.swf');
-			var contentFile:ByteArray = new GAConfigClass();
-			var contentStr:String = contentFile.readUTFBytes( contentFile.length );
-			pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
-			pluginConfigurations.push(pluginResource);
+			if (loaderInfo.parameters.GTrackPluginURL) {
+				pluginResource = new URLResource(loaderInfo.parameters.GTrackPluginURL);
+				var contentFile:ByteArray = new GAConfigClass();
+				var contentStr:String = contentFile.readUTFBytes( contentFile.length );
+				pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
+				pluginConfigurations.push(pluginResource);
+			}
 			CONFIG::LOGGING {
 				var p:uint = 0;
 				for each(pluginResource in pluginConfigurations) {
