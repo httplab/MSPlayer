@@ -1,7 +1,9 @@
 package org.osmf.player.chrome.widgets {
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.VerticalAlign;
@@ -15,16 +17,59 @@ package org.osmf.player.chrome.widgets {
 		private var _currentGroup:ChannelGroup;
 		private var _animationInProgress:int = 0;
 		private var back:Sprite;
+		private var _mask:Sprite;
+		private var _dragger:MovieClip;
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			back = new ASSET_ChannelsListBack();
 			addChild(back);
 			_contentContainer = new Sprite();
+			_contentContainer.x = 10;
+			_contentContainer.y = 10;
+			_mask = new Sprite();
+			with (_mask.graphics) {
+				beginFill(0, 0);
+				drawRect(10, 10, back.width - 50, back.height - 10);
+				endFill();
+			}
+			_contentContainer.mask = _mask;
+			addChild(_mask);
 			addChild(_contentContainer);
+			initDragger();
 			super.configure(xml, assetManager);
 			closeButton = getChildWidget(WidgetIDs.CHANNEL_LIST_CLOSE_BUTTON) as ButtonWidget;
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
 			addChild(closeButton);
+		}
+		
+		private function initDragger():void {
+			_dragger = new ASSET_ChannelsListDragger();
+			_dragger.visible = false;
+			_dragger.useHandCursor = _dragger.buttonMode = true;
+			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
+			_dragger.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
+			_dragger.x = 370;
+			_dragger.y = 10;
+			addChild(_dragger);
+		}
+		
+		private function startDraggerActions(e:MouseEvent):void {
+			_dragger.gotoAndStop('down');
+			_dragger.startDrag(false, new Rectangle(_dragger.x, 10, 0, back.height - 20 - _dragger.height));
+			_dragger.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
+			_dragger.stage.addEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
+		}
+		
+		private function stopDraggerActions(e:MouseEvent):void {
+			_dragger.gotoAndStop('idle');
+			_dragger.stopDrag();
+			_dragger.stage.removeEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
+			_dragger.removeEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
+		}
+		
+		private function moveChannelList(e:MouseEvent):void {
+			_contentContainer.y = - _contentContainer.height * (_dragger.y - 10) / (back.height - 20 - _dragger.height);
+			_contentContainer.y += 10;
 		}
 		
 		public function show():void {
@@ -52,6 +97,7 @@ package org.osmf.player.chrome.widgets {
 				_contentContainer.addChild(channelGroup);
 			}
 			validateNow();
+			checkForDraggerAvailability();
 			_contentContainer.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
 			_contentContainer.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 		}
@@ -80,6 +126,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function channelGroupAnimationEndHandler(e:Event):void {
 			_animationInProgress--;
+			checkForDraggerAvailability();
 		}
 		
 		override public function set x(value:Number):void {
@@ -88,6 +135,10 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function set y(value:Number):void {
 			parent && (super.y = (parent.height - back.height) / 2);
+		}
+		
+		private function checkForDraggerAvailability():void {
+			_dragger.visible = (_contentContainer.height > _mask.height);
 		}
 		
 		private function enterFrameHandler(e:Event):void {

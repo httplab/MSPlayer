@@ -121,9 +121,9 @@ package org.osmf.player.chrome
 			
 			// Right side
  			var rightControls:Widget = new Widget();
-			rightControls.layoutMetadata.percentHeight = 100;
+			rightControls.layoutMetadata.percentWidth = 100;
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			//rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
@@ -161,7 +161,7 @@ package org.osmf.player.chrome
 			muteButton.id = WidgetIDs.MUTE_BUTTON;
 			muteButton.volumeSteps = 3;
 			muteButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			muteButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			muteButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			rightControls.addChildWidget(muteButton);
 			
 			// Spacer
