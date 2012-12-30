@@ -49,9 +49,11 @@ package {
 			var fontAsset:FontAsset = assetsManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
 			regularFormat = fontAsset ? fontAsset.format : new TextFormat();
 			regularFormat.size = 12;
+			regularFormat.align = TextFormatAlign.CENTER;
 			fontAsset = assetsManager.getAsset(AssetIDs.TAHOMA_BOLD) as FontAsset;
 			boldFormat = fontAsset ? fontAsset.format : new TextFormat();
 			boldFormat.size = 12;
+			boldFormat.align = TextFormatAlign.CENTER;
 		}
 		
 		private function initMainTextField():void {

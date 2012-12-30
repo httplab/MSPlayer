@@ -46,25 +46,28 @@ package org.osmf.player.chrome.widgets {
 			_dragger = new ASSET_ChannelsListDragger();
 			_dragger.visible = false;
 			_dragger.useHandCursor = _dragger.buttonMode = true;
-			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
-			_dragger.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.x = 370;
 			_dragger.y = 10;
 			addChild(_dragger);
+			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
 		}
 		
 		private function startDraggerActions(e:MouseEvent):void {
+			if (_animationInProgress) { return; }
+			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
+			_dragger.stage.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.gotoAndStop('down');
 			_dragger.startDrag(false, new Rectangle(_dragger.x, 10, 0, back.height - 20 - _dragger.height));
-			_dragger.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
+			_dragger.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
 			_dragger.stage.addEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
 		}
 		
 		private function stopDraggerActions(e:MouseEvent):void {
 			_dragger.gotoAndStop('idle');
 			_dragger.stopDrag();
+			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.stage.removeEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
-			_dragger.removeEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
+			_dragger.stage.removeEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
 		}
 		
 		private function moveChannelList(e:MouseEvent):void {

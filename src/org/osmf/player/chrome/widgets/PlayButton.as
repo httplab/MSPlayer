@@ -17,52 +17,45 @@
  * Incorporated. All Rights Reserved.
  **********************************************************/
 
-package org.osmf.player.chrome.widgets
-{
+package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import org.osmf.player.chrome.assets.AssetsManager;
 	
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
 	import org.osmf.traits.PlayTrait;
 	
-	public class PlayButton extends PlayableButton
-	{
-		public function PlayButton()
-		{
+	public class PlayButton extends PlayableButton {
+		public function PlayButton() {
 			super();
 			
 			upFace = AssetIDs.PLAY_BUTTON_NORMAL
 			downFace = AssetIDs.PLAY_BUTTON_DOWN;
 			overFace = AssetIDs.PLAY_BUTTON_OVER;
 		}
-	
 		// Overrides
 		//
 		
-		override protected function onMouseClick(event:MouseEvent):void
-		{
+		override protected function onMouseClick(event:MouseEvent):void {
 			var playable:PlayTrait = media.getTrait(MediaTraitType.PLAY) as PlayTrait;
 			playable.play();
 //			event.stopImmediatePropagation();
 		}
 		
-		override protected function visibilityDeterminingEventHandler(event:Event = null):void
-		{
+		override protected function visibilityDeterminingEventHandler(event:Event = null):void {
 			visible = playable && playable.playState != PlayState.PLAYING && _contentVisible;
 			
-			if (media && media.metadata)
-			{
+			if (media && media.metadata) {
 				visible &&= media.metadata.getValue("Advertisement") == null;
 			}
 		}
-
+		
         public function set contentVisible(value:Boolean):void {
             _contentVisible = value;
         }
-
+		
         private var _contentVisible:Boolean = true;
-
     }
 }

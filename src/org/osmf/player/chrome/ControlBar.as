@@ -76,6 +76,7 @@ package org.osmf.player.chrome
 			
 			var leftControls:Widget = new Widget();
 			leftControls.layoutMetadata.percentHeight = 100;
+			leftControls.layoutMetadata.width = 22;
 			leftControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			leftControls.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			
@@ -85,12 +86,14 @@ package org.osmf.player.chrome
 			playButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE
 			playButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			leftControls.addChildWidget(playButton);
+			playButton.visible = false;
 			
 			var pauseButton:PauseButton = new PauseButton();
             pauseButton.id = WidgetIDs.PAUSE_BUTTON;
             pauseButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE
 			pauseButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			leftControls.addChildWidget(pauseButton);
+			pauseButton.visible = false;
 			
 			// Previous/Next
 			var previousButton:PlaylistPreviousButton = new PlaylistPreviousButton();

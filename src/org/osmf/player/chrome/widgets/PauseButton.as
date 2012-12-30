@@ -17,21 +17,19 @@
  * Incorporated. All Rights Reserved.
  **********************************************************/
 
-package org.osmf.player.chrome.widgets
-{
+package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import org.osmf.player.chrome.assets.AssetsManager;
 	
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
 	import org.osmf.traits.PlayTrait;
 	
-	public class PauseButton extends PlayableButton
-	{
+	public class PauseButton extends PlayableButton {
 
-		public function PauseButton()
-		{
+		public function PauseButton() {
 			super();
 			
 			upFace = AssetIDs.PAUSE_BUTTON_NORMAL;
@@ -40,37 +38,28 @@ package org.osmf.player.chrome.widgets
 		}
 		// Overrides
 		//
-
 		
-		override protected function onMouseClick(event:MouseEvent):void
-		{
+		override protected function onMouseClick(event:MouseEvent):void {
 			var playable:PlayTrait = media.getTrait(MediaTraitType.PLAY) as PlayTrait;
-			if ( playable.canPause)
-			{
+			if ( playable.canPause) {
 				playable.pause();
-			}
-			else
-			{
+			} else {
 				playable.stop();
 			}
 			event.stopImmediatePropagation();
 		}
 		
-		override protected function visibilityDeterminingEventHandler(event:Event = null):void
-		{
+		override protected function visibilityDeterminingEventHandler(event:Event = null):void {
 			visible = (playable && playable.playState == PlayState.PLAYING && _contentVisible)
-			if (media && media.metadata)
-			{
-//				visible ||= media.metadata.getValue("Advertisement") != null;
+			if (media && media.metadata) {
+				//visible ||= media.metadata.getValue("Advertisement") != null;
 				visible &&= media.metadata.getValue("Advertisement") == null;
             }
 		}
-
+		
         public function set contentVisible(value:Boolean):void {
             _contentVisible = value;
         }
-
         private var _contentVisible:Boolean = true;
-
     }
 }

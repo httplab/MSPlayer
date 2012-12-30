@@ -48,6 +48,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		public function registerQualities(availableStreams:Array):void {
+			currentIdx = 0;
 			_availableStreams = availableStreams.concat();
 			recreateUpFace();
 			over['tf'].text = _availableStreams[currentIdx];
@@ -117,18 +118,12 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function set y(value:Number):void {
-			if (value > 0) {
-				super.y = value;
-			}
+			super.y = (parent.height - over.height) / 2;
 		}
 		
 		override public function measure(deep:Boolean = true):void {
 			removeSelectBox(null);
 			super.measure();
-		}
-		
-		override public function get height():Number {
-			return over.height;
 		}
 		
 		public function get currentStreamIdx():int {
