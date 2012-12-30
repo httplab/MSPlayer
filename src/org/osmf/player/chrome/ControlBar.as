@@ -185,13 +185,6 @@ package org.osmf.player.chrome
 			
 			addChildWidget(rightControls);
 			
-			// Spacer
-			var afterFullscreenSpacer:Widget = new Widget();
-			afterFullscreenSpacer.layoutMetadata.width = 13;
-			addChildWidget(afterFullscreenSpacer);
-			
-			var filler:Widget = new Widget();
-			
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
 			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
@@ -216,7 +209,7 @@ package org.osmf.player.chrome
 				afterVolumeSpacer,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
-				afterFullscreenSpacer, 
+				//afterFullscreenSpacer, 
 				rightControls, 
 				rightMargin
 			];
