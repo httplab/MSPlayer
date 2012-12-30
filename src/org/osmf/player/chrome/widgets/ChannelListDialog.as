@@ -10,7 +10,6 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.ChannelGroup;
 	public class ChannelListDialog extends Widget {
-		
 		private var closeButton:ButtonWidget;
 		private var _content:Vector.<ChannelGroup>;
 		private var _contentContainer:Sprite;
@@ -19,17 +18,18 @@ package org.osmf.player.chrome.widgets {
 		private var back:Sprite;
 		private var _mask:Sprite;
 		private var _dragger:MovieClip;
+		static private const GAP:Number = 10;
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			back = new ASSET_ChannelsListBack();
 			addChild(back);
 			_contentContainer = new Sprite();
-			_contentContainer.x = 10;
-			_contentContainer.y = 10;
+			_contentContainer.x = GAP;
+			_contentContainer.y = GAP;
 			_mask = new Sprite();
 			with (_mask.graphics) {
 				beginFill(0, 0);
-				drawRect(10, 10, back.width - 50, back.height - 10);
+				drawRect(GAP, GAP, back.width - 50, back.height - 2*GAP);
 				endFill();
 			}
 			_contentContainer.mask = _mask;
@@ -46,8 +46,8 @@ package org.osmf.player.chrome.widgets {
 			_dragger = new ASSET_ChannelsListDragger();
 			_dragger.visible = false;
 			_dragger.useHandCursor = _dragger.buttonMode = true;
-			_dragger.x = 370;
-			_dragger.y = 10;
+			_dragger.x = 2 * GAP + _mask.width;
+			_dragger.y = GAP;
 			addChild(_dragger);
 			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
 		}
@@ -57,12 +57,14 @@ package org.osmf.player.chrome.widgets {
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.gotoAndStop('down');
-			_dragger.startDrag(false, new Rectangle(_dragger.x, 10, 0, back.height - 20 - _dragger.height));
+			_dragger.startDrag(false, new Rectangle(_dragger.x, GAP, 0, maxDragY - GAP));
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
 			_dragger.stage.addEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
 		}
 		
 		private function stopDraggerActions(e:MouseEvent):void {
+			e.preventDefault();
+			e.stopImmediatePropagation();
 			_dragger.gotoAndStop('idle');
 			_dragger.stopDrag();
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
@@ -71,8 +73,21 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function moveChannelList(e:MouseEvent):void {
-			_contentContainer.y = - _contentContainer.height * (_dragger.y - 10) / (back.height - 20 - _dragger.height);
-			_contentContainer.y += 10;
+			var maxListDeltaY:Number = maxListY - GAP;
+			var maxDragDeltaY:Number = maxDragY - GAP;
+			var currentDragDeltaY:Number = _dragger.y - GAP;
+			var currentListDeltaY:Number = maxListDeltaY * currentDragDeltaY / maxDragDeltaY;
+			_contentContainer.y = currentListDeltaY + GAP;
+		}
+		
+		private function checkForDraggerAvailability():void {
+			_dragger.visible = (_contentContainer.height > _mask.height);
+			if (!_dragger.visible) { return; }
+			var maxListDeltaY:Number = maxListY - GAP;
+			var maxDragDeltaY:Number = maxDragY - GAP;
+			var currentListDeltaY:Number = _contentContainer.y - GAP;
+			var currentDragDeltaY:Number = maxDragDeltaY * currentListDeltaY / maxListDeltaY;
+			_dragger.y = currentDragDeltaY + GAP;
 		}
 		
 		public function show():void {
@@ -101,8 +116,8 @@ package org.osmf.player.chrome.widgets {
 			}
 			validateNow();
 			checkForDraggerAvailability();
-			_contentContainer.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
-			_contentContainer.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+			_contentContainer.removeEventListener(Event.EXIT_FRAME, enterFrameHandler);
+			_contentContainer.addEventListener(Event.EXIT_FRAME, enterFrameHandler);
 		}
 		
 		private function onCloseButtonClick(e:MouseEvent):void {
@@ -140,15 +155,27 @@ package org.osmf.player.chrome.widgets {
 			parent && (super.y = (parent.height - back.height) / 2);
 		}
 		
-		private function checkForDraggerAvailability():void {
-			_dragger.visible = (_contentContainer.height > _mask.height);
-		}
-		
 		private function enterFrameHandler(e:Event):void {
-			//if (!_animationInProgress) { return; }
 			for (var i:int = 1; i < _content.length; i++) {
 				_content[i].y = _content[i - 1].y + _content[i - 1].height;
 			}
+			if (_animationInProgress) {
+				if (_currentGroup) {
+					_contentContainer.y = GAP - _currentGroup.y;
+				} else {
+					_contentContainer.y = GAP;
+				}
+			}
+			_contentContainer.y = Math.max(_contentContainer.y, maxListY);
+			_contentContainer.y = Math.min(_contentContainer.y, GAP);
+		}
+		
+		private function get maxListY():Number {
+			return _mask.height - _contentContainer.height + GAP;
+		}
+		
+		private function get maxDragY():Number {
+			return _mask.height - _dragger.height + GAP;
 		}
 	}
 }
