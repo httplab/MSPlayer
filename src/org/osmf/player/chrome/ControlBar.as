@@ -30,6 +30,7 @@ package org.osmf.player.chrome
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.widgets.AutoHideWidget;
+	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.FullScreenEnterButton;
 	import org.osmf.player.chrome.widgets.FullScreenLeaveButton;
 	import org.osmf.player.chrome.widgets.MuteButton;
@@ -70,9 +71,9 @@ package org.osmf.player.chrome
 			addChildWidget(leftMargin);
 			
 			// Spacer
-			var beforePlaySpacer:Widget = new Widget();
-			beforePlaySpacer.width = 6;			
-			addChildWidget(beforePlaySpacer);
+			//var beforePlaySpacer:Widget = new Widget();
+			//beforePlaySpacer.width = 6;			
+			//addChildWidget(beforePlaySpacer);
 			
 			var leftControls:Widget = new Widget();
 			leftControls.layoutMetadata.percentHeight = 100;
@@ -111,7 +112,6 @@ package org.osmf.player.chrome
 			// Spacer
 			var afterPlaySpacer:Widget = new Widget();
 			afterPlaySpacer.width = 10;			
-			
 			addChildWidget(afterPlaySpacer);
 			
 			// Scrub bar
@@ -131,7 +131,7 @@ package org.osmf.player.chrome
 			
 			// Spacer
 			var afterScrubSpacer:Widget = new Widget();
-			afterScrubSpacer.width = 15;
+			afterScrubSpacer.width = 10;
 			rightControls.addChildWidget(afterScrubSpacer);
 			
 			// Time view
@@ -147,6 +147,16 @@ package org.osmf.player.chrome
 			//hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			//rightControls.addChildWidget(hdIndicator);
 			
+			//ChannelListButton
+			var channelListButton:ChannelListButton = new ChannelListButton();
+			channelListButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			channelListButton.id = WidgetIDs.CHANNEL_LIST_BUTTON;
+			rightControls.addChildWidget(channelListButton);
+			
+			var afterChannelSpacer:Widget = new Widget();
+			afterChannelSpacer.width = 10;
+			rightControls.addChildWidget(afterChannelSpacer);
+			
 			// Quality switcher
 			qualitySwitcherWidget = new QualitySwitcherContainer();
 			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
@@ -156,7 +166,7 @@ package org.osmf.player.chrome
 			
 			// Spacer
 			var afterTimeSpacer:Widget = new Widget();
-			afterTimeSpacer.width = 10;
+			afterTimeSpacer.width = 5;
 			rightControls.addChildWidget(afterTimeSpacer);
 			
 			// Mute/unmute
@@ -168,16 +178,16 @@ package org.osmf.player.chrome
 			rightControls.addChildWidget(muteButton);
 			
 			// Spacer
-			var afterVolumeSpacer:Widget = new Widget();
-			afterVolumeSpacer.width = 10;
-			rightControls.addChildWidget(afterVolumeSpacer);
+			//var afterVolumeSpacer:Widget = new Widget();
+			//afterVolumeSpacer.width = 10;
+			//rightControls.addChildWidget(afterVolumeSpacer);
 			
 			// FullScreen			
 			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
 			fullscreenLeaveButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			fullscreenLeaveButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.addChildWidget(fullscreenLeaveButton);
-		
+			
 			fullscreenEnterButton.id = WidgetIDs.FULL_SCREEN_ENTER_BUTTON; 
 			fullscreenEnterButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			fullscreenEnterButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
@@ -187,12 +197,12 @@ package org.osmf.player.chrome
 			
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
-			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			//rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			addChildWidget(rightMargin);				
 			
 			_widgets = [ 
 				leftMargin, 
-				beforePlaySpacer, 
+				//beforePlaySpacer, 
 				pauseButton, 
 				playButton, 
 				previousButton, 
@@ -202,11 +212,13 @@ package org.osmf.player.chrome
 				scrubBar, 
 				afterScrubSpacer,
 				//timeViewWidget,
-				afterTimeSpacer,
 				//hdIndicator, 
+				channelListButton,
+				afterChannelSpacer,
 				qualitySwitcherWidget, 
+				afterTimeSpacer,
 				muteButton, 
-				afterVolumeSpacer,
+				//afterVolumeSpacer,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
 				//afterFullscreenSpacer, 

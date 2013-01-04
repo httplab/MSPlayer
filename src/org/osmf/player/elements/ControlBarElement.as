@@ -26,6 +26,7 @@ package org.osmf.player.elements {
 	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.IControlBar;
+	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.PauseButton;
 	import org.osmf.player.chrome.widgets.PlayButton;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
@@ -191,20 +192,35 @@ package org.osmf.player.elements {
 			// and mediaHeight properties:
 			var viewable:DisplayObjectTrait = new DisplayObjectTrait(DisplayObject(controlBar));
 			
-            for each(var widget:Widget in controlBar.widgets) {
-                if (widget.id == WidgetIDs.PLAY_BUTTON){
-                    PlayButton(widget).addEventListener(
-						MouseEvent.CLICK, 
-						function(evt:MouseEvent):void {
-							trace("play button click");
-							dispatchEvent(new Event("playButtonClick"));
-						}
-					);
-                    break;
-                }
+			for each(var widget:Widget in controlBar.widgets) {
+                switch (widget.id) {
+					case WidgetIDs.PLAY_BUTTON:
+						PlayButton(widget).addEventListener(
+							MouseEvent.CLICK, 
+							function(evt:MouseEvent):void {
+								trace("play button click");
+								dispatchEvent(new Event("playButtonClick"));
+							}
+						);
+						break;
+					case WidgetIDs.CHANNEL_LIST_BUTTON: 
+						widget.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);
+						break;
+					default:
+						break;
+				}
             }
-            // Add the trait:
 			addTrait(MediaTraitType.DISPLAY_OBJECT, viewable);
+			hide();
+		}
+		
+		public function show():void {
+			(controlBar as Widget).visible = true;
+			(controlBar as Widget).validateNow();
+		}
+		
+		public function hide():void {
+			(controlBar as Widget).visible = false;
 		}
 		
 		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource

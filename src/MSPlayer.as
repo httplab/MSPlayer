@@ -34,6 +34,7 @@ package {
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.configuration.ConfigurationUtils;
 	import org.osmf.player.chrome.events.WidgetEvent;
+	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.configuration.*;
 	import org.osmf.player.debug.LogHandler;
@@ -322,6 +323,7 @@ package {
 		
 		public function loadMedia(e:Event = null):void {
 			trace("Load media");
+			viewHelper.controlBar.hide();
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase = injector.getInstance(MediaResourceBase);
 			if (resource is MultiQualityStreamingResource) {
@@ -339,11 +341,12 @@ package {
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
 				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
-				viewHelper.controlBar.getQualitySwitcherWidget().addEventListener(QualitySwitcherContainer.LIST_CALL, addList);
+				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
 			}
+			viewHelper.controlBar.show();
 			resource.addMetadataValue("timeWatched", { pageURL: "Analytics Test Video" } );
 			_adController = new AdController(player, viewHelper, factory);
 			media = factory.createMediaElement(resource);
@@ -356,10 +359,10 @@ package {
 			
 		}
 		
-		private function addList(e:Event):void {
-			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) && 
-					viewHelper.mainContainer.removeMediaElement(viewHelper.channelList);
-			viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+		private function switchChannelListVisible(e:Event):void {
+			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) ?
+				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList) :
+				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
 		}
 		
 		private function changeStreamQuality(e:Event):void {
