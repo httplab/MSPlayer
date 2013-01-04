@@ -134,6 +134,10 @@ package org.osmf.player.chrome.assets
 		
 		public static const QUALITY_SWITCHER_ELEMENT_UP:String = "qualitySwitcherElementUp";
 		public static const QUALITY_SWITCHER_ELEMENT_OVER:String = "qualitySwitcherElementOver";
-		static public const QUALITY_SWITCHER_ELEMENT_BACK:String = "qualitySwitcherElementBack";
+		public static const QUALITY_SWITCHER_ELEMENT_BACK:String = "qualitySwitcherElementBack";
+		
+		public static const CHANNEL_LIST_BUTTON_OVER:String = "channelListButtonOver";
+		public static const CHANNEL_LIST_BUTTON_DOWN:String = "channelListButtonDown";
+		public static const CHANNEL_LIST_BUTTON_NORMAL:String = "channelListButtonNormal";
 	}
 }

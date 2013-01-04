@@ -44,7 +44,8 @@ package org.osmf.player.chrome.widgets
         public static const PLAY_BUTTON:String = "playButton";
         public static const PAUSE_BUTTON:String = "pauseButton";
 		public static const QUALITY_SWITCHER_WIDGET:String = "qualitySwitcherWidget";
-		static public const CHANNEL_LIST_CLOSE_BUTTON:String = "channelListCloseButton";
-		static public const CHANNEL_LIST_DIALOG:String = "channelListDialog";
+		public static const CHANNEL_LIST_CLOSE_BUTTON:String = "channelListCloseButton";
+		public static const CHANNEL_LIST_DIALOG:String = "channelListDialog";
+		public static const CHANNEL_LIST_BUTTON:String = "channelListButton";
     }
 }

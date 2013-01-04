@@ -27,6 +27,7 @@ package org.osmf.player.elements {
 				drawRect(0, 0, 1, 1);
 				endFill();
 			}
+			_mask.height = 0;
 			_channelsContaner.mask = _mask;
 			_channelsContaner.y = groupNameTxt.height;
 		}

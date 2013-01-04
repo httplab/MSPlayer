@@ -254,6 +254,10 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_UP, ASSET_QualitySwitcherElement_up);
 			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_OVER, ASSET_QualitySwitcherElement_over);
 			addEmbeddedSymbol(AssetIDs.QUALITY_SWITCHER_ELEMENT_BACK, ASSET_QualitySwitcherElement_back);
+			
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_NORMAL, ASSET_channelListButton_normal);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_OVER, ASSET_channelListButton_over);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_DOWN, ASSET_channelListButton_selected);
 
 		}
 		

@@ -9,6 +9,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.ChannelGroup;
+	import ru.etcs.ui.MouseWheel;
 	public class ChannelListDialog extends Widget {
 		private var closeButton:ButtonWidget;
 		private var _content:Vector.<ChannelGroup>;
@@ -39,7 +40,9 @@ package org.osmf.player.chrome.widgets {
 			super.configure(xml, assetManager);
 			closeButton = getChildWidget(WidgetIDs.CHANNEL_LIST_CLOSE_BUTTON) as ButtonWidget;
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
-			addChild(closeButton);
+			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
+			addEventListener(MouseEvent.ROLL_OUT, releaseMouse);
+			addEventListener(MouseEvent.MOUSE_WHEEL, scrollContent);
 		}
 		
 		private function initDragger():void {
@@ -88,6 +91,21 @@ package org.osmf.player.chrome.widgets {
 			var currentListDeltaY:Number = _contentContainer.y - GAP;
 			var currentDragDeltaY:Number = maxDragDeltaY * currentListDeltaY / maxListDeltaY;
 			_dragger.y = currentDragDeltaY + GAP;
+		}
+		
+		private function scrollContent(e:MouseEvent):void {
+			_contentContainer.y += GAP * e.delta;
+			enterFrameHandler(e);
+			checkForDraggerAvailability();
+			e.preventDefault();
+		}
+		
+		private function catchMouse(e:MouseEvent):void {
+			MouseWheel.capture();
+		}
+		
+		private function releaseMouse(e:MouseEvent):void {
+			MouseWheel.release();
 		}
 		
 		public function show():void {
