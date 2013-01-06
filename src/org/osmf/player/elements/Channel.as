@@ -30,7 +30,9 @@ package org.osmf.player.elements {
 			setHeight(broadcastTxt.textHeight + 4);
 			var date:Date = new Date();
 			date.setTime(time);
-			timeTxt.text = date.getHours() + ":" + date.getMinutes(); 
+			var hours:String = String(date.getHours());
+			var minutes:String = String(date.getMinutes());
+			timeTxt.text = ((hours.length < 2) ? "0" : "") + hours + ":" + ((minutes.length < 2) ? "0" : "") + minutes;
 		}
 		
 		override public function get height():Number {

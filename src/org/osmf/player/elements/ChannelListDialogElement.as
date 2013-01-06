@@ -11,6 +11,7 @@ package org.osmf.player.elements {
 	import org.osmf.media.MediaElement;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.ChromeProvider;
+	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
 	import org.osmf.player.configuration.PlayerConfiguration;
 	import org.osmf.traits.DisplayObjectTrait;
@@ -34,6 +35,7 @@ package org.osmf.player.elements {
 			chromeProvider = ChromeProvider.getInstance();
 			channelListDialog = chromeProvider.createChannelListDialog();
 			channelListDialog.measure();			
+			channelListDialog.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);			
 			addMetadata(LayoutMetadata.LAYOUT_NAMESPACE, channelListDialog.layoutMetadata);
 			var viewable:DisplayObjectTrait = new DisplayObjectTrait(channelListDialog, channelListDialog.measuredWidth, channelListDialog.measuredHeight);
 			addTrait(MediaTraitType.DISPLAY_OBJECT, viewable);				

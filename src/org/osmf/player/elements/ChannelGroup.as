@@ -16,6 +16,7 @@ package org.osmf.player.elements {
 			groupNameTxt.width = Math.max(groupNameTxt.textWidth, groupNameTxt.width);
 			setHeight(groupNameTxt.textHeight);
 			channels = new Vector.<Channel>();
+			switcher.x = groupNameTxt.x + groupNameTxt.textWidth + 10;
 			initMask();
 		}
 		
@@ -47,6 +48,7 @@ package org.osmf.player.elements {
 		public function expand():void {
 			_channelsContaner.addChild(_mask);
 			addChild(_channelsContaner);
+			switcher.gotoAndStop('opened');
 			_tweener && _tweener.stop();
 			_tweener = new Tweener(_mask, 'height', _channelsContaner.height, 10, expandIsDone);
 		}
@@ -63,6 +65,7 @@ package org.osmf.player.elements {
 		}
 		
 		private function collapseIsDone():void { 
+			switcher.gotoAndStop('closed');
 			_mask.height = 0;
 			removeChild(_channelsContaner);
 			dispatchEvent(new Event(ANIMATION_END));
@@ -70,11 +73,11 @@ package org.osmf.player.elements {
 		
 		private function setHeight(value:Number):void {
 			groupNameTxt.height = value;
-			bg.height = value;
+			bg.height = value + groupNameTxt.y * 2;
 		}
 		
 		override public function get height():Number {
-			return groupNameTxt.height + _mask.height;
+			return bg.height + _mask.height;
 		}
 	}
 }

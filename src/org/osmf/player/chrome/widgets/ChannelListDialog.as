@@ -1,4 +1,5 @@
 package org.osmf.player.chrome.widgets {
+	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -10,27 +11,30 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.ChannelGroup;
 	import ru.etcs.ui.MouseWheel;
+	
 	public class ChannelListDialog extends Widget {
-		private var closeButton:ButtonWidget;
+		private var TOP_GAP:Number = 0;
+		private var closeButton:InteractiveObject;
 		private var _content:Vector.<ChannelGroup>;
 		private var _contentContainer:Sprite;
 		private var _currentGroup:ChannelGroup;
 		private var _animationInProgress:int = 0;
-		private var back:Sprite;
+		private var back:ASSET_ChannelsListBack;
 		private var _mask:Sprite;
 		private var _dragger:MovieClip;
-		static private const GAP:Number = 10;
+		static private const GAP:Number = 8;
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			back = new ASSET_ChannelsListBack();
 			addChild(back);
+			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
 			_contentContainer = new Sprite();
 			_contentContainer.x = GAP;
-			_contentContainer.y = GAP;
+			_contentContainer.y = TOP_GAP;
 			_mask = new Sprite();
 			with (_mask.graphics) {
 				beginFill(0, 0);
-				drawRect(GAP, GAP, back.width - 50, back.height - 2*GAP);
+				drawRect(GAP, TOP_GAP, back.width - 15, back.height - (TOP_GAP + GAP));
 				endFill();
 			}
 			_contentContainer.mask = _mask;
@@ -38,7 +42,7 @@ package org.osmf.player.chrome.widgets {
 			addChild(_contentContainer);
 			initDragger();
 			super.configure(xml, assetManager);
-			closeButton = getChildWidget(WidgetIDs.CHANNEL_LIST_CLOSE_BUTTON) as ButtonWidget;
+			closeButton = back.closeButton;
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
 			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
 			addEventListener(MouseEvent.ROLL_OUT, releaseMouse);
@@ -48,9 +52,8 @@ package org.osmf.player.chrome.widgets {
 		private function initDragger():void {
 			_dragger = new ASSET_ChannelsListDragger();
 			_dragger.visible = false;
-			_dragger.useHandCursor = _dragger.buttonMode = true;
-			_dragger.x = 2 * GAP + _mask.width;
-			_dragger.y = GAP;
+			_dragger.x = _mask.width;
+			_dragger.y = TOP_GAP;
 			addChild(_dragger);
 			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
 		}
@@ -59,8 +62,7 @@ package org.osmf.player.chrome.widgets {
 			if (_animationInProgress) { return; }
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
-			_dragger.gotoAndStop('down');
-			_dragger.startDrag(false, new Rectangle(_dragger.x, GAP, 0, maxDragY - GAP));
+			_dragger.startDrag(false, new Rectangle(_dragger.x, TOP_GAP, 0, maxDragY - TOP_GAP));
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
 			_dragger.stage.addEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
 		}
@@ -68,7 +70,6 @@ package org.osmf.player.chrome.widgets {
 		private function stopDraggerActions(e:MouseEvent):void {
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			_dragger.gotoAndStop('idle');
 			_dragger.stopDrag();
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.stage.removeEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
@@ -76,21 +77,21 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function moveChannelList(e:MouseEvent):void {
-			var maxListDeltaY:Number = maxListY - GAP;
-			var maxDragDeltaY:Number = maxDragY - GAP;
-			var currentDragDeltaY:Number = _dragger.y - GAP;
+			var maxListDeltaY:Number = maxListY - TOP_GAP;
+			var maxDragDeltaY:Number = maxDragY - TOP_GAP;
+			var currentDragDeltaY:Number = _dragger.y - TOP_GAP;
 			var currentListDeltaY:Number = maxListDeltaY * currentDragDeltaY / maxDragDeltaY;
-			_contentContainer.y = currentListDeltaY + GAP;
+			_contentContainer.y = currentListDeltaY + TOP_GAP;
 		}
 		
 		private function checkForDraggerAvailability():void {
 			_dragger.visible = (_contentContainer.height > _mask.height);
 			if (!_dragger.visible) { return; }
-			var maxListDeltaY:Number = maxListY - GAP;
-			var maxDragDeltaY:Number = maxDragY - GAP;
-			var currentListDeltaY:Number = _contentContainer.y - GAP;
+			var maxListDeltaY:Number = maxListY - TOP_GAP;
+			var maxDragDeltaY:Number = maxDragY - TOP_GAP;
+			var currentListDeltaY:Number = _contentContainer.y - TOP_GAP;
 			var currentDragDeltaY:Number = maxDragDeltaY * currentListDeltaY / maxListDeltaY;
-			_dragger.y = currentDragDeltaY + GAP;
+			_dragger.y = currentDragDeltaY + TOP_GAP;
 		}
 		
 		private function scrollContent(e:MouseEvent):void {
@@ -140,7 +141,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function onCloseButtonClick(e:MouseEvent):void {
 			e && e.updateAfterEvent();
-			close();
+			dispatchEvent(new Event(ChannelListButton.LIST_CALL));
 		}
 		
 		private function set currentGroup(value:ChannelGroup):void {
@@ -179,21 +180,26 @@ package org.osmf.player.chrome.widgets {
 			}
 			if (_animationInProgress) {
 				if (_currentGroup) {
-					_contentContainer.y = GAP - _currentGroup.y;
+					_contentContainer.y = TOP_GAP - _currentGroup.y;
 				} else {
-					_contentContainer.y = GAP;
+					_contentContainer.y = TOP_GAP;
 				}
 			}
 			_contentContainer.y = Math.max(_contentContainer.y, maxListY);
-			_contentContainer.y = Math.min(_contentContainer.y, GAP);
+			_contentContainer.y = Math.min(_contentContainer.y, TOP_GAP);
 		}
 		
 		private function get maxListY():Number {
-			return _mask.height - _contentContainer.height + GAP;
+			return _mask.height - _contentContainer.height + TOP_GAP;
 		}
 		
 		private function get maxDragY():Number {
-			return _mask.height - _dragger.height + GAP;
+			return _mask.height - _dragger.height + TOP_GAP;
+		}
+		
+		override public function set height(value:Number):void {
+			//TODO: Handle shrinking for little containers
+			return;
 		}
 	}
 }

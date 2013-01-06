@@ -341,7 +341,10 @@ package {
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
 				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
+				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
+				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
 				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
+				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
