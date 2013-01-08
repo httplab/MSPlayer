@@ -366,6 +366,7 @@ package {
 			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) ?
 				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList) :
 				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+			viewHelper.controlBar.processListState(viewHelper.mainContainer.containsMediaElement(viewHelper.channelList));
 		}
 		
 		private function changeStreamQuality(e:Event):void {

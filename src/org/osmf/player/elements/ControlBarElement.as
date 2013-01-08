@@ -251,6 +251,14 @@ package org.osmf.player.elements {
 			widget && (widget.visible = true);
 		}
 		
+		public function processListState(listIsOpened:Boolean):void {
+			for each(var widget:Widget in controlBar.widgets) {
+				if (widget is ChannelListButton) {
+					(widget as ChannelListButton).processListState(listIsOpened);
+				}
+			}
+		}
+		
 		public function get currentStreamIdx():int {
 			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
 			return (widget) ? (widget.currentStreamIdx) : (0);
