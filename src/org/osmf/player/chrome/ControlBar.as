@@ -150,6 +150,7 @@ package org.osmf.player.chrome
 			//ChannelListButton
 			var channelListButton:ChannelListButton = new ChannelListButton();
 			channelListButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			channelListButton.layoutMetadata.width = 33;
 			channelListButton.id = WidgetIDs.CHANNEL_LIST_BUTTON;
 			rightControls.addChildWidget(channelListButton);
 			
@@ -161,6 +162,7 @@ package org.osmf.player.chrome
 			qualitySwitcherWidget = new QualitySwitcherContainer();
 			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			qualitySwitcherWidget.layoutMetadata.width = 45;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			

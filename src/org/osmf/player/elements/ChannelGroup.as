@@ -12,7 +12,10 @@ package org.osmf.player.elements {
 		private var _tweener:Tweener;
 		
 		public function ChannelGroup(name:String) {
+			var tf:TextFormat = groupNameTxt.defaultTextFormat;
 			groupNameTxt.text = name;
+			tf.bold = true;
+			groupNameTxt.setTextFormat(tf);
 			groupNameTxt.width = Math.max(groupNameTxt.textWidth, groupNameTxt.width);
 			setHeight(groupNameTxt.textHeight);
 			channels = new Vector.<Channel>();
