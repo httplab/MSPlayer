@@ -247,10 +247,7 @@ package org.osmf.player.chrome
 			var channelListDialog:ChannelListDialog = new ChannelListDialog();
 			channelListDialog.id = WidgetIDs.CHANNEL_LIST_DIALOG;
 			channelListDialog.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			channelListDialog.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
-			channelListDialog.layoutMetadata.scaleMode = ScaleMode.NONE;
 			configureWidgets([channelListDialog]);
-			
 			return channelListDialog;
 		}
 		

@@ -1,4 +1,6 @@
 package org.osmf.player.chrome.widgets {
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -14,7 +16,7 @@ package org.osmf.player.chrome.widgets {
 	
 	public class ChannelListDialog extends Widget {
 		private var TOP_GAP:Number = 0;
-		private var closeButton:InteractiveObject;
+		private var closeButton:Sprite;
 		private var _content:Vector.<ChannelGroup>;
 		private var _contentContainer:Sprite;
 		private var _currentGroup:ChannelGroup;
@@ -22,19 +24,20 @@ package org.osmf.player.chrome.widgets {
 		private var back:ASSET_ChannelsListBack;
 		private var _mask:Sprite;
 		private var _dragger:MovieClip;
-		static private const GAP:Number = 8;
+		static private const GAP:Number = 0;
+		private var _tweener:Tweener;
+		private var _correctionTweener:Tweener;
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			back = new ASSET_ChannelsListBack();
 			addChild(back);
 			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
 			_contentContainer = new Sprite();
-			_contentContainer.x = GAP;
 			_contentContainer.y = TOP_GAP;
 			_mask = new Sprite();
 			with (_mask.graphics) {
 				beginFill(0, 0);
-				drawRect(GAP, TOP_GAP, back.width - 15, back.height - (TOP_GAP + GAP));
+				drawRoundRect(0, TOP_GAP, back.width - 15, back.height - (TOP_GAP), 15, 15);
 				endFill();
 			}
 			_contentContainer.mask = _mask;
@@ -43,6 +46,8 @@ package org.osmf.player.chrome.widgets {
 			initDragger();
 			super.configure(xml, assetManager);
 			closeButton = back.closeButton;
+			closeButton.useHandCursor = true;
+			closeButton.buttonMode = true;
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
 			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
 			addEventListener(MouseEvent.ROLL_OUT, releaseMouse);
@@ -95,8 +100,9 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function scrollContent(e:MouseEvent):void {
-			_contentContainer.y += GAP * e.delta;
-			enterFrameHandler(e);
+			_contentContainer.y += TOP_GAP * e.delta;
+			_contentContainer.y = Math.max(_contentContainer.y, maxListY);
+			_contentContainer.y = Math.min(_contentContainer.y, TOP_GAP);
 			checkForDraggerAvailability();
 			e.preventDefault();
 		}
@@ -145,6 +151,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function set currentGroup(value:ChannelGroup):void {
+			_tweener && _tweener.stop()
 			if (_currentGroup) { 
 				_currentGroup.collapse();
 				_animationInProgress++;
@@ -152,8 +159,12 @@ package org.osmf.player.chrome.widgets {
 			if (_currentGroup == value) { _currentGroup = null; return; }
 			_currentGroup = value;
 			if (_currentGroup) {
+				
+				_tweener = new Tweener(_contentContainer, 'y', TOP_GAP - (_content.indexOf(_currentGroup) * _currentGroup.height), 10);
 				_currentGroup.expand();
 				_animationInProgress++;
+			} else {
+				_tweener = new Tweener(_contentContainer, 'y', TOP_GAP, 10);
 			}
 		}
 		
@@ -178,15 +189,6 @@ package org.osmf.player.chrome.widgets {
 			for (var i:int = 1; i < _content.length; i++) {
 				_content[i].y = _content[i - 1].y + _content[i - 1].height;
 			}
-			if (_animationInProgress) {
-				if (_currentGroup) {
-					_contentContainer.y = TOP_GAP - _currentGroup.y;
-				} else {
-					_contentContainer.y = TOP_GAP;
-				}
-			}
-			_contentContainer.y = Math.max(_contentContainer.y, maxListY);
-			_contentContainer.y = Math.min(_contentContainer.y, TOP_GAP);
 		}
 		
 		private function get maxListY():Number {
@@ -195,6 +197,11 @@ package org.osmf.player.chrome.widgets {
 		
 		private function get maxDragY():Number {
 			return _mask.height - _dragger.height + TOP_GAP;
+		}
+		
+		override public function measure(deep:Boolean = true):void {
+			//OSMF, respect my width/height overrides!
+			return;
 		}
 		
 		override public function set height(value:Number):void {
