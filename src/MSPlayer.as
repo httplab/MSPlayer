@@ -74,7 +74,7 @@ package {
 			private static const GAConfigClass:Class;
 			
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
-		private static const MAX_OVER_WIDTH:int = 400;
+		private static const MAX_OVER_WIDTH:int = 350;
 		private static const MAX_OVER_WIDTH_SMARTPHONE:int = 550;
 		private static const MAX_OVER_WIDTH_TABLET:int = 600;
 		private static const MEDIA_PLAYER:String = "org.osmf.media.MediaPlayer";
@@ -701,6 +701,7 @@ package {
 				}
 				viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) && 
 					viewHelper.mainContainer.removeMediaElement(viewHelper.channelList);
+				viewHelper.controlBar.processListState(false);
 				processNewMedia(value);
 				// Set the new main media element:
 				SOWrapper.releasePlayer(player);

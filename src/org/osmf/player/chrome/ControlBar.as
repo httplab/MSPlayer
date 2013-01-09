@@ -68,6 +68,7 @@ package org.osmf.player.chrome
 			var leftMargin:Widget = new Widget();
 			leftMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_LEFT;
 			leftMargin.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
+			leftMargin.layoutMetadata.width = 7;
 			addChildWidget(leftMargin);
 			
 			// Spacer
@@ -124,7 +125,7 @@ package org.osmf.player.chrome
 			
 			// Right side
  			var rightControls:Widget = new Widget();
-			rightControls.layoutMetadata.percentWidth = 100;
+			//rightControls.layoutMetadata.percentWidth = 100;
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			//rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
@@ -179,11 +180,6 @@ package org.osmf.player.chrome
 			muteButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			rightControls.addChildWidget(muteButton);
 			
-			// Spacer
-			//var afterVolumeSpacer:Widget = new Widget();
-			//afterVolumeSpacer.width = 10;
-			//rightControls.addChildWidget(afterVolumeSpacer);
-			
 			// FullScreen			
 			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
 			fullscreenLeaveButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
@@ -197,10 +193,17 @@ package org.osmf.player.chrome
 			
 			addChildWidget(rightControls);
 			
+			// Spacer
+			var afterFullScreenSpacer:Widget = new Widget();
+			afterFullScreenSpacer.width = 10;
+			afterFullScreenSpacer.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			addChildWidget(afterFullScreenSpacer);
+			
 			var rightMargin:Widget = new Widget();
 			rightMargin.face = AssetIDs.CONTROL_BAR_BACKDROP_RIGHT;
-			//rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			addChildWidget(rightMargin);				
+			rightMargin.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			rightMargin.layoutMetadata.width = 7;
+			addChildWidget(rightMargin);
 			
 			_widgets = [ 
 				leftMargin, 
@@ -220,10 +223,9 @@ package org.osmf.player.chrome
 				qualitySwitcherWidget, 
 				afterTimeSpacer,
 				muteButton, 
-				//afterVolumeSpacer,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
-				//afterFullscreenSpacer, 
+				afterFullScreenSpacer, 
 				rightControls, 
 				rightMargin
 			];
