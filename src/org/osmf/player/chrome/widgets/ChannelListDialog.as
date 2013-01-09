@@ -38,9 +38,9 @@ package org.osmf.player.chrome.widgets {
 			addChild(back);
 			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
 			prepareContentContainer();
+			prepareCloseButton();
 			initDragger();
 			super.configure(xml, assetManager);
-			prepareCloseButton();
 			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
 			addEventListener(MouseEvent.ROLL_OUT, releaseMouse);
 			addEventListener(MouseEvent.MOUSE_WHEEL, scrollContent);
@@ -85,9 +85,11 @@ package org.osmf.player.chrome.widgets {
 			}
 			_content = value;
 			for each (channelGroup in value) {
-				channelGroup.removeEventListener(ChannelGroup.ANIMATION_END, channelGroupAnimationEndHandler);
+				channelGroup.removeEventListener(ChannelGroup.COLLAPSE_END, channelGroupCollapseEndHandler);
+				channelGroup.removeEventListener(ChannelGroup.EXPAND_END, channelGroupExpandEndHandler);
 				channelGroup.removeEventListener(MouseEvent.MOUSE_DOWN, doExpand);
-				channelGroup.addEventListener(ChannelGroup.ANIMATION_END, channelGroupAnimationEndHandler);
+				channelGroup.addEventListener(ChannelGroup.COLLAPSE_END, channelGroupCollapseEndHandler);
+				channelGroup.addEventListener(ChannelGroup.EXPAND_END, channelGroupExpandEndHandler);
 				channelGroup.addEventListener(MouseEvent.MOUSE_DOWN, doExpand);
 				channelGroup.y = _contentContainer.height;
 				_contentContainer.addChild(channelGroup);
@@ -145,6 +147,21 @@ package org.osmf.player.chrome.widgets {
 			currentGroup = (e.currentTarget as ChannelGroup);
 		}
 		
+		private function channelGroupExpandEndHandler(e:Event):void {
+			channelGroupAnimationEndHandler(e);
+		}
+		
+		private function channelGroupCollapseEndHandler(e:Event):void {
+			if (_currentGroup) {
+				_tweener && _tweener.stop();
+				_tweener = new Tweener(_contentContainer, 'y', TOP_GAP - (_content.indexOf(_currentGroup) * _currentGroup.height), 10);
+				_currentGroup.expand();
+				_animationInProgress++;
+			}
+			channelGroupAnimationEndHandler(e);
+		}
+		
+		
 		private function channelGroupAnimationEndHandler(e:Event):void {
 			_animationInProgress--;
 			checkForDraggerAvailability();
@@ -164,18 +181,18 @@ package org.osmf.player.chrome.widgets {
 		
 		private function set currentGroup(value:ChannelGroup):void {
 			_tweener && _tweener.stop();
-			if (_currentGroup) { 
-				_currentGroup.collapse();
-				_animationInProgress++;
-			}
+			if (!_currentGroup) {
+				_currentGroup = value;
+				channelGroupCollapseEndHandler(null);
+				return;
+			} 
+			_currentGroup.collapse();
+			_animationInProgress++;
 			_tweener = new Tweener(_contentContainer, 'y', TOP_GAP, 10);
-			if (_currentGroup == value) { _currentGroup = null; return; }
-			_currentGroup = value;
-			if (_currentGroup) {
-				_tweener.stop();
-				_tweener = new Tweener(_contentContainer, 'y', TOP_GAP - (_content.indexOf(_currentGroup) * _currentGroup.height), 10);
-				_currentGroup.expand();
-				_animationInProgress++;
+			if (_currentGroup != value) {
+				_currentGroup = value;
+			} else {
+				_currentGroup = null;
 			}
 		}
 		

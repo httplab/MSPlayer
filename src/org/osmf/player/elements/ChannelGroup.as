@@ -4,7 +4,8 @@ package org.osmf.player.elements {
 	import flash.events.Event;
 	import flash.text.TextFormat;
 	public class ChannelGroup extends ASSET_ChannelGroup {
-		static public const ANIMATION_END:String = "animationEnd";
+		static public const EXPAND_END:String = "expandEnd";
+		static public const COLLAPSE_END:String = "collapseEnd";
 		private var groupName:String;
 		private var channels:Vector.<Channel>
 		private var _mask:Sprite;
@@ -67,7 +68,7 @@ package org.osmf.player.elements {
 		}
 		
 		private function expandIsDone():void { 
-			dispatchEvent(new Event(ANIMATION_END));
+			dispatchEvent(new Event(EXPAND_END));
 		} 
 		
 		public function collapse():void {
@@ -81,7 +82,7 @@ package org.osmf.player.elements {
 			switcher.gotoAndStop('closed');
 			_mask.height = 0;
 			removeChild(_channelsContaner);
-			dispatchEvent(new Event(ANIMATION_END));
+			dispatchEvent(new Event(COLLAPSE_END));
 		}
 		
 		private function setHeight(value:Number):void {
