@@ -13,6 +13,7 @@ package {
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
+	import org.osmf.player.chrome.ChromeProvider;
 	
 	public class AdBlockHeader extends Sprite {	
 		static public const PASS_AD_REQUEST:String = "passAdRequest";
@@ -45,7 +46,7 @@ package {
 		}
 		
 		private function initTextFormats():void {
-			var assetsManager:AssetsManager = new AssetsManager();
+			var assetsManager:AssetsManager = ChromeProvider.getInstance().assetManager;
 			var fontAsset:FontAsset = assetsManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
 			regularFormat = fontAsset ? fontAsset.format : new TextFormat();
 			regularFormat.size = 12;
