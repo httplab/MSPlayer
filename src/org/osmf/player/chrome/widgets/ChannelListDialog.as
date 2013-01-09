@@ -11,6 +11,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.assets.AssetsManager;
+	import org.osmf.player.elements.Channel;
 	import org.osmf.player.elements.ChannelGroup;
 	import ru.etcs.ui.MouseWheel;
 	
@@ -51,7 +52,7 @@ package org.osmf.player.chrome.widgets {
 			_mask = new Sprite();
 			with (_mask.graphics) {
 				beginFill(0, 0);
-				drawRoundRect(0, TOP_GAP, back.width - 15, back.height - (TOP_GAP), 15, 15);
+				drawRect(0, TOP_GAP, back.width - 15, back.height - (TOP_GAP) - 6);
 				endFill();
 			}
 			_contentContainer.mask = _mask;
@@ -70,7 +71,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function prepareCloseButton():void {
 			closeButton = back.closeButton;
-			closeButton.useHandCursor = true;
+			closeButton.mouseChildren = false;
 			closeButton.buttonMode = true;
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
 		}
@@ -140,6 +141,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function doExpand(e:MouseEvent):void {
+			if (e.target is Channel) { return; }
 			currentGroup = (e.currentTarget as ChannelGroup);
 		}
 		

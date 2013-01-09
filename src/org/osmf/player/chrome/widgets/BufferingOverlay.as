@@ -113,7 +113,10 @@ package org.osmf.player.chrome.widgets
 			}
 			
 			scaleX = scaleY = 1;
+			var faceDO:DisplayObject = getChildAt(0);
+			faceDO && removeChild(faceDO);
 			super.measure(deep);
+			faceDO && addChild(faceDO);
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean=true):void

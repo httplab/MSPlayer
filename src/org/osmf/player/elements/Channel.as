@@ -1,4 +1,5 @@
 package org.osmf.player.elements {
+	import flash.display.InteractiveObject;
 	public class Channel extends ASSET_Channel {
 		private var _height:Number;
 		public var srcId:int;
@@ -14,6 +15,9 @@ package org.osmf.player.elements {
 			broadcastTxt.wordWrap = true;
 			channelNameTxt.text = name;
 			setHeight(channelNameTxt.textHeight + 4);
+			for (var i:int = 0; i < numChildren; i++) {
+				(getChildAt(i) as InteractiveObject) && ((getChildAt(i) as InteractiveObject).mouseEnabled = false);
+			}
 		}
 		
 		private function setHeight(value:Number):void {

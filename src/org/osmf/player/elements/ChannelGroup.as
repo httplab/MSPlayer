@@ -1,4 +1,5 @@
 package org.osmf.player.elements {
+	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.text.TextFormat;
@@ -12,15 +13,22 @@ package org.osmf.player.elements {
 		private var _tweener:Tweener;
 		
 		public function ChannelGroup(name:String) {
+			initMask();
+			setText(name);
+			setHeight(groupNameTxt.textHeight);
+			channels = new Vector.<Channel>();
+			for (var i:int = 0; i < numChildren; i++) {
+				(getChildAt(i) as InteractiveObject) && ((getChildAt(i) as InteractiveObject).mouseEnabled = false);
+			}
+		}
+		
+		private function setText(name:String):void {
 			var tf:TextFormat = groupNameTxt.defaultTextFormat;
 			groupNameTxt.text = name;
 			tf.bold = true;
 			groupNameTxt.setTextFormat(tf);
 			groupNameTxt.width = Math.max(groupNameTxt.textWidth, groupNameTxt.width);
-			setHeight(groupNameTxt.textHeight);
-			channels = new Vector.<Channel>();
 			switcher.x = groupNameTxt.x + groupNameTxt.textWidth + 10;
-			initMask();
 		}
 		
 		private function initMask():void {
@@ -32,6 +40,8 @@ package org.osmf.player.elements {
 				endFill();
 			}
 			_mask.height = 0;
+			_mask.mouseEnabled = false;
+			_channelsContaner.mouseEnabled = false;
 			_channelsContaner.mask = _mask;
 			_channelsContaner.y = groupNameTxt.height;
 		}
@@ -53,7 +63,7 @@ package org.osmf.player.elements {
 			addChild(_channelsContaner);
 			switcher.gotoAndStop('opened');
 			_tweener && _tweener.stop();
-			_tweener = new Tweener(_mask, 'height', _channelsContaner.height, 10, expandIsDone);
+			_tweener = new Tweener(_mask, 'height', _channelsContaner.height, int(_channelsContaner.height / 15), expandIsDone);
 		}
 		
 		private function expandIsDone():void { 
@@ -64,7 +74,7 @@ package org.osmf.player.elements {
 			_channelsContaner.addChild(_mask);
 			addChild(_channelsContaner);
 			_tweener && _tweener.stop();
-			_tweener = new Tweener(_mask, 'height', 0, 10, collapseIsDone);
+			_tweener = new Tweener(_mask, 'height', 0, 7, collapseIsDone);
 		}
 		
 		private function collapseIsDone():void { 
@@ -76,7 +86,9 @@ package org.osmf.player.elements {
 		
 		private function setHeight(value:Number):void {
 			groupNameTxt.height = value;
-			bg.height = value + groupNameTxt.y * 2;
+			groupNameTxt.y = 2;
+			bg.height = value + 6;
+			_channelsContaner.y = bg.height;
 		}
 		
 		override public function get height():Number {
