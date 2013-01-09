@@ -22,6 +22,7 @@ package org.osmf.player.chrome
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.events.Event;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.ScaleMode;
@@ -125,28 +126,15 @@ package org.osmf.player.chrome
 			
 			// Right side
  			var rightControls:Widget = new Widget();
-			//rightControls.layoutMetadata.percentWidth = 100;
+			rightControls.layoutMetadata.percentWidth = 100;
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			//rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
 			var afterScrubSpacer:Widget = new Widget();
 			afterScrubSpacer.width = 10;
 			rightControls.addChildWidget(afterScrubSpacer);
-			
-			// Time view
-			//var timeViewWidget:TimeViewWidget = new TimeViewWidget();
-            //timeViewWidget.id = WidgetIDs.TIME_VIEW_WIDGET;
-			//timeViewWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			//timeViewWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;	
-			//rightControls.addChildWidget(timeViewWidget);
-			
-			// HD indicator
-			//var hdIndicator:QualityIndicator = new QualityIndicator();
-			//hdIndicator.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			//hdIndicator.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			//rightControls.addChildWidget(hdIndicator);
 			
 			//ChannelListButton
 			var channelListButton:ChannelListButton = new ChannelListButton();
@@ -172,31 +160,39 @@ package org.osmf.player.chrome
 			afterTimeSpacer.width = 5;
 			rightControls.addChildWidget(afterTimeSpacer);
 			
+			var muteContainerWidget:Widget = new Widget();
+			muteContainerWidget.layoutMetadata.width = 38;
+			muteContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
+			//muteContainerWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			rightControls.addChildWidget(muteContainerWidget);
+			
 			// Mute/unmute
 			var muteButton:MuteButton = new MuteButton();
 			muteButton.id = WidgetIDs.MUTE_BUTTON;
 			muteButton.volumeSteps = 3;
 			muteButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			muteButton.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
-			rightControls.addChildWidget(muteButton);
+			muteContainerWidget.addChildWidget(muteButton);
+			
+			var fullscreenContainerWidget:Widget = new Widget();
+			fullscreenContainerWidget.layoutMetadata.width = 26;
+			fullscreenContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			fullscreenContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
+			//fullscreenContainerWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			rightControls.addChildWidget(fullscreenContainerWidget);
 			
 			// FullScreen			
 			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
-			fullscreenLeaveButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			fullscreenLeaveButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.addChildWidget(fullscreenLeaveButton);
+			
+			fullscreenContainerWidget.addChildWidget(fullscreenLeaveButton);
 			
 			fullscreenEnterButton.id = WidgetIDs.FULL_SCREEN_ENTER_BUTTON; 
-			fullscreenEnterButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			fullscreenEnterButton.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
-			rightControls.addChildWidget(fullscreenEnterButton);
+			fullscreenContainerWidget.addChildWidget(fullscreenEnterButton);
 			
 			addChildWidget(rightControls);
 			
 			// Spacer
 			var afterFullScreenSpacer:Widget = new Widget();
-			afterFullScreenSpacer.width = 10;
-			afterFullScreenSpacer.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
+			afterFullScreenSpacer.width = 20;
 			addChildWidget(afterFullScreenSpacer);
 			
 			var rightMargin:Widget = new Widget();
@@ -222,7 +218,9 @@ package org.osmf.player.chrome
 				afterChannelSpacer,
 				qualitySwitcherWidget, 
 				afterTimeSpacer,
+				muteContainerWidget,
 				muteButton, 
+				fullscreenContainerWidget,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
 				afterFullScreenSpacer, 
