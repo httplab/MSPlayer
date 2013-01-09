@@ -7,9 +7,12 @@ package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
+	import flash.ui.Mouse;
+	import flash.ui.MouseCursor;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.VerticalAlign;
+	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.Channel;
 	import org.osmf.player.elements.ChannelGroup;
@@ -18,11 +21,10 @@ package org.osmf.player.chrome.widgets {
 	public class ChannelListDialog extends Widget {
 		static private const SCROLL_SPEED:Number = 5;
 		private var TOP_GAP:Number = 0;
-		private var closeButton:Sprite;
+		private var closeButton:ButtonWidget;
 		private var _content:Vector.<ChannelGroup>;
 		private var _contentContainer:Sprite;
 		private var _currentGroup:ChannelGroup;
-		private var _animationInProgress:int = 0;
 		private var back:ASSET_ChannelsListBack;
 		private var _mask:Sprite;
 		private var _dragger:MovieClip;
@@ -39,6 +41,8 @@ package org.osmf.player.chrome.widgets {
 			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
 			prepareContentContainer();
 			prepareCloseButton();
+			closeButton.configure(xml, assetManager);
+			closeButton.x = back.width - 35;
 			initDragger();
 			super.configure(xml, assetManager);
 			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
@@ -67,12 +71,17 @@ package org.osmf.player.chrome.widgets {
 			_dragger.y = TOP_GAP;
 			addChild(_dragger);
 			_dragger.addEventListener(MouseEvent.MOUSE_DOWN, startDraggerActions);
+			_dragger.addEventListener(MouseEvent.ROLL_OVER, draggerOverHandler);
+			_dragger.addEventListener(MouseEvent.ROLL_OUT, draggerOutHandler);
 		}
 		
 		private function prepareCloseButton():void {
-			closeButton = back.closeButton;
-			closeButton.mouseChildren = false;
-			closeButton.buttonMode = true;
+			closeButton = new ButtonWidget();
+			closeButton.id = WidgetIDs.CLOSE_BUTTON;
+			closeButton.upFace = AssetIDs.AUTH_CANCEL_BUTTON_NORMAL;
+			closeButton.overFace = AssetIDs.AUTH_CANCEL_BUTTON_OVER;
+			closeButton.downFace = AssetIDs.AUTH_CANCEL_BUTTON_DOWN;
+			addChild(closeButton);
 			closeButton.addEventListener(MouseEvent.CLICK, onCloseButtonClick);
 		}
 		
@@ -104,9 +113,17 @@ package org.osmf.player.chrome.widgets {
 		* User actions' handlers
 		*/
 		
+		private function draggerOutHandler(event:MouseEvent):void {
+			Mouse.cursor = MouseCursor.ARROW;
+		}
+		
+		private function draggerOverHandler(event:MouseEvent):void {
+			Mouse.cursor = MouseCursor.BUTTON;
+		}
+		
 		private function startDraggerActions(e:MouseEvent):void {
-			if (_animationInProgress) { return; }
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
+			_dragger.removeEventListener(MouseEvent.ROLL_OUT, draggerOutHandler);
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.startDrag(false, new Rectangle(_dragger.x, TOP_GAP, 0, maxDragY - TOP_GAP));
 			_dragger.stage.addEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
@@ -125,6 +142,7 @@ package org.osmf.player.chrome.widgets {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			_dragger.stopDrag();
+			_dragger.addEventListener(MouseEvent.ROLL_OUT, draggerOutHandler);
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraggerActions);
 			_dragger.stage.removeEventListener(MouseEvent.ROLL_OUT, stopDraggerActions);
 			_dragger.stage.removeEventListener(MouseEvent.MOUSE_MOVE, moveChannelList);
@@ -156,14 +174,12 @@ package org.osmf.player.chrome.widgets {
 				_tweener && _tweener.stop();
 				_tweener = new Tweener(_contentContainer, 'y', TOP_GAP - (_content.indexOf(_currentGroup) * _currentGroup.height), 10);
 				_currentGroup.expand();
-				_animationInProgress++;
 			}
 			channelGroupAnimationEndHandler(e);
 		}
 		
 		
 		private function channelGroupAnimationEndHandler(e:Event):void {
-			_animationInProgress--;
 			checkForDraggerAvailability();
 		}
 		
@@ -187,7 +203,6 @@ package org.osmf.player.chrome.widgets {
 				return;
 			} 
 			_currentGroup.collapse();
-			_animationInProgress++;
 			_tweener = new Tweener(_contentContainer, 'y', TOP_GAP, 10);
 			if (_currentGroup != value) {
 				_currentGroup = value;

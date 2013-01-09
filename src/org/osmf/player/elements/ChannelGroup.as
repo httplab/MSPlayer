@@ -2,7 +2,10 @@ package org.osmf.player.elements {
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
+	import flash.ui.Mouse;
+	import flash.ui.MouseCursor;
 	public class ChannelGroup extends ASSET_ChannelGroup {
 		static public const EXPAND_END:String = "expandEnd";
 		static public const COLLAPSE_END:String = "collapseEnd";
@@ -21,6 +24,17 @@ package org.osmf.player.elements {
 			for (var i:int = 0; i < numChildren; i++) {
 				(getChildAt(i) as InteractiveObject) && ((getChildAt(i) as InteractiveObject).mouseEnabled = false);
 			}
+			bg.mouseEnabled = true;
+			bg.addEventListener(MouseEvent.ROLL_OVER, overHandler);
+			bg.addEventListener(MouseEvent.ROLL_OUT, outHandler);
+		}
+		
+		private function outHandler(event:MouseEvent):void {
+			Mouse.cursor = MouseCursor.ARROW;
+		}
+		
+		private function overHandler(event:MouseEvent):void {
+			Mouse.cursor = MouseCursor.BUTTON;
 		}
 		
 		private function setText(name:String):void {
