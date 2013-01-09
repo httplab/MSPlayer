@@ -160,11 +160,11 @@ package org.osmf.player.chrome.widgets
 		//
 		
 		override public function set x(value:Number):void {
-			parent && (super.x = parent.width / 2);
+			stage && (super.x = stage.stageWidth / 2);
 		}
 		
 		override public function set y(value:Number):void {
-			parent && (super.y = parent.height / 2);
+			stage && (super.y = stage.stageHeight / 2);
 		}
 		
 		private function updateState(event:Event = null):void
