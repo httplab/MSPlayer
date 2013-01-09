@@ -62,6 +62,7 @@ package {
 			adBlockTF.background = true;
 			adBlockTF.backgroundColor = AD_BLOCK_BGCOLOR;
 			adBlockTF.text = AD_BLOCK_TEXT;
+			adBlockTF.setTextFormat(boldFormat);
 			adBlockTF.alpha = .8;
 			adBlockTF.selectable = false;
 		}
@@ -120,6 +121,7 @@ package {
 		
 		private function renderSeconds(e:TimerEvent):void {
 			secondsTF.text = DEFAULT_SECONDS_TEXT.split('|S|').join(secondsLeft--);
+			secondsTF.setTextFormat(regularFormat);
 		}
 		
 		private function readyToWork(e:TimerEvent):void {
@@ -127,6 +129,7 @@ package {
 				secondsTF.removeEventListener(MouseEvent.ROLL_OVER, setOveredState);
 				secondsTF.removeEventListener(MouseEvent.ROLL_OUT, setReadyState);
 				secondsTF.text = READY_SECONDS_TEXT;
+				secondsTF.setTextFormat(regularFormat);
 				secondsTF.addEventListener(MouseEvent.ROLL_OVER, setOveredState);
 				secondsTF.addEventListener(MouseEvent.ROLL_OUT, setReadyState);
 				secondsTF.addEventListener(MouseEvent.MOUSE_DOWN, processUserPassAdRequest);
