@@ -113,10 +113,7 @@ package org.osmf.player.chrome.widgets
 			}
 			
 			scaleX = scaleY = 1;
-			var faceDO:DisplayObject = getChildAt(0);
-			faceDO && removeChild(faceDO);
 			super.measure(deep);
-			faceDO && addChild(faceDO);
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean=true):void
@@ -161,6 +158,14 @@ package org.osmf.player.chrome.widgets
 		
 		// Internals
 		//
+		
+		override public function set x(value:Number):void {
+			parent && (super.x = parent.width / 2);
+		}
+		
+		override public function set y(value:Number):void {
+			parent && (super.y = parent.height / 2);
+		}
 		
 		private function updateState(event:Event = null):void
 		{
