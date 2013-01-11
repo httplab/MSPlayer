@@ -23,7 +23,6 @@ package {
 		
 		static public const RECORDED_DATA_REQUEST:String = "http://www.tvbreak.ru/api/movies/|SRCID|/source.json";
 		static public const LIVE_DATA_REQUEST:String = "http://www.tvbreak.ru/api/tv/|SRCID|/source.json";
-		static public const STREAM_SRC_BASE:String = "rtmp://w1.msproject.httplab.ru/vod/mp4:";
 		static public const STREAM_CHANGED:String = "streamChanged";
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
@@ -90,7 +89,7 @@ package {
 		
 		override public function get url():String {
 			if (streamType == StreamType.RECORDED) {
-				return STREAM_SRC_BASE + getMetadataValue('filepath').toString();
+				return getMetadataValue('filepath').toString();
 			}
 			return getMetadataValue('url').toString();
 		}
