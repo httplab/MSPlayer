@@ -3,6 +3,7 @@ package org.osmf.player.elements {
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.external.ExternalInterface;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import org.osmf.layout.HorizontalAlign;
@@ -20,6 +21,7 @@ package org.osmf.player.elements {
 	
 	
 	public class ChannelListDialogElement extends MediaElement {
+		private var _jsCallbackFunctionName:String = '';
 		static public const CHANNEL_CHANGED:String = "channelChanged";
 		static public const ALL_CHANNELS:String = "Все каналы";
 		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://www.tvbreak.ru/api/tvslice";
@@ -91,12 +93,19 @@ package org.osmf.player.elements {
 			var channel:Channel = (e.currentTarget as Channel);
 			_configuration.srcId = channel.srcId;
 			_configuration.type = StreamType.LIVE;
+			_jsCallbackFunctionName && 
+				ExternalInterface.available && 
+				ExternalInterface.call(_jsCallbackFunctionName, channel.srcId);
 			dispatchEvent(new Event(CHANNEL_CHANGED));
 		}
 		
 		private function loadFailed(e:Event):void {
 			//TODO: Tell about initialization failure
 			trace("Sry, guys, i tried to do my best");
+		}
+		
+		public function set jsCallbackFunctionName(value:String):void {
+			_jsCallbackFunctionName = value;
 		}
 	}
 }
