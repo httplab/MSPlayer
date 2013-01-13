@@ -32,21 +32,38 @@ package org.osmf.player.chrome.assets
 		public static const CONTROL_BAR_BACKDROP_LEFT:String = "controlBarBackdropLeft";
 		public static const CONTROL_BAR_BACKDROP_RIGHT:String = "controlBarBackdropRight";
 		
-		public static const SCRUB_BAR_TRACK:String = "scrubBarTrack";
-		public static const SCRUB_BAR_TRACK_LEFT:String = "scrubBarTrackLeft";
-		public static const SCRUB_BAR_TRACK_RIGHT:String = "scrubBarTrackRight";
-		public static const SCRUB_BAR_LOADED_TRACK:String = "scrubBarLoadedTrack";
-		public static const SCRUB_BAR_LOADED_TRACK_END:String = "scrubBarLoadedTrackEnd";
-		public static const SCRUB_BAR_PLAYED_TRACK:String = "scrubBarPlayedTrack";
-		public static const SCRUB_BAR_PLAYED_TRACK_SEEKING:String = "scrubBarPlayedTrackSeeking";
-		public static const SCRUB_BAR_DVR_LIVE_TRACK:String = "scrubBarDVRLiveTrack";
-		public static const SCRUB_BAR_DVR_LIVE_INACTIVE_TRACK:String = "scrubBarDVRLiveInactiveTrack";
-		public static const SCRUB_BAR_LIVE_ONLY_TRACK:String = "scrubBarLiveOnlyTrack";
-		public static const SCRUB_BAR_LIVE_ONLY_INACTIVE_TRACK:String = "scrubBarLiveOnlyInactiveTrack";
-		public static const SCRUB_BAR_SCRUBBER_NORMAL:String = "scrubBarScrubberNormal";
-		public static const SCRUB_BAR_SCRUBBER_DOWN:String = "scrubBarScrubberDown";
-		public static const SCRUB_BAR_SCRUBBER_OVER:String = "scrubBarScrubberOver";
-		public static const SCRUB_BAR_SCRUBBER_DISABLED:String = "scrubBarScrubberDisabled";
+		//public static const SCRUB_BAR_TRACK:String = "scrubBarTrack";
+		//public static const SCRUB_BAR_TRACK_LEFT:String = "scrubBarTrackLeft";
+		//public static const SCRUB_BAR_TRACK_RIGHT:String = "scrubBarTrackRight";
+		//public static const SCRUB_BAR_LOADED_TRACK:String = "scrubBarLoadedTrack";
+		//public static const SCRUB_BAR_LOADED_TRACK_END:String = "scrubBarLoadedTrackEnd";
+		//public static const SCRUB_BAR_PLAYED_TRACK:String = "scrubBarPlayedTrack";
+		//public static const SCRUB_BAR_PLAYED_TRACK_SEEKING:String = "scrubBarPlayedTrackSeeking";
+		//public static const SCRUB_BAR_DVR_LIVE_TRACK:String = "scrubBarDVRLiveTrack";
+		//public static const SCRUB_BAR_DVR_LIVE_INACTIVE_TRACK:String = "scrubBarDVRLiveInactiveTrack";
+		//public static const SCRUB_BAR_LIVE_ONLY_TRACK:String = "scrubBarLiveOnlyTrack";
+		//public static const SCRUB_BAR_LIVE_ONLY_INACTIVE_TRACK:String = "scrubBarLiveOnlyInactiveTrack";
+		//public static const SCRUB_BAR_SCRUBBER_NORMAL:String = "scrubBarScrubberNormal";
+		//public static const SCRUB_BAR_SCRUBBER_DOWN:String = "scrubBarScrubberDown";
+		//public static const SCRUB_BAR_SCRUBBER_OVER:String = "scrubBarScrubberOver";
+		//public static const SCRUB_BAR_SCRUBBER_DISABLED:String = "scrubBarScrubberDisabled";
+		
+		static public const SCRUB_BAR_WHITE_LEFT:String = "scrubBarWhiteLeft";
+		static public const SCRUB_BAR_WHITE_MIDDLE:String = "scrubBarWhiteMiddle";
+		static public const SCRUB_BAR_WHITE_RIGHT:String = "scrubBarWhiteRight";
+		
+		static public const SCRUB_BAR_BLUE_LEFT:String = "scrubBarBlueLeft";
+		static public const SCRUB_BAR_BLUE_MIDDLE:String = "scrubBarBlueMiddle";
+		static public const SCRUB_BAR_BLUE_RIGHT:String = "scrubBarBlueRight";
+		
+		static public const SCRUB_BAR_GRAY_LEFT:String = "scrubBarGrayLeft";
+		static public const SCRUB_BAR_GRAY_MIDDLE:String = "scrubBarGrayMiddle";
+		static public const SCRUB_BAR_GRAY_RIGHT:String = "scrubBarGrayRight";
+		
+		static public const SCRUB_BAR_DARK_GRAY_LEFT:String = "scrubBarDarkGrayLeft";
+		static public const SCRUB_BAR_DARK_GRAY_MIDDLE:String = "scrubBarDarkGrayMiddle";
+		static public const SCRUB_BAR_DARK_GRAY_RIGHT:String = "scrubBarDarkGrayRight";
+		
 		public static const SCRUB_BAR_TIME_HINT:String = "scrubBarTimeHint";
 		
 		public static const BACK_BUTTON_NORMAL:String = "backButtonNormal";

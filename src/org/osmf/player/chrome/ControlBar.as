@@ -18,11 +18,9 @@
  * 
  **********************************************************/
 
-package org.osmf.player.chrome
-{
+package org.osmf.player.chrome {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.events.Event;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.ScaleMode;
@@ -47,15 +45,13 @@ package org.osmf.player.chrome
 	import org.osmf.traits.PlayTrait;
 
 	/**
-	 * ControlBar contains all the control widgets and is responsible for their layout.
-	 */ 
-	public class ControlBar extends AutoHideWidget implements IControlBar
-	{
+	* ControlBar contains all the control widgets and is responsible for their layout.
+	*/ 
+	
+	public class ControlBar extends AutoHideWidget implements IControlBar {
 		// Overrides
 		//
-	
-		override public function configure(xml:XML, assetManager:AssetsManager):void
-		{
+		override public function configure(xml:XML, assetManager:AssetsManager):void {
 			id = WidgetIDs.CONTROL_BAR;
 			face = AssetIDs.CONTROL_BAR_BACKDROP;
 			fadeSteps = 6;			
@@ -71,11 +67,6 @@ package org.osmf.player.chrome
 			leftMargin.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			leftMargin.layoutMetadata.width = 7;
 			addChildWidget(leftMargin);
-			
-			// Spacer
-			//var beforePlaySpacer:Widget = new Widget();
-			//beforePlaySpacer.width = 6;			
-			//addChildWidget(beforePlaySpacer);
 			
 			var leftControls:Widget = new Widget();
 			leftControls.layoutMetadata.percentHeight = 100;
@@ -119,9 +110,9 @@ package org.osmf.player.chrome
 			// Scrub bar
 			var scrubBar:ScrubBar = new ScrubBar();		
 			scrubBar.id = WidgetIDs.SCRUB_BAR;
+			scrubBar.layoutMetadata.percentWidth = 100;
 			scrubBar.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
 			scrubBar.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			scrubBar.layoutMetadata.percentWidth = 100;
 			addChildWidget(scrubBar);
 			
 			// Right side
@@ -163,7 +154,6 @@ package org.osmf.player.chrome
 			var muteContainerWidget:Widget = new Widget();
 			muteContainerWidget.layoutMetadata.width = 38;
 			muteContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			//muteContainerWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.addChildWidget(muteContainerWidget);
 			
 			// Mute/unmute
@@ -177,17 +167,13 @@ package org.osmf.player.chrome
 			fullscreenContainerWidget.layoutMetadata.width = 26;
 			fullscreenContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			fullscreenContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			//fullscreenContainerWidget.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.addChildWidget(fullscreenContainerWidget);
 			
 			// FullScreen			
 			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
-			
 			fullscreenContainerWidget.addChildWidget(fullscreenLeaveButton);
-			
 			fullscreenEnterButton.id = WidgetIDs.FULL_SCREEN_ENTER_BUTTON; 
 			fullscreenContainerWidget.addChildWidget(fullscreenEnterButton);
-			
 			addChildWidget(rightControls);
 			
 			// Spacer
@@ -203,7 +189,6 @@ package org.osmf.player.chrome
 			
 			_widgets = [ 
 				leftMargin, 
-				//beforePlaySpacer, 
 				pauseButton, 
 				playButton, 
 				previousButton, 
@@ -212,8 +197,6 @@ package org.osmf.player.chrome
 				leftControls,
 				scrubBar, 
 				afterScrubSpacer,
-				//timeViewWidget,
-				//hdIndicator, 
 				channelListButton,
 				afterChannelSpacer,
 				qualitySwitcherWidget, 
@@ -257,23 +240,14 @@ package org.osmf.player.chrome
 			return toReturn;
 		}
 		
-//		public function set scrubBarAndPlaybackButtonsVisible(value:Boolean):void{
-//			trace("ControlBar: set scrubBarAndPlaybackButtonsVisible");
-//			return;
-//		}
-//		
-//		public function get scrubBarAndPlaybackButtonsVisible():Boolean{
-//			trace("ControlBar: get scrubBarAndPlaybackButtonsVisible");
-//			return true;
-//		}
 		public function get widgets():Array{
 			trace("ControlBar: get widgets");
 			return _widgets;
 		}
-
+		
 		// Internals
 		//
-	
+		
 		private function configureWidgets(widgets:Array):void
 		{
 			for each( var widget:Widget in widgets)

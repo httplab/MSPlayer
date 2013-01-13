@@ -147,25 +147,42 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.CONTROL_BAR_BACKDROP_RIGHT, ASSET_backDrop_right_wrapper);
 			
 			// Scrub bar:
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK, ASSET_scrub_no_load);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK_LEFT, ASSET_scrub_left);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK_RIGHT, ASSET_scrub_right);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LOADED_TRACK, ASSET_scrub_loaded);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LOADED_TRACK_END, ASSET_scrub_loaded_end);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_PLAYED_TRACK, ASSET_scrub_loaded_played);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_PLAYED_TRACK_SEEKING, ASSET_scrub_loaded_played_seeking);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK, ASSET_scrub_no_load);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK_LEFT, ASSET_scrub_left);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TRACK_RIGHT, ASSET_scrub_right);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LOADED_TRACK, ASSET_scrub_loaded);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LOADED_TRACK_END, ASSET_scrub_loaded_end);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_PLAYED_TRACK, ASSET_scrub_loaded_played);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_PLAYED_TRACK_SEEKING, ASSET_scrub_loaded_played_seeking);
+			//
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DVR_LIVE_TRACK, ASSET_ScrubDvrLive);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DVR_LIVE_INACTIVE_TRACK, ASSET_ScrubDvrLiveInactive);	
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_ONLY_TRACK, ASSET_ScrubLive);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_ONLY_INACTIVE_TRACK, ASSET_ScrubLiveInactive);
+			//
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_NORMAL, ASSET_scrub_tab);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_DOWN, ASSET_scrub_tab);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_OVER, ASSET_scrub_tab);
+			//addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_OVER, ASSET_scrub_tab);
 			
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DVR_LIVE_TRACK, ASSET_ScrubDvrLive);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DVR_LIVE_INACTIVE_TRACK, ASSET_ScrubDvrLiveInactive);	
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_ONLY_TRACK, ASSET_ScrubLive);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_ONLY_INACTIVE_TRACK, ASSET_ScrubLiveInactive);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_GRAY_LEFT, ASSET_scrub_gray_left);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_GRAY_MIDDLE, ASSET_scrub_gray_middle);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_GRAY_RIGHT, ASSET_scrub_gray_right);
 			
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_NORMAL, ASSET_scrub_tab);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_DOWN, ASSET_scrub_tab);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_OVER, ASSET_scrub_tab);
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SCRUBBER_OVER, ASSET_scrub_tab);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT, ASSET_scrub_darkGray_left);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE, ASSET_scrub_darkGray_middle);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_DARK_GRAY_RIGHT, ASSET_scrub_darkGray_right);
+			
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_BLUE_LEFT, ASSET_scrub_blue_left);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_BLUE_MIDDLE, ASSET_scrub_blue_middle);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_BLUE_RIGHT, ASSET_scrub_blue_right);
+			
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_LEFT, ASSET_scrub_white_left);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_MIDDLE, ASSET_scrub_white_middle);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_RIGHT, ASSET_scrub_white_right);
+			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT, ASSET_time_hint);
-						
+			
 			// Play button:
 			addEmbeddedSymbol(AssetIDs.PLAY_BUTTON_NORMAL, ASSET_play_normal);
 			addEmbeddedSymbol(AssetIDs.PLAY_BUTTON_DOWN, ASSET_play_selected);

@@ -92,7 +92,7 @@ package org.osmf.player.chrome{
 			// Scrub bar
 			var scrubBar:ScrubBar = new ScrubBar();
 			scrubBar.id = WidgetIDs.SCRUB_BAR;
-			scrubBar.includeTimeHint = false;
+			//scrubBar.includeTimeHint = false;
 			scrubBar.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
 			scrubBar.layoutMetadata.verticalAlign = VerticalAlign.TOP;
 			scrubBar.layoutMetadata.percentWidth = 100;

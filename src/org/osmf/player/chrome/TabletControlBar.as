@@ -114,7 +114,7 @@ package org.osmf.player.chrome{
 			scrubBar.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			scrubBar.layoutMetadata.percentWidth = 100;
 			scrubBar.layoutMetadata.height = 25;
-			scrubBar.includeTimeHint = false;
+			//scrubBar.includeTimeHint = false;
 			middleControls.addChildWidget(scrubBar);
 			
 			// Spacer
