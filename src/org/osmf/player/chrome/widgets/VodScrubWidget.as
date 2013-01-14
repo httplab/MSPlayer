@@ -2,6 +2,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -23,6 +24,7 @@ package org.osmf.player.chrome.widgets {
 		private var _playedMask:Sprite;
 		private var seeker:Seeker;
 		private var _seekTo:Number;
+		private var _hintPosition:Number;
 		
 		public function VodScrubWidget() {
 			super();
@@ -34,6 +36,8 @@ package org.osmf.player.chrome.widgets {
 			emptyContainer = new Sprite();
 			loadedContainer = new Sprite();
 			playedContainer = new Sprite();
+			
+			emptyContainer.mouseEnabled = loadedContainer.mouseEnabled = playedContainer.mouseEnabled = false;
 			
 			backDropLeft_played = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_LEFT); 
 			backDropMiddle_played = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_MIDDLE); 
@@ -74,6 +78,10 @@ package org.osmf.player.chrome.widgets {
 			seeker.addEventListener(Seeker.SEEK_UPDATE, onSeekerUpdate);
 			seeker.addEventListener(Seeker.SEEK_END, onSeekerEnd);
 			addChild(seeker);
+			
+			addEventListener(MouseEvent.ROLL_OVER, callShowHint);
+			addEventListener(MouseEvent.MOUSE_MOVE, callShowHint);
+			addEventListener(MouseEvent.ROLL_OUT, callHideHint);
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
@@ -105,6 +113,16 @@ package org.osmf.player.chrome.widgets {
 		private function onSeekerEnd(event:Event):void {
 			dispatchEvent(new Event(ScrubBar.PLAY_CALL));
 		}
+		
+		private function callShowHint(e:MouseEvent):void {
+			_hintPosition = mouseX / width;
+			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL))
+		}
+		
+		private function callHideHint(e:MouseEvent):void {
+			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
+		}
+		
 		
 		public function set loadedPosition(value:Number):void {
 			isNaN(value) && (value = 0);
@@ -140,6 +158,10 @@ package org.osmf.player.chrome.widgets {
 		
 		public function get seekTo():Number {
 			return _seekTo;
+		}
+		
+		public function get hintPosition():Number {
+			return _hintPosition;
 		}
 	}
 }

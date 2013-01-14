@@ -23,12 +23,15 @@ package org.osmf.player.chrome.widgets
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	import flash.text.TextFormatAlign;
+	import org.osmf.player.chrome.assets.AssetIDs;
 	
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
 
-	public class TimeHintWidget extends LabelWidget
-	{
+	public class TimeHintWidget extends LabelWidget {
+		public function TimeHintWidget() {
+			face = AssetIDs.SCRUB_BAR_TIME_HINT;
+		}
 		
 		// Overrides
 		//

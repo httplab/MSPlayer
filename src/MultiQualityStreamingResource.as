@@ -26,6 +26,7 @@ package {
 		static public const STREAM_CHANGED:String = "streamChanged";
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
+		private var _shedulesArray:Array;
 		
 		public function MultiQualityStreamingResource(srcId:int, streamType:String = '') {
 			super('', streamType);
@@ -54,6 +55,15 @@ package {
 					version[key] =versionData[key];
 				}
 				versionsArray.push(versionData);
+			}
+			var shedules:Object = (data.info ? data.info.shedule : { } ) || { }
+			_shedulesArray = [];
+			for each (var sheduleData:Object in shedules) {
+				var shedule:Object = {
+					start: Date.parse(sheduleData.start_at.split('-').join('/')),
+					title: sheduleData.title
+				}
+				_shedulesArray.push(shedule);
 			}
 			loadStream();
 		}
@@ -97,6 +107,10 @@ package {
 		override public function set streamType(value:String):void {
 			if (streamType) { return; }
 			super.streamType = value;
+		}
+		
+		public function get shedulesArray():Array {
+			return _shedulesArray.concat();
 		}
 		
 		/**
