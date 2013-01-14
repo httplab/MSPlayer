@@ -64,6 +64,9 @@ package org.osmf.player.chrome.assets
 		static public const SCRUB_BAR_DARK_GRAY_MIDDLE:String = "scrubBarDarkGrayMiddle";
 		static public const SCRUB_BAR_DARK_GRAY_RIGHT:String = "scrubBarDarkGrayRight";
 		
+		static public const SCRUB_BAR_RECORDED_RIGHT:String = "scrubBarRecordedRight";
+		static public const SCRUB_BAR_LIVE_RIGHT:String = "scrubBarLiveRight";
+		
 		public static const SCRUB_BAR_TIME_HINT:String = "scrubBarTimeHint";
 		
 		public static const BACK_BUTTON_NORMAL:String = "backButtonNormal";

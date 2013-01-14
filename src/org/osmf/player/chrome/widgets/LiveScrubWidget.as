@@ -9,7 +9,7 @@ package org.osmf.player.chrome.widgets {
 	public class LiveScrubWidget extends Widget {
 		private var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
-		private var backDropRight:DisplayObject;
+		protected var backDropLiveRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
@@ -22,7 +22,7 @@ package org.osmf.player.chrome.widgets {
 		
 		protected var backDropLeftFace:String;
 		protected var backDropMiddleFace:String;
-		protected var backDropRightFace:String;
+		protected var backDropLiveRightFace:String;
 		protected var backDropLeftProgramFace:String;
 		protected var backDropMiddleProgramFace:String;
 		protected var backDropRightProgramFace:String;
@@ -31,7 +31,7 @@ package org.osmf.player.chrome.widgets {
 			super();
 			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT;
 			backDropMiddleFace = AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE;
-			backDropRightFace = AssetIDs.SCRUB_BAR_DARK_GRAY_RIGHT;
+			backDropLiveRightFace = AssetIDs.SCRUB_BAR_LIVE_RIGHT;
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_GRAY_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_GRAY_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_GRAY_RIGHT;
@@ -47,7 +47,7 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropLeft = assetManager.getDisplayObject(backDropLeftFace); 
 			backDropMiddle = assetManager.getDisplayObject(backDropMiddleFace); 
-			backDropRight = assetManager.getDisplayObject(backDropRightFace); 
+			backDropLiveRight = assetManager.getDisplayObject(backDropLiveRightFace); 
 			
 			backDropLeft_program = assetManager.getDisplayObject(backDropLeftProgramFace); 
 			backDropMiddle_program = assetManager.getDisplayObject(backDropMiddleProgramFace); 
@@ -55,7 +55,7 @@ package org.osmf.player.chrome.widgets {
 			
 			container.addChild(backDropLeft);
 			container.addChild(backDropMiddle);
-			container.addChild(backDropRight);
+			container.addChild(backDropLiveRight);
 			
 			programContainer.addChild(backDropLeft_program);
 			programContainer.addChild(backDropMiddle_program);
@@ -73,14 +73,14 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
-			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropRight.width);
-			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropRight_program.width);
+			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
+			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
 			
 			backDropMiddle.x = backDropLeft.width;
-			backDropRight.x = availableWidth - backDropRight.width;
+			backDropLiveRight.x = availableWidth - backDropLiveRight.width;
 			
 			backDropMiddle_program.x = backDropLeft_program.width;
-			backDropRight_program.x = availableWidth - backDropRight_program.width;
+			backDropRight_program.x = availableWidth - backDropLiveRight.width;
 		}
 		
 		public function set programPositions(value:Array):void {
@@ -98,7 +98,7 @@ package org.osmf.player.chrome.widgets {
 				for (i = 0; i < value.length; i++) {
 					if (_programs[i].position > 1 || _programs[i].position < 0) { continue; }
 					beginFill(0, 1);
-					drawRect(_programs[i].position * width, 0, 2, height);
+					drawRect(int(20 * _programs[i].position * width)/20, 0, 2, height);
 					endFill();
 				}
 			}
@@ -114,7 +114,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function get width():Number {
-			return container.width;
+			return container.width - backDropLiveRight.width + backDropLeft.width;
 		}
 		
 		override public function get height():Number {

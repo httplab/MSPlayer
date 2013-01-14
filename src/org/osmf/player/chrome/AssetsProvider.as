@@ -181,6 +181,9 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_MIDDLE, ASSET_scrub_white_middle);
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_RIGHT, ASSET_scrub_white_right);
 			
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_RIGHT, ASSET_scrub_recorded_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_RIGHT, ASSET_scrub_live_right);
+			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT, ASSET_time_hint);
 			
 			// Play button:

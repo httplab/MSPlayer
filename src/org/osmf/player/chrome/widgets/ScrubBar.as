@@ -20,6 +20,8 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.widgets.LiveScrubWidget;
 	import org.osmf.player.chrome.widgets.TimeHintWidget;
 	import org.osmf.player.chrome.widgets.Widget;
+	import org.osmf.player.media.StrobeMediaPlayer;
+	import org.osmf.player.metadata.MediaMetadata;
 	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
@@ -90,6 +92,8 @@ package org.osmf.player.chrome.widgets {
 			switch(streamType) {
 				case StreamType.DVR: 
 					currentSubWidget = dvrScrub;
+					var mediaMetadata:MediaMetadata = media.metadata.getValue(MediaMetadata.ID) as MediaMetadata;
+					mediaMetadata.mediaPlayer.snapToLive();
 					break;
 				case StreamType.LIVE: 
 					currentSubWidget = liveScrub;
