@@ -48,7 +48,15 @@ package org.osmf.player.chrome.widgets
 				textField.x = getChildAt(0).width/2 - textField.width/2;
 				// get the bubble height and substract the stem and the shadow to 
 				// find the vertically available space to center in   
-				textField.y = _topPaddings + (_availableBubbleHeight - parseInt(textField.getTextFormat().size.toString())) / 2;
+				var size:Number = 12;
+				if (
+					textField && 
+					textField.getTextFormat() && 
+					textField.getTextFormat().size
+				) {
+					size = parseInt(textField.getTextFormat().size.toString());
+				}
+				textField.y = _topPaddings + (_availableBubbleHeight - size) / 2
 			}
 		}
 		
