@@ -116,25 +116,24 @@ package org.osmf.player.chrome {
 			addChildWidget(scrubBar);
 			
 			// Right side
- 			var rightControls:Widget = new Widget();
-			rightControls.layoutMetadata.percentWidth = 100;
+ 			rightControls = new Widget();
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
-			var afterScrubSpacer:Widget = new Widget();
+			afterScrubSpacer = new Widget();
 			afterScrubSpacer.width = 10;
 			rightControls.addChildWidget(afterScrubSpacer);
 			
 			//ChannelListButton
-			var channelListButton:ChannelListButton = new ChannelListButton();
+			channelListButton = new ChannelListButton();
 			channelListButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			channelListButton.layoutMetadata.width = 33;
 			channelListButton.id = WidgetIDs.CHANNEL_LIST_BUTTON;
 			rightControls.addChildWidget(channelListButton);
 			
-			var afterChannelSpacer:Widget = new Widget();
+			afterChannelSpacer = new Widget();
 			afterChannelSpacer.width = 10;
 			rightControls.addChildWidget(afterChannelSpacer);
 			
@@ -147,11 +146,11 @@ package org.osmf.player.chrome {
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
 			// Spacer
-			var afterTimeSpacer:Widget = new Widget();
+			afterTimeSpacer = new Widget();
 			afterTimeSpacer.width = 5;
 			rightControls.addChildWidget(afterTimeSpacer);
 			
-			var muteContainerWidget:Widget = new Widget();
+			muteContainerWidget = new Widget();
 			muteContainerWidget.layoutMetadata.width = 38;
 			muteContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.addChildWidget(muteContainerWidget);
@@ -163,7 +162,7 @@ package org.osmf.player.chrome {
 			muteButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			muteContainerWidget.addChildWidget(muteButton);
 			
-			var fullscreenContainerWidget:Widget = new Widget();
+			fullscreenContainerWidget = new Widget();
 			fullscreenContainerWidget.layoutMetadata.width = 26;
 			fullscreenContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			fullscreenContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
@@ -175,6 +174,15 @@ package org.osmf.player.chrome {
 			fullscreenEnterButton.id = WidgetIDs.FULL_SCREEN_ENTER_BUTTON; 
 			fullscreenContainerWidget.addChildWidget(fullscreenEnterButton);
 			addChildWidget(rightControls);
+			
+			rightControls.layoutMetadata.width = 
+				afterScrubSpacer.width + 
+				channelListButton.layoutMetadata.width + 
+				afterChannelSpacer.width +
+				qualitySwitcherWidget.layoutMetadata.width +
+				afterTimeSpacer.width +
+				muteContainerWidget.layoutMetadata.width + 
+				fullscreenContainerWidget.layoutMetadata.width
 			
 			// Spacer
 			var afterFullScreenSpacer:Widget = new Widget();
@@ -224,6 +232,47 @@ package org.osmf.player.chrome {
 					widget.height = height;
 				}
 			}
+		}
+		
+		override public function set width(value:Number):void {
+			if (_isExpanded && (value < MIN_EXPANDED_WITDH)) {
+				switchToCollapsedState();
+				value -= 40;
+			} else if (!_isExpanded && (value >= MIN_EXPANDED_WITDH)) {
+				switchToExpandedState();
+			}
+			super.width = value - 40;			
+			validateNow();
+		}
+		
+		private function switchToExpandedState():void {
+			_isExpanded = true;
+			rightControls.addChildWidget(channelListButton);
+			rightControls.addChildWidget(afterChannelSpacer);
+			rightControls.addChildWidget(qualitySwitcherWidget);
+			rightControls.addChildWidget(afterTimeSpacer);
+			rightControls.removeChildWidget(muteContainerWidget);
+			rightControls.addChildWidget(muteContainerWidget);
+			rightControls.removeChildWidget(fullscreenContainerWidget);
+			rightControls.addChildWidget(fullscreenContainerWidget);
+			rightControls.layoutMetadata.width = afterScrubSpacer.width + 
+				channelListButton.layoutMetadata.width + 
+				afterChannelSpacer.width +
+				qualitySwitcherWidget.layoutMetadata.width +
+				afterTimeSpacer.width +
+				muteContainerWidget.layoutMetadata.width + 
+				fullscreenContainerWidget.layoutMetadata.width
+		}
+		
+		private function switchToCollapsedState():void {
+			_isExpanded = false;
+			rightControls.removeChildWidget(channelListButton);
+			rightControls.removeChildWidget(afterChannelSpacer);
+			rightControls.removeChildWidget(qualitySwitcherWidget);
+			rightControls.removeChildWidget(afterTimeSpacer);
+			rightControls.layoutMetadata.width = afterScrubSpacer.width + 
+				muteContainerWidget.layoutMetadata.width + 
+				fullscreenContainerWidget.layoutMetadata.width
 		}
 		
 		override public function get height():Number {
@@ -280,6 +329,15 @@ package org.osmf.player.chrome {
 		private var _widgets:Array;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		private var qualitySwitcherWidget:QualitySwitcherContainer;
+		private var _isExpanded:Boolean = true;
+		static public const MIN_EXPANDED_WITDH:Number = 350;
+		private var rightControls:Widget;
+		private var channelListButton:ChannelListButton;
+		private var afterChannelSpacer:Widget;
+		private var afterTimeSpacer:Widget;
+		private var muteContainerWidget:Widget;
+		private var fullscreenContainerWidget:Widget;
+		private var afterScrubSpacer:Widget;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}
 }
