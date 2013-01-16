@@ -140,7 +140,7 @@ package {
 		
 		public function initialize(parameters:Object, stage:Stage, loaderInfo:LoaderInfo, pluginHostWhitelist:Array):void {
 			injector = new InjectorModule();
-			initUncaughtErrorsHandler();
+			//initUncaughtErrorsHandler();
 			initPluginsWhitelist(pluginHostWhitelist);
 			initPlayerItself();
 			// Add DRM error handler
@@ -763,7 +763,7 @@ package {
 			media = null;
 			// Translate error message:
 			var message:String;
-			if (configuration.verbose) {
+			if (true || configuration.verbose) {
 				message = event.error.message + "\n" + event.error.detail;
 			} else {
 				message = ErrorTranslator.translate(event.error).message;
@@ -799,6 +799,8 @@ package {
 		}
 		
 		private function reportError(message:String):void {
+			//TODO: Remove on release!
+			throw new Error(message, 8036);
 			// If an alert widget is available, use it. Otherwise, trace the message:
 			if (viewHelper.alert) {
 				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
