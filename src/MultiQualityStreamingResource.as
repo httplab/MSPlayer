@@ -76,6 +76,11 @@ package {
 			for (var key:String in versionsArray[versionIdx]) {
 				addMetadataValue(key, versionsArray[versionIdx][key]);
 			}
+			if (getMetadataValue('dvr')) {
+				streamType = StreamType.DVR;
+			} else {
+				streamType = StreamType.LIVE;
+			}
 			dispatchEvent(new Event(STREAM_CHANGED));
 		}
 		
@@ -105,7 +110,7 @@ package {
 		}
 		
 		override public function set streamType(value:String):void {
-			if (streamType) { return; }
+			if (streamType == StreamType.RECORDED) { return; }
 			super.streamType = value;
 		}
 		

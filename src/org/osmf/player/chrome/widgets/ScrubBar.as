@@ -110,8 +110,8 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function addShedules():void {
-			if ((media is VideoElement) && ((media as VideoElement).resource is MultiQualityStreamingResource)) {
-				_currentSubWidget['programPositions'] = ((media as VideoElement).resource as MultiQualityStreamingResource).shedulesArray;
+			if ((media.resource) && (media.resource is MultiQualityStreamingResource)) {
+				_currentSubWidget['programPositions'] = (media.resource as MultiQualityStreamingResource).shedulesArray;
 			}
 		}
 		

@@ -13,7 +13,7 @@ package org.osmf.player.chrome.widgets {
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
-		private var container:Sprite;
+		protected var container:Sprite;
 		private var programContainer:Sprite;
 		private var _programMask:Sprite;
 		private var _programs:Array;
@@ -105,8 +105,12 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function callShowHint(e:MouseEvent):void {
-			_hintPosition = mouseX / width;
-			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
+			if (mouseX / width <= 1) {
+				_hintPosition = mouseX / width;
+				dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
+			} else {
+				callHideHint(e);
+			}
 		}
 		
 		private function callHideHint(e:MouseEvent):void {

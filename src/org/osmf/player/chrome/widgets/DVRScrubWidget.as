@@ -38,6 +38,7 @@ package org.osmf.player.chrome.widgets {
 			backDropRecorded = assetManager.getDisplayObject(backDropRecordedFace); 
 			backDropRecorded.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			backDropRecorded.visible = false;
+			container.addChild(backDropRecorded);
 		}
 		
 		private function goToLive(event:MouseEvent):void {
