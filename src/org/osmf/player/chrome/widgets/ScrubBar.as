@@ -176,7 +176,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function showHintCallHandler(e:Event):void {
-			if (_currentSubWidget != vodScrub) {
+			if (_currentSubWidget == dvrScrub) {
 				timeHint.text = _currentSubWidget['programText'];
 			} else {
 				if (!timeTrait) { return;}

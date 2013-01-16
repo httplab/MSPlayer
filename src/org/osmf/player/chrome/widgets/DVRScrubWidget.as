@@ -15,6 +15,7 @@ package org.osmf.player.chrome.widgets {
 		private var backDropRecordedFace:String;
 		private var seeker:Seeker;
 		private var _seekTo:Number;
+		private var _hintPosition:Number;
 		
 		public function DVRScrubWidget() {
 			super();
@@ -39,6 +40,23 @@ package org.osmf.player.chrome.widgets {
 			backDropRecorded.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			backDropRecorded.visible = false;
 			container.addChild(backDropRecorded);
+			
+			addEventListener(MouseEvent.ROLL_OVER, callShowHint);
+			addEventListener(MouseEvent.MOUSE_MOVE, callShowHint);
+			addEventListener(MouseEvent.ROLL_OUT, callHideHint);
+		}
+		
+		private function callShowHint(e:MouseEvent):void {
+			if (mouseX / width <= 1) {
+				_hintPosition = mouseX / width;
+				dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
+			} else {
+				callHideHint(e);
+			}
+		}
+		
+		private function callHideHint(e:MouseEvent):void {
+			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
 		}
 		
 		private function goToLive(event:MouseEvent):void {
@@ -78,6 +96,29 @@ package org.osmf.player.chrome.widgets {
 		
 		public function removeHandlers():void {
 			seeker.removeHandlers();
+		}
+		
+		public function get hintPosition():Number {
+			return _hintPosition;
+		}
+		
+		public function get programText():String {
+			if (!_programs || !_programs.length) { return ""; }
+			var toReturn:String = "";
+			var maxPosition:Number = -20;
+			for each (var program:Object in _programs) {
+				if (_hintPosition < program.position) { continue; }
+				if (maxPosition < program.position) {
+					maxPosition = program.position;
+					var date:Date = new Date(program.start);
+					var minutes:String = String(date.getMinutes());
+					var hours:String = String(date.getHours());
+					minutes.length < 2 && (minutes = "0" + minutes);
+					hours.length < 2 && (hours = "0" + hours);
+					toReturn =  hours + ":" + minutes //+ "\n" + program.title;
+				}
+			}
+			return toReturn;
 		}
 	}
 }

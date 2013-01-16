@@ -16,8 +16,7 @@ package org.osmf.player.chrome.widgets {
 		protected var container:Sprite;
 		private var programContainer:Sprite;
 		private var _programMask:Sprite;
-		private var _programs:Array;
-		private var _hintPosition:Number;
+		protected var _programs:Array;
 		private var programs:Array;
 		
 		protected var backDropLeftFace:String;
@@ -67,9 +66,6 @@ package org.osmf.player.chrome.widgets {
 			addChild(container);
 			addChild(programContainer);
 			
-			addEventListener(MouseEvent.ROLL_OVER, callShowHint);
-			addEventListener(MouseEvent.MOUSE_MOVE, callShowHint);
-			addEventListener(MouseEvent.ROLL_OUT, callHideHint);
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
@@ -104,48 +100,12 @@ package org.osmf.player.chrome.widgets {
 			}
 		}
 		
-		private function callShowHint(e:MouseEvent):void {
-			if (mouseX / width <= 1) {
-				_hintPosition = mouseX / width;
-				dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
-			} else {
-				callHideHint(e);
-			}
-		}
-		
-		private function callHideHint(e:MouseEvent):void {
-			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
-		}
-		
 		override public function get width():Number {
 			return container.width - backDropLiveRight.width + backDropLeft.width;
 		}
 		
 		override public function get height():Number {
 			return container.height;
-		}
-		
-		public function get hintPosition():Number {
-			return _hintPosition;
-		}
-		
-		public function get programText():String {
-			if (!_programs || !_programs.length) { return ""; }
-			var toReturn:String = "";
-			var maxPosition:Number = -20;
-			for each (var program:Object in _programs) {
-				if (_hintPosition < program.position) { continue; }
-				if (maxPosition < program.position) {
-					maxPosition = program.position;
-					var date:Date = new Date(program.start);
-					var minutes:String = String(date.getMinutes());
-					var hours:String = String(date.getHours());
-					minutes.length < 2 && (minutes = "0" + minutes);
-					hours.length < 2 && (hours = "0" + hours);
-					toReturn =  hours + ":" + minutes + "\n" + program.title;
-				}
-			}
-			return toReturn;
 		}
 	}
 }
