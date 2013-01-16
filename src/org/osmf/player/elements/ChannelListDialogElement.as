@@ -96,6 +96,7 @@ package org.osmf.player.elements {
 			_jsCallbackFunctionName && 
 				ExternalInterface.available && 
 				ExternalInterface.call(_jsCallbackFunctionName, channel.srcId);
+			dispatchEvent(new Event(ChannelListButton.LIST_CALL));
 			dispatchEvent(new Event(CHANNEL_CHANGED));
 		}
 		
