@@ -162,7 +162,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function seekCallHandler(e:Event):void {
-			if (!timeTrait && !seekTrait) { return; }
+			if (!timeTrait || !seekTrait) { return; }
 			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
 			if (seekTrait.canSeekTo(time)) {
 				if (playTrait && playTrait.playState == PlayState.STOPPED) {
