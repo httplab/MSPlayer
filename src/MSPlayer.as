@@ -76,7 +76,7 @@ package {
 			
 		public static const RATCHET_ACCESS_TOKEN:String = "584b28b15c44406884afbeab3709761f";
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
-		private static const MAX_OVER_WIDTH:int = 350;
+		private static const MAX_OVER_WIDTH:int = 400;
 		private static const MAX_OVER_WIDTH_SMARTPHONE:int = 550;
 		private static const MAX_OVER_WIDTH_TABLET:int = 600;
 		private static const MEDIA_PLAYER:String = "org.osmf.media.MediaPlayer";
@@ -814,7 +814,8 @@ package {
 				throw new Error(message, int(8036 * Math.random()));
 			} catch (e:Error) {
 				Ratchet.handleError(e);
-				throw e;
+				return;
+				//throw e;
 			}
 			// If an alert widget is available, use it. Otherwise, trace the message:
 			if (viewHelper.alert) {
