@@ -25,6 +25,7 @@ package {
 	import flash.ui.Mouse;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
+	import io.ratchet.notifier.Ratchet;
 	import org.osmf.elements.*;
 	import org.osmf.events.*;
 	import org.osmf.layout.*;
@@ -73,6 +74,7 @@ package {
 		[Embed(source='../assets/GAConfig.xml', mimeType="application/octet-stream")]
 			private static const GAConfigClass:Class;
 			
+		public static const RATCHET_ACCESS_TOKEN:String = "584b28b15c44406884afbeab3709761f";
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
 		private static const MAX_OVER_WIDTH:int = 350;
 		private static const MAX_OVER_WIDTH_SMARTPHONE:int = 550;
@@ -138,7 +140,14 @@ package {
 		* Init-time methods
 		*/
 		
+		private function isDebug():Boolean {
+			//TODO: Should be false, when production
+			return true;
+		}
+		
 		public function initialize(parameters:Object, stage:Stage, loaderInfo:LoaderInfo, pluginHostWhitelist:Array):void {
+			var environment:String = isDebug() ? "development" : "production";
+			Ratchet.init(this, RATCHET_ACCESS_TOKEN, environment);
 			injector = new InjectorModule();
 			//initUncaughtErrorsHandler();
 			initPluginsWhitelist(pluginHostWhitelist);
@@ -286,7 +295,8 @@ package {
 			initSkins();
 		}
 		
-		private function onSkinLoaderFailure(event:Event):void {
+		private function onSkinLoaderFailure(event:ErrorEvent):void {
+			Ratchet.handleErrorEvent(event);
 			trace("WARNING: failed to load skin file at " + configuration.skin);
 			onSkinLoaderComplete();
 		}
@@ -799,8 +809,13 @@ package {
 		}
 		
 		private function reportError(message:String):void {
-			//TODO: Remove on release!
-			throw new Error(message, 8036);
+			try { 
+				//TODO: Remove on release!
+				throw new Error(message, int(8036 * Math.random()));
+			} catch (e:Error) {
+				Ratchet.handleError(e);
+				throw e;
+			}
 			// If an alert widget is available, use it. Otherwise, trace the message:
 			if (viewHelper.alert) {
 				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
@@ -826,6 +841,7 @@ package {
 		}
 		
 		private function onDRMError(event:DRMErrorEvent):void {
+			Ratchet.handleErrorEvent(event);
 			switch(event.errorID) {
 				// Use the following link for the error codes
 				// http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/runtimeErrors.html
@@ -850,6 +866,7 @@ package {
 		
 		CONFIG::FLASH_10_1 {
 			private function onUncaughtError(event:UncaughtErrorEvent):void {
+				Ratchet.handleErrorEvent(event);
 				event.preventDefault();
 				var timer:Timer = new Timer(3000, 1);
 				var mediaError:MediaError = new MediaError(
