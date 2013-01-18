@@ -255,7 +255,7 @@ package {
 		private function initPlugins():Vector.<MediaResourceBase> {
 			var pluginConfigurations:Vector.<MediaResourceBase> = ConfigurationUtils.transformDynamicObjectToMediaResourceBases(configuration.plugins);
 			var pluginResource:MediaResourceBase;	
-			pluginResource = new URLResource('GTrackPlugin.swf');
+			pluginResource = new URLResource(loaderInfo.parameters.GTrackPluginURL || 'GTrackPlugin.swf');
 			var contentFile:ByteArray = new GAConfigClass();
 			var contentStr:String = contentFile.readUTFBytes( contentFile.length );
 			pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
