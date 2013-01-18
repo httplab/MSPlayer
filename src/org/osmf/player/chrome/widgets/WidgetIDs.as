@@ -24,6 +24,8 @@ package org.osmf.player.chrome.widgets
 	{
 		/* static */
 		
+		public static const FREE_MODE_BUTTON:String = "freeModeButton";
+		public static const FULL_WIDTH_BUTTON:String = "fullWidthButton";
 		public static const CONTROL_BAR:String = "controlBar";
 		public static const SCRUB_BAR:String = "scrubBar";
 		public static const MUTE_BUTTON:String = "muteButton";

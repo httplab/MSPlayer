@@ -241,6 +241,14 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.FULL_SCREEN_LEAVE_DOWN, ASSET_fullscreen_off_selected);
 			addEmbeddedSymbol(AssetIDs.FULL_SCREEN_LEAVE_OVER, ASSET_fullscreen_off_over);
 			
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_NORMAL, ASSET_full_width_normal);
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_DOWN, ASSET_full_width_selected);
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_OVER, ASSET_full_width_over);
+			
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_NORMAL, ASSET_free_mode_normal);
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_DOWN, ASSET_free_mode_selected);
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_OVER, ASSET_free_mode_over);
+			
 			// Authentication dialog:
 			addEmbeddedSymbol(AssetIDs.AUTH_BACKDROP, ASSET_auth_backdrop);
 			addEmbeddedSymbol(AssetIDs.AUTH_SUBMIT_BUTTON_NORMAL, ASSET_button_normal);
@@ -278,7 +286,6 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_NORMAL, ASSET_channelListButton_normal);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_OVER, ASSET_channelListButton_over);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_DOWN, ASSET_channelListButton_selected);
-
 		}
 		
 		private function onAssetsManagerComplete(event:Event):void

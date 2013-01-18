@@ -124,6 +124,14 @@ package org.osmf.player.chrome.assets
 		public static const FULL_SCREEN_LEAVE_DOWN:String = "fullScreenLeaveButtonDown";
 		public static const FULL_SCREEN_LEAVE_OVER:String = "fullScreenLeaveButtonOver";
 		
+		public static const FULL_WIDTH_NORMAL:String = "fullWidthLeaveNormal";
+		public static const FULL_WIDTH_DOWN:String = "fullWidthLeaveDown";
+		public static const FULL_WIDTH_OVER:String = "fullWidthLeaveOver";
+		
+		public static const FREE_MODE_NORMAL:String = "freeModeLeaveNormal";
+		public static const FREE_MODE_DOWN:String = "freeModeLeaveDown";
+		public static const FREE_MODE_OVER:String = "freeModeLeaveOver";
+		
 		public static const HD_ON:String = "hdOn";
 		public static const HD_OFF:String = "hdOff";
 		
