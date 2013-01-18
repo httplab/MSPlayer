@@ -104,8 +104,13 @@ package org.osmf.player.chrome.widgets
 		
 		private var fullScreenState:String = "";
 		
+		override public function get width():Number {
+			return layoutMetadata.width;
+		}
+		
 		/* static */
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
-		_requiredTraits[0] = MediaTraitType.DISPLAY_OBJECT;
+		//TODO: Avoid invisilbling and width flushing some other way
+		//_requiredTraits[0] = MediaTraitType.DISPLAY_OBJECT;
 	}
 }
