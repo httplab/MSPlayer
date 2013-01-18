@@ -14,7 +14,7 @@ package org.osmf.player.chrome.widgets {
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
 		protected var container:Sprite;
-		private var programContainer:Sprite;
+		protected var programContainer:Sprite;
 		private var _programMask:Sprite;
 		protected var _programs:Array;
 		private var programs:Array;
@@ -25,6 +25,7 @@ package org.osmf.player.chrome.widgets {
 		protected var backDropLeftProgramFace:String;
 		protected var backDropMiddleProgramFace:String;
 		protected var backDropRightProgramFace:String;
+		public static const TWO_HOURS_IN_MILLISECONDS:Number = (1000 * 3600 * 2);
 		
 		public function LiveScrubWidget() {
 			super();
@@ -62,10 +63,6 @@ package org.osmf.player.chrome.widgets {
 			_programMask = new Sprite();
 			programContainer.mask = _programMask;
 			programContainer.addChild(_programMask);
-			
-			addChild(container);
-			addChild(programContainer);
-			
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
@@ -80,7 +77,6 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		public function set programPositions(value:Array):void {
-			var thims:Number = (1000 * 3600 * 2);
 			var currentDate:Date = new Date();
 			var twoHoursAgo:Date = new Date(currentDate.valueOf() - thims);
 			_programs = value;
@@ -106,6 +102,10 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function get height():Number {
 			return container.height;
+		}
+		
+		protected function get thims():Number{
+			return TWO_HOURS_IN_MILLISECONDS;
 		}
 	}
 }

@@ -3,6 +3,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.GlowFilter;
 	import flash.geom.Point;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -28,6 +29,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
+			alpha = 1;
 			super.configure(xml, assetManager);
 			
 			seeker = new Seeker();
@@ -44,6 +46,9 @@ package org.osmf.player.chrome.widgets {
 			addEventListener(MouseEvent.ROLL_OVER, callShowHint);
 			addEventListener(MouseEvent.MOUSE_MOVE, callShowHint);
 			addEventListener(MouseEvent.ROLL_OUT, callHideHint);
+			
+			addChild(container);
+			addChild(programContainer);
 		}
 		
 		private function callShowHint(e:MouseEvent):void {
@@ -105,19 +110,27 @@ package org.osmf.player.chrome.widgets {
 		public function get programText():String {
 			if (!_programs || !_programs.length) { return ""; }
 			var toReturn:String = "";
-			var maxPosition:Number = -20;
-			for each (var program:Object in _programs) {
-				if (_hintPosition < program.position) { continue; }
-				if (maxPosition < program.position) {
-					maxPosition = program.position;
-					var date:Date = new Date(program.start);
-					var minutes:String = String(date.getMinutes());
-					var hours:String = String(date.getHours());
-					minutes.length < 2 && (minutes = "0" + minutes);
-					hours.length < 2 && (hours = "0" + hours);
-					toReturn =  hours + ":" + minutes //+ "\n" + program.title;
-				}
-			}
+			var date:Date = new Date();
+			date.setTime(date.time - (1 - _hintPosition) * thims);
+			var minutes:String = String(date.getMinutes());
+			var hours:String = String(date.getHours());
+			minutes.length < 2 && (minutes = "0" + minutes);
+			hours.length < 2 && (hours = "0" + hours);
+			toReturn =  hours + ":" + minutes;
+			//TODO: Вернуть, когда решат, где показывать название программы.
+			//var maxPosition:Number = -20;
+			//for each (var program:Object in _programs) {
+				//if (_hintPosition < program.position) { continue; }
+				//if (maxPosition < program.position) {
+					//maxPosition = program.position;
+					//var date:Date = new Date(program.start);
+					//var minutes:String = String(date.getMinutes());
+					//var hours:String = String(date.getHours());
+					//minutes.length < 2 && (minutes = "0" + minutes);
+					//hours.length < 2 && (hours = "0" + hours);
+					//toReturn =  hours + ":" + minutes //+ "\n" + program.title;
+				//}
+			//}
 			return toReturn;
 		}
 	}
