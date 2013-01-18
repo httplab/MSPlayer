@@ -773,11 +773,11 @@ package {
 			media = null;
 			// Translate error message:
 			var message:String;
-			if (true || configuration.verbose) {
-				message = event.error.message + "\n" + event.error.detail;
-			} else {
+			var nonTranslatedMessage:String = event.error.message + "\n" + event.error.detail;
+			if (!configuration.verbose) {
 				message = ErrorTranslator.translate(event.error).message;
 			}
+			!message && (message = nonTranslatedMessage);
 			CONFIG::FLASH_10_1 {
 				var tokens:Array = Capabilities.version.split(/[\s,]/);
 				var flashPlayerMajorVersion:int = parseInt(tokens[1]);
@@ -790,7 +790,7 @@ package {
 					}
 				}
 			}
-			reportError(message);
+			reportError(message, nonTranslatedMessage);
 			// Forward the raw error message to JavaScript:
 			if (ExternalInterface.available) {
 				try {
@@ -808,10 +808,10 @@ package {
 			}
 		}
 		
-		private function reportError(message:String):void {
+		private function reportError(message:String, nonTranslatedMessage:String = ""):void {
 			try { 
 				//TODO: Remove on release!
-				throw new Error(message, int(8036 * Math.random()));
+				throw new Error(nonTranslatedMessage || message, int(8036 * Math.random()));
 			} catch (e:Error) {
 				Ratchet.handleError(e);
 				return;
