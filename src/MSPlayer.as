@@ -430,11 +430,11 @@ package {
 				e.currentTarget.removeEventListener(e.type, arguments.callee);
 			}
 			//TODO: Remove, when we will have own Media and Traits for multi-quality streaming:
-			viewHelper.controlBar.disableMultiQualityButton();
+			viewHelper.controlBar && viewHelper.controlBar.disableMultiQualityButton();
 			if (viewHelper.mediaContainer.containsMediaElement(player.media)) {
 				viewHelper.mediaContainer.removeMediaElement(player.media);
 			} else {
-				player.media.addEventListener(ContainerChangeEvent.CONTAINER_CHANGE, removeMainVideoFromContainer);
+				player && player.media && player.media.addEventListener(ContainerChangeEvent.CONTAINER_CHANGE, removeMainVideoFromContainer);
 			}
 		}
 		
