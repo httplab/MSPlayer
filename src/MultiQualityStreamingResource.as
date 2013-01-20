@@ -96,10 +96,10 @@ package {
 				if (version.resolution) {
 					qualities.push(version.resolution.split("x")[1]);
 				} else if (version.quality) {
-					version.quality.split('low').join('Низкое');
-					version.quality.split('medium').join('Хорошее');
-					version.quality.split('high').join('Высокое');
-					version.quality.split('hight').join('Высокое');
+					version.quality = version.quality.replace('low', 'Низкое');
+					version.quality = version.quality.replace('medium', 'Средне');
+					version.quality = version.quality.replace('hight', 'Высокое');
+					version.quality = version.quality.replace('high', 'Высокое');
 					qualities.push(version.quality);
 				}
 			}
