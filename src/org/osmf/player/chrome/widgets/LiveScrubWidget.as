@@ -3,6 +3,8 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	
@@ -15,9 +17,9 @@ package org.osmf.player.chrome.widgets {
 		private var backDropRight_program:DisplayObject;
 		protected var container:Sprite;
 		protected var programContainer:Sprite;
-		private var _programMask:Sprite;
 		protected var _programs:Array;
-		private var programs:Array;
+		private var _programMask:Sprite;
+		private var _programsShiftTimer:Timer;
 		
 		protected var backDropLeftFace:String;
 		protected var backDropMiddleFace:String;
@@ -74,6 +76,23 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropMiddle_program.x = backDropLeft_program.width;
 			backDropRight_program.x = availableWidth - backDropLiveRight.width;
+			recreateProgramsShiftTimer();
+			_programs && (programPositions = _programs);
+		}
+		
+		private function recreateProgramsShiftTimer():void {
+			if (_programsShiftTimer) {
+				_programsShiftTimer.stop();
+				_programsShiftTimer.reset();
+				_programsShiftTimer = null;
+			}
+			_programsShiftTimer = new Timer(thims / width, 0);
+			_programsShiftTimer.addEventListener(TimerEvent.TIMER, shiftPrograms);
+			_programsShiftTimer.start();
+		}
+		
+		private function shiftPrograms(e:TimerEvent):void {
+			_programs && (programPositions = _programs);
 		}
 		
 		public function set programPositions(value:Array):void {
@@ -104,7 +123,7 @@ package org.osmf.player.chrome.widgets {
 			return container.height;
 		}
 		
-		protected function get thims():Number{
+		protected function get thims():Number {
 			return TWO_HOURS_IN_MILLISECONDS;
 		}
 	}
