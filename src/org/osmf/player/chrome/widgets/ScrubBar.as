@@ -177,14 +177,14 @@ package org.osmf.player.chrome.widgets {
 		
 		private function showHintCallHandler(e:Event):void {
 			if (_currentSubWidget == dvrScrub) {
-				timeHint.text = _currentSubWidget['programText'];
+				timeHint.text = dvrScrub.programText;
 			} else {
 				if (!timeTrait) { return;}
 				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * timeTrait.duration, timeTrait.duration)[0];	
 			}
 			timeHint.textFormat = textFormat;
 			timeHint.visible = true;
-			timeHint.x = width * _currentSubWidget['hintPosition'];
+			timeHint.x = _currentSubWidget.width * _currentSubWidget['hintPosition'];
 			timeHint.x -= timeHint.width / 2;
 			timeHint.y = -timeHint.height;
 		}

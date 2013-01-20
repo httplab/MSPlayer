@@ -29,14 +29,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
-			alpha = 1;
 			super.configure(xml, assetManager);
-			
-			seeker = new Seeker();
-			seeker.addEventListener(Seeker.SEEK_START, onSeekerStart);
-			seeker.addEventListener(Seeker.SEEK_UPDATE, onSeekerUpdate);
-			seeker.addEventListener(Seeker.SEEK_END, onSeekerEnd);
-			addChild(seeker);
 			
 			backDropRecorded = assetManager.getDisplayObject(backDropRecordedFace); 
 			backDropRecorded.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
@@ -49,15 +42,21 @@ package org.osmf.player.chrome.widgets {
 			
 			addChild(container);
 			addChild(programContainer);
+			
+			seeker = new Seeker();
+			seeker.addEventListener(Seeker.SEEK_START, onSeekerStart);
+			seeker.addEventListener(Seeker.SEEK_UPDATE, onSeekerUpdate);
+			seeker.addEventListener(Seeker.SEEK_END, onSeekerEnd);
+			addChild(seeker);
 		}
 		
 		private function callShowHint(e:MouseEvent):void {
 			if (mouseX / width <= 1) {
 				_hintPosition = mouseX / width;
-				dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
 			} else {
-				callHideHint(e);
+				_hintPosition = 1 + (backDropLiveRight.width / width) / 2;
 			}
+			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
 		}
 		
 		private function callHideHint(e:MouseEvent):void {
@@ -108,6 +107,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		public function get programText():String {
+			if (hintPosition > 1) { return 'Live'; }
 			if (!_programs || !_programs.length) { return ""; }
 			var toReturn:String = "";
 			var date:Date = new Date();

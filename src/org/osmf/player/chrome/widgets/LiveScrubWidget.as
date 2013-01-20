@@ -9,7 +9,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	
 	public class LiveScrubWidget extends Widget {
-		private var backDropLeft:DisplayObject;
+		protected var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
 		protected var backDropLiveRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
@@ -116,7 +116,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function get width():Number {
-			return container.width - backDropLiveRight.width + backDropLeft.width;
+			return container.width - backDropLiveRight.width;
 		}
 		
 		override public function get height():Number {
