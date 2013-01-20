@@ -23,6 +23,7 @@ package org.osmf.player.chrome.widgets {
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, processSeekHandler);
 			e && processSeekHandler(e);
 			e && dispatchEvent(new Event(SEEK_START));
+			e && e.updateAfterEvent();
 		}
 		
 		private function stopSeekHandler(e:MouseEvent):void {
@@ -33,10 +34,12 @@ package org.osmf.player.chrome.widgets {
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, processSeekHandler);
 			e && processSeekHandler(e);
 			e && dispatchEvent(new Event(SEEK_END));
+			e && e.updateAfterEvent();
 		}
 		
 		private function processSeekHandler(e:MouseEvent):void {
 			setPosition((e.stageX - getBounds(stage).x) / width);
+			e && e.updateAfterEvent();
 		}
 		
 		public function set point(value:Point):void {

@@ -120,7 +120,10 @@ package org.osmf.player.chrome.widgets {
 		*/
 		
 		private function currentTimeChangedHandler(e:Event):void {
-			timeTrait && (vodScrub.playedPosition = timeTrait.currentTime / timeTrait.duration);
+			playTrait && 
+				timeTrait &&
+				playTrait.playState == PlayState.PLAYING &&
+				(vodScrub.playedPosition = timeTrait.currentTime / timeTrait.duration);
 		}
 		
 		private function bytesLoadedChangedHandler(e:Event):void {
@@ -165,13 +168,12 @@ package org.osmf.player.chrome.widgets {
 			if (!timeTrait || !seekTrait) { return; }
 			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
 			if (seekTrait.canSeekTo(time)) {
-				if (playTrait && playTrait.playState == PlayState.STOPPED) {
-					if (playTrait.canPause) {
-						playTrait.play();
-						playTrait.pause();
-					}
-				}
 				seekTrait.seek(time);
+				try {
+					_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0;
+				} catch (e:Error) {
+					//Current widget has no `played` position
+				}
 			}
 		}
 		
