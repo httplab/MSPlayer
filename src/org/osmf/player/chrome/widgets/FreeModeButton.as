@@ -1,5 +1,6 @@
 package org.osmf.player.chrome.widgets {
 	import flash.display.DisplayObject;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import org.osmf.player.chrome.assets.AssetIDs;
@@ -29,6 +30,11 @@ package org.osmf.player.chrome.widgets {
 			} else {
 				super.setFace(face); 
 			}
+		}
+		
+		override public function layout(avalableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
+			super.layout(avalableWidth, availableHeight, deep);
+			stage && (visible = (stage.displayState != StageDisplayState.FULL_SCREEN));
 		}
 	}		
 }
