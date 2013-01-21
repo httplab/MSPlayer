@@ -4,6 +4,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
+	import flash.filters.GlowFilter;
 	import flash.utils.Timer;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -11,7 +12,7 @@ package org.osmf.player.chrome.widgets {
 	public class LiveScrubWidget extends Widget {
 		protected var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
-		protected var backDropLiveRight:DisplayObject;
+		protected var backDropRecordedRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
@@ -23,7 +24,7 @@ package org.osmf.player.chrome.widgets {
 		
 		protected var backDropLeftFace:String;
 		protected var backDropMiddleFace:String;
-		protected var backDropLiveRightFace:String;
+		protected var backDropRecordedRightFace:String;
 		protected var backDropLeftProgramFace:String;
 		protected var backDropMiddleProgramFace:String;
 		protected var backDropRightProgramFace:String;
@@ -33,7 +34,7 @@ package org.osmf.player.chrome.widgets {
 			super();
 			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT; 	
 			backDropMiddleFace = AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE;
-			backDropLiveRightFace = AssetIDs.SCRUB_BAR_LIVE_RIGHT;
+			backDropRecordedRightFace = AssetIDs.SCRUB_BAR_RECORDED_RIGHT;
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_GRAY_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_GRAY_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_GRAY_RIGHT;
@@ -49,15 +50,15 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropLeft = assetManager.getDisplayObject(backDropLeftFace); 
 			backDropMiddle = assetManager.getDisplayObject(backDropMiddleFace); 
-			backDropLiveRight = assetManager.getDisplayObject(backDropLiveRightFace); 
-			
+			backDropRecordedRight = assetManager.getDisplayObject(backDropRecordedRightFace); 
+			backDropRecordedRight.filters = [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
 			backDropLeft_program = assetManager.getDisplayObject(backDropLeftProgramFace); 
 			backDropMiddle_program = assetManager.getDisplayObject(backDropMiddleProgramFace); 
 			backDropRight_program = assetManager.getDisplayObject(backDropRightProgramFace); 
 			
 			container.addChild(backDropLeft);
 			container.addChild(backDropMiddle);
-			container.addChild(backDropLiveRight);
+			container.addChild(backDropRecordedRight);
 			
 			programContainer.addChild(backDropLeft_program);
 			programContainer.addChild(backDropMiddle_program);
@@ -68,14 +69,14 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
-			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
-			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
+			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropRecordedRight.width);
+			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropRecordedRight.width - backDropRight_program.width);
 			
 			backDropMiddle.x = backDropLeft.width;
-			backDropLiveRight.x = availableWidth - backDropLiveRight.width;
+			backDropRecordedRight.x = availableWidth - backDropRecordedRight.width;
 			
 			backDropMiddle_program.x = backDropLeft_program.width;
-			backDropRight_program.x = availableWidth - backDropLiveRight.width;
+			backDropRight_program.x = availableWidth - backDropRecordedRight.width;
 			recreateProgramsShiftTimer();
 			_programs && (programPositions = _programs);
 		}
@@ -116,7 +117,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function get width():Number {
-			return container.width - backDropLiveRight.width;
+			return container.width - backDropRecordedRight.width;
 		}
 		
 		override public function get height():Number {

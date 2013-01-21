@@ -12,8 +12,6 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.metadata.MediaMetadata;
 
 	public class DVRScrubWidget extends LiveScrubWidget {
-		private var backDropRecorded:DisplayObject;
-		private var backDropRecordedFace:String;
 		private var seeker:Seeker;
 		private var _seekTo:Number;
 		private var _hintPosition:Number;
@@ -33,7 +31,6 @@ package org.osmf.player.chrome.widgets {
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_WHITE_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_WHITE_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_WHITE_RIGHT;
-			backDropRecordedFace = AssetIDs.SCRUB_BAR_RECORDED_RIGHT;
 			
 			backDropLeftPositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_LEFT;
 			backDropMiddlePositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_MIDDLE;
@@ -45,10 +42,7 @@ package org.osmf.player.chrome.widgets {
 			
 			positionContainer = new Sprite();
 			
-			backDropRecorded = assetManager.getDisplayObject(backDropRecordedFace); 
-			backDropRecorded.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
-			backDropRecorded.visible = false;
-			container.addChild(backDropRecorded);
+			backDropRecordedRight.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			
 			backDropLeft_position = assetManager.getDisplayObject(backDropLeftPositionFace); 
 			backDropMiddle_position = assetManager.getDisplayObject(backDropMiddlePositionFace); 
@@ -82,7 +76,7 @@ package org.osmf.player.chrome.widgets {
 			if (mouseX / width <= 1) {
 				_hintPosition = mouseX / width;
 			} else {
-				_hintPosition = 1 + (backDropLiveRight.width / width) / 2;
+				_hintPosition = 1 + (backDropRecordedRight.width / width) / 2;
 			}
 			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
 		}
@@ -96,19 +90,19 @@ package org.osmf.player.chrome.widgets {
 			var mediaMetadata:MediaMetadata = media.metadata.getValue(MediaMetadata.ID) as MediaMetadata;
 			var mediaPlayer:StrobeMediaPlayer = mediaMetadata.mediaPlayer;
 			if (mediaPlayer.snapToLive()) {
-				backDropRecorded.visible = false;
+				backDropRecordedRight.filters = [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
+				backDropRecordedRight['gotoAndStop'](1);
 				playedPosition = NaN;
 			}
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
 			super.layout(availableWidth, availableHeight, deep);
-			backDropRecorded.x = backDropLiveRight.x;
 			
-			backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
+			backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedRight.width);
 			
 			backDropMiddle_position.x = backDropLeft_position.width;
-			backDropRight_position.x = availableWidth - backDropLiveRight.width;
+			backDropRight_position.x = availableWidth - backDropRecordedRight.width;
 			
 			seeker.point = new Point(width, height);
 		}
@@ -120,7 +114,7 @@ package org.osmf.player.chrome.widgets {
 		private function onSeekerUpdate(event:Event):void {
 			_seekTo = seeker.position;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
-			backDropRecorded.visible = (_seekTo < 1);
+			backDropRecordedRight.filters = (_seekTo < 1) ? [] : [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
 		}
 		
 		private function onSeekerEnd(event:Event):void {
@@ -151,16 +145,9 @@ package org.osmf.player.chrome.widgets {
 		
 		public function get programText():String {
 			if (hintPosition > 1) { return 'Live'; }
-			if (!_programs || !_programs.length) { return ""; }
 			var toReturn:String = "";
-			var date:Date = new Date();
-			date.setTime(date.time - (1 - _hintPosition) * thims);
-			var minutes:String = String(date.getMinutes());
-			var hours:String = String(date.getHours());
-			minutes.length < 2 && (minutes = "0" + minutes);
-			hours.length < 2 && (hours = "0" + hours);
-			toReturn =  hours + ":" + minutes;
 			//TODO: Вернуть, когда решат, где показывать название программы.
+			//if (!_programs || !_programs.length) { return ""; }
 			//var maxPosition:Number = -20;
 			//for each (var program:Object in _programs) {
 				//if (_hintPosition < program.position) { continue; }
@@ -174,6 +161,13 @@ package org.osmf.player.chrome.widgets {
 					//toReturn =  hours + ":" + minutes //+ "\n" + program.title;
 				//}
 			//}
+			var date:Date = new Date();
+			date.setTime(date.time - (1 - _hintPosition) * thims);
+			var minutes:String = String(date.getMinutes());
+			var hours:String = String(date.getHours());
+			minutes.length < 2 && (minutes = "0" + minutes);
+			hours.length < 2 && (hours = "0" + hours);
+			toReturn =  hours + ":" + minutes;
 			return toReturn;
 		}
 	}
