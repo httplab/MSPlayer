@@ -149,7 +149,7 @@ package {
 			var environment:String = isDebug() ? "development" : "production";
 			Ratchet.init(this, RATCHET_ACCESS_TOKEN, environment);
 			injector = new InjectorModule();
-			//initUncaughtErrorsHandler();
+			initUncaughtErrorsHandler();
 			initPluginsWhitelist(pluginHostWhitelist);
 			initPlayerItself();
 			// Add DRM error handler
@@ -771,6 +771,7 @@ package {
 		
 		private function onMediaError(event:MediaErrorEvent):void {
 			// Make sure this event gets handled only once:
+			new Ratchet().handleOtherEvent(event);
 			player.removeEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			// Reset the current media:
 			player.media = null;
@@ -813,14 +814,14 @@ package {
 		}
 		
 		private function reportError(message:String, nonTranslatedMessage:String = ""):void {
-			try { 
+			//try { 
 				//TODO: Remove on release!
-				throw new Error(nonTranslatedMessage || message, int(8036 * Math.random()));
-			} catch (e:Error) {
-				Ratchet.handleError(e);
-				return;
+				//throw new Error(nonTranslatedMessage || message, int(8036 * Math.random()));
+			//} catch (e:Error) {
+				//Ratchet.handleError(e);
+				//return;
 				//throw e;
-			}
+			//}
 			// If an alert widget is available, use it. Otherwise, trace the message:
 			if (viewHelper.alert) {
 				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
