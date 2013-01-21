@@ -2,6 +2,7 @@ package {
 	import org.osmf.containers.MediaContainer;
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
+	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.widgets.BufferingOverlay;
@@ -15,6 +16,7 @@ package {
 	import org.osmf.player.elements.AuthenticationDialogElement;
 	import org.osmf.player.elements.ChannelListDialogElement;
 	import org.osmf.player.elements.ControlBarElement;
+	import org.osmf.player.elements.PlayerTitleElement;
 	import org.osmf.player.media.StrobeMediaPlayer;
 
 	public class ViewHelper {
@@ -27,6 +29,7 @@ package {
 		
 		private var _playOverlay:PlayButtonOverlay;
 		private var _controlBarContainer:MediaContainer;
+		private var _playerTitleContainer:MediaContainer;
 		private var _configuration:PlayerConfiguration;
 		private var _mainContainer:StrobeMediaContainer;
 		private var _mediaContainer:MediaContainer;
@@ -39,6 +42,8 @@ package {
 		private var _player:StrobeMediaPlayer;
 		private var _adBlockHeader:AdBlockHeader;
 		private var _channelList:ChannelListDialogElement;
+		private var _playerTitle:PlayerTitleElement;
+		;
 		
 		public function ViewHelper(configuration:PlayerConfiguration, player:StrobeMediaPlayer) {
 			_configuration = configuration;
@@ -50,6 +55,7 @@ package {
 			initMainContainer();
 			initMediaContainer();
 			initControlBarContainer();
+			initPlayerTitleContainer();
 			if (_configuration.playButtonOverlay) {
 				initPlayOverlay();
 			}
@@ -61,6 +67,7 @@ package {
 			initLoginWindowContainer();
 			if (_configuration.controlBarMode != ControlBarMode.NONE) {
 				initControlBar();
+				initPlayerTitle();
             }
 			mainContainer.layoutRenderer.addTarget(mediaContainer);
 			initQosOverlay();
@@ -90,6 +97,14 @@ package {
 			_controlBarContainer = new MediaContainer();
 			_controlBarContainer.layoutMetadata.verticalAlign = VerticalAlign.TOP;
 			_controlBarContainer.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
+		}
+		
+		private function initPlayerTitleContainer():void {
+			_playerTitleContainer = new MediaContainer();
+			_playerTitleContainer.layoutMetadata.verticalAlign = VerticalAlign.TOP;
+			_playerTitleContainer.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
+			_playerTitleContainer.layoutMetadata.scaleMode = ScaleMode.NONE;
+			_playerTitleContainer.layoutMetadata.index = ALWAYS_ON_TOP;
 		}
 		
 		private function initPlayOverlay():void {
@@ -152,6 +167,16 @@ package {
 			_controlBarContainer.addMediaElement(_controlBar);
 			_mainContainer.layoutRenderer.addTarget(_controlBarContainer);
 			_mediaContainer.layoutRenderer.addTarget(_loginWindowContainer);
+		}
+		
+		private function initPlayerTitle():void {
+			_playerTitle = new PlayerTitleElement();
+			_playerTitle.autoHide = _configuration.controlBarAutoHide;
+			_playerTitle.autoHideTimeout = _configuration.controlBarAutoHideTimeout * 1000;
+			_playerTitle.tintColor = _configuration.tintColor;
+			_playerTitleContainer.layoutMetadata.height = _playerTitle.height;
+			_playerTitleContainer.addMediaElement(_playerTitle);
+			_mainContainer.layoutRenderer.addTarget(_playerTitleContainer);
 		}
 		
 		private function initQosOverlay():void {
@@ -223,6 +248,10 @@ package {
 			return _controlBarContainer;
 		}
 		
+		public function get playerTitleContainer():MediaContainer {
+			return _playerTitleContainer;
+		}
+		
 		public function get playOverlay():PlayButtonOverlay {
 			return _playOverlay;
 		}
@@ -245,6 +274,10 @@ package {
 		
 		public function get controlBar():ControlBarElement {
 			return _controlBar;
+		}
+		
+		public function get playerTitle():PlayerTitleElement {
+			return _playerTitle;
 		}
 		
 		public function get qosOverlay():VideoInfoOverlay {

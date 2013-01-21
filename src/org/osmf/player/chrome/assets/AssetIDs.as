@@ -139,6 +139,8 @@ package org.osmf.player.chrome.assets
 		public static const HD_ON:String = "hdOn";
 		public static const HD_OFF:String = "hdOff";
 		
+		public static const PLAYER_TITLE:String = "playerTitle";
+		
 		public static const PREVIOUS_BUTTON_NORMAL:String = "previousButtonNormal";
 		public static const PREVIOUS_BUTTON_DOWN:String = "previousButtonDown";
 		public static const PREVIOUS_BUTTON_OVER:String = "previousButtonOver";

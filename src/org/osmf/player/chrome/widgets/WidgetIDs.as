@@ -23,7 +23,7 @@ package org.osmf.player.chrome.widgets
 	public class WidgetIDs
 	{
 		/* static */
-		
+		static public const TITLE_WIDGET:String = "titleWidget";
 		public static const FREE_MODE_BUTTON:String = "freeModeButton";
 		public static const FULL_WIDTH_BUTTON:String = "fullWidthButton";
 		public static const CONTROL_BAR:String = "controlBar";

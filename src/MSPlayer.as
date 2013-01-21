@@ -640,6 +640,8 @@ package {
 					}
 				}
 			}
+			
+			viewHelper.playerTitle && (viewHelper.playerTitle .width = newWidth);
 		}
 		
 		private function onCurrentTimeChange(event:TimeEvent):void {
@@ -721,6 +723,8 @@ package {
 					viewHelper.mediaContainer.addMediaElement(_media);
                     // Forward a reference to controlBar:
 					viewHelper.controlBar && (viewHelper.controlBar.target = _media);
+					// Forward a reference to controlBar:
+					viewHelper.playerTitle && (viewHelper.playerTitle.target = _media);
 					// Forward a reference to login window:
 					viewHelper.loginWindow && (viewHelper.loginWindow.target = _media);
                 }

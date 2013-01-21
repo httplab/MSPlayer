@@ -31,7 +31,7 @@ package org.osmf.player.chrome.widgets {
 		
 		public function LiveScrubWidget() {
 			super();
-			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT;
+			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT; 	
 			backDropMiddleFace = AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE;
 			backDropLiveRightFace = AssetIDs.SCRUB_BAR_LIVE_RIGHT;
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_GRAY_LEFT;

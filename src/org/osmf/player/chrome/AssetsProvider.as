@@ -279,6 +279,8 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.HD_ON, ASSET_hd_on);
 			addEmbeddedSymbol(AssetIDs.HD_OFF, ASSET_hd_off);
 			
+			addEmbeddedSymbol(AssetIDs.PLAYER_TITLE, ASSET_player_title);
+			
 			// Buffering overlay:
 			addEmbeddedSymbol(AssetIDs.BUFFERING_OVERLAY, ASSET_BufferingOverlay);
 			

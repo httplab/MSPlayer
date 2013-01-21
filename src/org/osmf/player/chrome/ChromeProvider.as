@@ -28,6 +28,7 @@ package org.osmf.player.chrome
 	import flash.utils.getQualifiedClassName;
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
+	import org.osmf.player.chrome.widgets.TitleWidget;
 	
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
@@ -275,29 +276,32 @@ package org.osmf.player.chrome
 			
 			return errorWidget;
 		}
-
-		public function createControlBar():IControlBar
-		{
+		
+		public function createPlayerTitle():TitleWidget {
+			var titleWidget:TitleWidget = new TitleWidget();
+			titleWidget.configure(<default/>,  assetsProvider.assetsManager)
+			return titleWidget;
+		}
+		
+		public function createControlBar():IControlBar {
 			var controlBar:ControlBar = new ControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createSmartphoneControlBar():IControlBar
-		{
+		public function createSmartphoneControlBar():IControlBar {
 			var controlBar:SmartphoneControlBar = new SmartphoneControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createTabletControlBar():IControlBar
-		{
+		public function createTabletControlBar():IControlBar {
 			var controlBar:TabletControlBar = new TabletControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createVolumeControlBar():VolumeControlBar{
+		public function createVolumeControlBar():VolumeControlBar {
 			var volumeBar:VolumeControlBar = new VolumeControlBar();
 			volumeBar.configure(<default/>,  assetsProvider.assetsManager)
 			return volumeBar;

@@ -27,6 +27,7 @@ package {
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
 		private var _shedulesArray:Array;
+		private var _currentTitle:String = '';
 		
 		public function MultiQualityStreamingResource(srcId:int, streamType:String = '') {
 			super('', streamType);
@@ -56,6 +57,7 @@ package {
 				}
 				versionsArray.push(versionData);
 			}
+			_currentTitle = (data.info ? data.info.title : '') || '';
 			var shedules:Object = (data.info ? data.info.shedule : { } ) || { }
 			_shedulesArray = [];
 			for each (var sheduleData:Object in shedules) {
@@ -120,6 +122,10 @@ package {
 		
 		public function get shedulesArray():Array {
 			return _shedulesArray.concat();
+		}
+		
+		public function get currentTitle():String {
+			return _currentTitle;
 		}
 		
 		/**

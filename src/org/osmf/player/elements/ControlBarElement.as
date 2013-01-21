@@ -223,15 +223,6 @@ package org.osmf.player.elements {
 			(controlBar as Widget).visible = false;
 		}
 		
-		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource
-		public function configureStreamQualitySwitcher(availableStreams:Array):void {
-			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			if (!widget) { return; }
-			widget.registerQualities(availableStreams);
-			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
-		}
-		
-		//TODO: Close interface, when channels list has own show button
 		public function getQualitySwitcherWidget():QualitySwitcherContainer {
 			for each(var widget:Widget in controlBar.widgets) {
 				if (widget is QualitySwitcherContainer) {
@@ -239,6 +230,14 @@ package org.osmf.player.elements {
 				}
 			}
 			return null;
+		}
+		
+		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource
+		public function configureStreamQualitySwitcher(availableStreams:Array):void {
+			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
+			if (!widget) { return; }
+			widget.registerQualities(availableStreams);
+			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
 		}
 		
 		public function disableMultiQualityButton():void {
