@@ -99,7 +99,7 @@ package {
 					qualities.push(version.resolution.split("x")[1]);
 				} else if (version.quality) {
 					version.quality = version.quality.replace('low', 'Низкое');
-					version.quality = version.quality.replace('medium', 'Средне');
+					version.quality = version.quality.replace('medium', 'Хорошее');
 					version.quality = version.quality.replace('hight', 'Высокое');
 					version.quality = version.quality.replace('high', 'Высокое');
 					qualities.push(version.quality);

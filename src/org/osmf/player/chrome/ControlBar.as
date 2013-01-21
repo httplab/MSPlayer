@@ -143,7 +143,7 @@ package org.osmf.player.chrome {
 			qualitySwitcherWidget = new QualitySwitcherContainer();
 			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			qualitySwitcherWidget.layoutMetadata.width = 45;
+			qualitySwitcherWidget.layoutMetadata.width = 48;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
