@@ -341,7 +341,12 @@ package org.osmf.player.chrome {
 					widget.configure(<default/>, assetManager);					
 				}
 			}
-		}		
+		}
+		
+		override public function set media(value:MediaElement):void {
+			super.media = value;
+			mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
+		}
 		
 		override protected function processRequiredTraitsAvailable(element:MediaElement):void {
 			super.processRequiredTraitsAvailable(element);
