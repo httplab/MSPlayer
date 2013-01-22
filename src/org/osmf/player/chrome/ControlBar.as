@@ -174,15 +174,15 @@ package org.osmf.player.chrome {
 			//fullWidthButton.id = WidgetIDs.FULL_WIDTH_BUTTON; 
 			//fullWidthContainerWidget.addChildWidget(fullWidthButton);
 			//
-			freeModeContainerWidget = new Widget();
-			freeModeContainerWidget.layoutMetadata.width = 29;
-			freeModeContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			freeModeContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			rightControls.addChildWidget(freeModeContainerWidget);
-			
-			var freeModeButton:FreeModeButton = new FreeModeButton();
-			freeModeButton.id = WidgetIDs.FREE_MODE_BUTTON; 
-			freeModeContainerWidget.addChildWidget(freeModeButton);
+			//freeModeContainerWidget = new Widget();
+			//freeModeContainerWidget.layoutMetadata.width = 29;
+			//freeModeContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//freeModeContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
+			//rightControls.addChildWidget(freeModeContainerWidget);
+			//
+			//var freeModeButton:FreeModeButton = new FreeModeButton();
+			//freeModeButton.id = WidgetIDs.FREE_MODE_BUTTON; 
+			//freeModeContainerWidget.addChildWidget(freeModeButton);
 			
 			fullscreenContainerWidget = new Widget();
 			fullscreenContainerWidget.layoutMetadata.width = 26;
@@ -206,7 +206,7 @@ package org.osmf.player.chrome {
 				afterTimeSpacer.width +
 				muteContainerWidget.layoutMetadata.width + 
 				//fullWidthContainerWidget.layoutMetadata.width + 
-				freeModeContainerWidget.layoutMetadata.width+ 
+				//freeModeContainerWidget.layoutMetadata.width+ 
 				fullscreenContainerWidget.layoutMetadata.width;
 			
 			// Spacer
@@ -238,8 +238,8 @@ package org.osmf.player.chrome {
 				muteButton, 
 				//fullWidthContainerWidget,
 				//fullWidthButton,
-				freeModeContainerWidget,
-				freeModeButton,
+				//freeModeContainerWidget,
+				//freeModeButton,
 				fullscreenContainerWidget,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
@@ -284,8 +284,8 @@ package org.osmf.player.chrome {
 			rightControls.addChildWidget(muteContainerWidget);
 			//rightControls.removeChildWidget(fullWidthContainerWidget);
 			//rightControls.addChildWidget(fullWidthContainerWidget);
-			rightControls.removeChildWidget(freeModeContainerWidget);
-			rightControls.addChildWidget(freeModeContainerWidget);
+			//rightControls.removeChildWidget(freeModeContainerWidget);
+			//rightControls.addChildWidget(freeModeContainerWidget);
 			rightControls.removeChildWidget(fullscreenContainerWidget);
 			rightControls.addChildWidget(fullscreenContainerWidget);
 			rightControls.layoutMetadata.width = afterScrubSpacer.width + 
@@ -295,7 +295,7 @@ package org.osmf.player.chrome {
 				afterTimeSpacer.width +
 				muteContainerWidget.layoutMetadata.width + 
 				//fullWidthContainerWidget.layoutMetadata.width + 
-				freeModeContainerWidget.layoutMetadata.width + 
+				//freeModeContainerWidget.layoutMetadata.width + 
 				fullscreenContainerWidget.layoutMetadata.width
 		}
 		
@@ -373,8 +373,8 @@ package org.osmf.player.chrome {
 		private var muteContainerWidget:Widget;
 		private var fullscreenContainerWidget:Widget;
 		private var afterScrubSpacer:Widget;
-		private var fullWidthContainerWidget:Widget;
-		private var freeModeContainerWidget:Widget;
+		//private var fullWidthContainerWidget:Widget;
+		//private var freeModeContainerWidget:Widget;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}
 }
