@@ -31,6 +31,7 @@ package {
 	import org.osmf.layout.*;
 	import org.osmf.logging.Log;
 	import org.osmf.media.*;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.configuration.ConfigurationUtils;
@@ -370,7 +371,14 @@ package {
 			viewHelper.channelList.jsCallbackFunctionName = loaderInfo.parameters.channelChangedCallback;
 			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
 			viewHelper.channelList.addEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
+			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
+			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
 			
+		}
+		
+		private function liveResumingHack(e:Event):void {
+			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
+			resource && (resource.streamType == StreamType.LIVE) && loadMedia(e);
 		}
 		
 		private function switchChannelListVisible(e:Event):void {
@@ -403,6 +411,7 @@ package {
 		private function restoreMainVideoAfterAd(e:Event):void {
 			SOWrapper.processPlayer(player);
 			viewHelper.mediaContainer.addMediaElement(player.media);
+			liveResumingHack(e);
 		}
 		
 		private function setCurrentVideoTime(e:BufferEvent):void {
@@ -770,7 +779,7 @@ package {
 		*/
 		
 		private function onMediaError(event:MediaErrorEvent):void {
-			// Make sure this event gets handled only once:
+				// Make sure this event gets handled only once:
 			new Ratchet().handleOtherEvent(event);
 			player.removeEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			// Reset the current media:

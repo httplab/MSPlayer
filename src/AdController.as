@@ -16,6 +16,7 @@ package {
 	import org.osmf.media.MediaPlayerState;
 	import org.osmf.media.URLResource;
 	import org.osmf.player.chrome.events.WidgetEvent;
+	import org.osmf.player.elements.ControlBarElement;
 	import org.osmf.player.media.StrobeMediaFactory;
 	import org.osmf.player.media.StrobeMediaPlayer;
 	import org.osmf.player.metadata.MediaMetadata;
@@ -68,7 +69,7 @@ package {
                 _player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, checkForMidrollNeed);
             }
             if (_loaderParams.streamType != "live" && _loaderParams.pauseRoll) {
-				_viewHelper.controlBar.addEventListener("playButtonClick", planPauseRoll);
+				_viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, planPauseRoll, false, int.MAX_VALUE);
 			}
             if (_loaderParams.streamType == "recorded" && _loaderParams.postRoll) {
                 _player.addEventListener(TimeEvent.COMPLETE, planPostRoll);
@@ -247,6 +248,8 @@ package {
 		
 		private function planPauseRoll(e:Event):void {
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
+			e.stopImmediatePropagation();
+			e.preventDefault();
 			prepareLinearAd(_loaderParams.pauseRoll);
 		}
 		

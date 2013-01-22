@@ -42,6 +42,7 @@ package org.osmf.player.elements {
 	* 
 	*/ 
 	public class ControlBarElement extends MediaElement {
+		static public const PLAY_BUTTON_CLICK:String = "playButtonClick";
 		private var _target:MediaElement;
 		private var controlBar:IControlBar;
 		private var chromeProvider:ChromeProvider;
@@ -199,7 +200,7 @@ package org.osmf.player.elements {
 							MouseEvent.CLICK, 
 							function(evt:MouseEvent):void {
 								trace("play button click");
-								dispatchEvent(new Event("playButtonClick"));
+								dispatchEvent(new Event(PLAY_BUTTON_CLICK));
 							}
 						);
 						break;
