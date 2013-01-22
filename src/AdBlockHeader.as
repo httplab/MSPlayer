@@ -63,6 +63,7 @@ package {
 			adBlockTF.background = true;
 			adBlockTF.backgroundColor = AD_BLOCK_BGCOLOR;
 			adBlockTF.text = AD_BLOCK_TEXT;
+			adBlockTF.height = HEIGHT;
 			adBlockTF.setTextFormat(boldFormat);
 			adBlockTF.alpha = .8;
 			adBlockTF.selectable = false;
@@ -72,7 +73,7 @@ package {
 			secondsTF = new TextField();
 			secondsTF.alpha = .8;
 			secondsTF.defaultTextFormat = regularFormat;
-			secondsTF.height = adBlockTF.height = HEIGHT;
+			secondsTF.height = HEIGHT;
 			secondsTF.width = WIDTH;
 			secondsTF.background = true;
 			secondsTF.backgroundColor = SECONDS_IDLE_BGCOLOR;
