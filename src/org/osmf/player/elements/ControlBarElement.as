@@ -241,16 +241,6 @@ package org.osmf.player.elements {
 			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
 		}
 		
-		public function disableMultiQualityButton():void {
-			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			widget && (widget.visible = false);
-		}
-		
-		public function enableMultiQualityButton():void {
-			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			widget && (widget.visible = true);
-		}
-		
 		public function processListState(listIsOpened:Boolean):void {
 			for each(var widget:Widget in controlBar.widgets) {
 				if (widget is ChannelListButton) {
