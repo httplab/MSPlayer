@@ -89,7 +89,7 @@ package {
 					var mediaElements:Vector.<MediaElement> = generator.createMediaElements(
 						_vastLoadTrait.vastDocument
 					);
-					_linearAdsQueue.push([mediaElements[0], true, resumePlaybackAfterAd, interruptInterval]);
+					mediaElements.length && _linearAdsQueue.push([mediaElements[0], true, resumePlaybackAfterAd, interruptInterval]);
 					continueAdvertising();
 				}
 			}
@@ -131,12 +131,13 @@ package {
 			adMediaPlayer.media.metadata.addValue("Advertisement", "1");
 			if (pauseMainMediaWhilePlayingAd) {
 				dispatchEvent(new Event(PAUSE_MAIN_VIDEO_REQUEST));
-				displayNonLinearAd();
+				//displayNonLinearAd();
 			}
 			var mediaMetadata:MediaMetadata = new MediaMetadata();
 			mediaMetadata.mediaPlayer = adMediaPlayer;
 			adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
 			_viewHelper.controlBar && (_viewHelper.controlBar.target = adMediaElement);
+			_viewHelper.playerTitle && (_viewHelper.playerTitle.target = adMediaElement);
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();
 			_viewHelper.adBlockHeader.startCountdown(interruptInterval * 1000);
