@@ -120,7 +120,7 @@ package org.osmf.player.chrome {
 			// Right side
  			rightControls = new Widget();
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
+			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
@@ -341,11 +341,6 @@ package org.osmf.player.chrome {
 					widget.configure(<default/>, assetManager);					
 				}
 			}
-		}
-		
-		override public function set media(value:MediaElement):void {
-			super.media = value;
-			mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
 		}
 		
 		override protected function processRequiredTraitsAvailable(element:MediaElement):void {

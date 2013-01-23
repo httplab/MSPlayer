@@ -12,6 +12,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
 	import org.osmf.layout.VerticalAlign;
+	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.Channel;
@@ -247,6 +248,14 @@ package org.osmf.player.chrome.widgets {
 		/**
 		* OSMF vs. Developers fight
 		*/
+		
+		override public function set media(value:MediaElement):void {
+			super.media = value;
+			if (media && media.metadata) {
+				mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
+				setSuperVisible(!media.metadata.getValue("Advertisement"));
+			}
+		}
 		
 		override public function set x(value:Number):void {
 			parent && (super.x = (parent.width - back.width) / 2);

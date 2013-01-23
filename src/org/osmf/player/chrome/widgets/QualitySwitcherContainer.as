@@ -7,6 +7,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.events.MouseEvent;
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.layout.VerticalAlign;
+	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayTrait;
@@ -126,5 +127,13 @@ package org.osmf.player.chrome.widgets {
 		public function get currentStreamIdx():int {
 			return currentIdx;
 		}
+		
+		override public function set media(value:MediaElement):void {
+			super.media = value;
+			if (media && media.metadata) {
+				mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
+				setSuperVisible(!media.metadata.getValue("Advertisement"));
+			}
+		}		
 	}
 }

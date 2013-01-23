@@ -55,7 +55,7 @@ package org.osmf.player.chrome.widgets {
 		override public function set media(value:MediaElement):void {
 			super.media = value;
 			if (value && value.metadata) {
-                visible = !value.metadata.getValue("Advertisement");
+                setSuperVisible(!value.metadata.getValue("Advertisement"));
             }
 			if ((media.resource) && (media.resource is MultiQualityStreamingResource)) {
 				resource = (media.resource as MultiQualityStreamingResource)

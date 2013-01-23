@@ -237,7 +237,7 @@ package org.osmf.player.chrome.widgets {
 				onMediaElementTraitAdd(traitAddEvent);
 			}
             if (media && media.metadata) {
-                visible = !media.metadata.getValue("Advertisement");
+                setSuperVisible(!media.metadata.getValue("Advertisement"));
             }
 			onMediaElementTraitRemove(null);
 			updateCurrentWidget();
