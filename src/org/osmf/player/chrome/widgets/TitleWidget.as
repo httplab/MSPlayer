@@ -57,7 +57,7 @@ package org.osmf.player.chrome.widgets {
 			if (value && value.metadata) {
                 setSuperVisible(!value.metadata.getValue("Advertisement"));
             }
-			if ((media.resource) && (media.resource is MultiQualityStreamingResource)) {
+			if (media && (media.resource) && (media.resource is MultiQualityStreamingResource)) {
 				resource = (media.resource as MultiQualityStreamingResource)
 			}
 			renewTexts();

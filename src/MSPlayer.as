@@ -384,6 +384,7 @@ package {
 			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
 			if (resource && (resource.streamType == StreamType.LIVE)) {
 				_liveResuming = true;
+				media = null;
 				loadMedia(e);
 			}
 		}
