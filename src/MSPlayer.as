@@ -368,7 +368,8 @@ package {
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
-			_adController.checkForAd(loaderInfo.parameters, _liveResuming);
+			var streamType:String = resource['streamType'] || loaderInfo.parameters.streamType;
+			_adController.checkForAd(loaderInfo.parameters, streamType, _liveResuming);
 			_liveResuming = false;
 			viewHelper.channelList.jsCallbackFunctionName = loaderInfo.parameters.channelChangedCallback;
 			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);

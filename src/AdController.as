@@ -15,6 +15,7 @@ package {
 	import org.osmf.media.MediaElement;
 	import org.osmf.media.MediaPlayerState;
 	import org.osmf.media.URLResource;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.events.WidgetEvent;
 	import org.osmf.player.elements.ControlBarElement;
 	import org.osmf.player.media.StrobeMediaFactory;
@@ -59,19 +60,19 @@ package {
 			_factory = factory;
 		}
 		
-		public function checkForAd(loaderParams:Object, liveResumingHack:Boolean = false):void {
+		public function checkForAd(loaderParams:Object, streamType:String, liveResumingHack:Boolean = false):void {
 			_loaderParams = loaderParams;
 			if (!liveResumingHack && _loaderParams.preRoll) {
 				var interruptInterval:int = int(_loaderParams.preRollInterrupt) || int(_loaderParams.interrupt) || 0;
 				prepareLinearAd(_loaderParams.preRoll, true, interruptInterval);
             }
-            if (_loaderParams.streamType != "live" && _loaderParams.midRoll && _loaderParams.midRollTime) {
+            if (streamType != StreamType.LIVE && _loaderParams.midRoll && _loaderParams.midRollTime) {
                 _player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, checkForMidrollNeed);
             }
-            if (_loaderParams.streamType != "live" && _loaderParams.pauseRoll) {
+            if (streamType != StreamType.LIVE && _loaderParams.pauseRoll) {
 				_viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, planPauseRoll, false, int.MAX_VALUE);
 			}
-            if (_loaderParams.streamType == "recorded" && _loaderParams.postRoll) {
+            if (streamType == StreamType.RECORDED && _loaderParams.postRoll) {
                 _player.addEventListener(TimeEvent.COMPLETE, planPostRoll);
             }
 		}
