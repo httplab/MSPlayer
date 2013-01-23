@@ -111,6 +111,7 @@ package {
 		private var viewHelper:ViewHelper;
 		private var _adController:AdController;
 		private var _mainVideoTimeSetted:Boolean;
+		private var _liveResuming:Boolean;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -367,7 +368,8 @@ package {
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
-			_adController.checkForAd(loaderInfo.parameters);
+			_adController.checkForAd(loaderInfo.parameters, _liveResuming);
+			_liveResuming = false;
 			viewHelper.channelList.jsCallbackFunctionName = loaderInfo.parameters.channelChangedCallback;
 			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
 			viewHelper.channelList.addEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
@@ -378,7 +380,10 @@ package {
 		
 		private function liveResumingHack(e:Event):void {
 			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
-			resource && (resource.streamType == StreamType.LIVE) && loadMedia(e);
+			if (resource && (resource.streamType == StreamType.LIVE)) {
+				_liveResuming = true;
+				loadMedia(e);
+			}
 		}
 		
 		private function switchChannelListVisible(e:Event):void {
@@ -401,7 +406,12 @@ package {
 		
 		private function resumeMainVideoAfterAd(e:Event):void {
 			// WORKAROUND: http://bugs.adobe.com/jira/browse/ST-397 - GPU Decoding issue on stagevideo: Win7, Flash Player version WIN 10,2,152,26 (debug)
-			player.play();
+			if (player.state == PlayState.PAUSED) {
+				player.play();
+				liveResumingHack(e);
+			} else {
+				player.play();
+			}
 			viewHelper.controlBar && (viewHelper.controlBar.target = player.media);
 			viewHelper.playerTitle && (viewHelper.playerTitle.target = _media);
 		}

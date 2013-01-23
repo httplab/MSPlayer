@@ -59,9 +59,9 @@ package {
 			_factory = factory;
 		}
 		
-		public function checkForAd(loaderParams:Object):void {
+		public function checkForAd(loaderParams:Object, liveResumingHack:Boolean = false):void {
 			_loaderParams = loaderParams;
-			if (_loaderParams.preRoll) {
+			if (!liveResumingHack && _loaderParams.preRoll) {
 				var interruptInterval:int = int(_loaderParams.preRollInterrupt) || int(_loaderParams.interrupt) || 0;
 				prepareLinearAd(_loaderParams.preRoll, true, interruptInterval);
             }
