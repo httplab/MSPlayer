@@ -379,6 +379,7 @@ package {
 		}
 		
 		private function liveResumingHack(e:Event):void {
+			if (_liveResuming) { return; }
 			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
 			if (resource && (resource.streamType == StreamType.LIVE)) {
 				_liveResuming = true;
@@ -406,7 +407,7 @@ package {
 		
 		private function resumeMainVideoAfterAd(e:Event):void {
 			// WORKAROUND: http://bugs.adobe.com/jira/browse/ST-397 - GPU Decoding issue on stagevideo: Win7, Flash Player version WIN 10,2,152,26 (debug)
-			if (player.state == PlayState.PAUSED) {
+			if (player.state == PlayState.PAUSED && !_liveResuming) {
 				player.play();
 				liveResumingHack(e);
 			} else {

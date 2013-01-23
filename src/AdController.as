@@ -138,6 +138,7 @@ package {
 			adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
 			_viewHelper.controlBar && (_viewHelper.controlBar.target = adMediaElement);
 			_viewHelper.playerTitle && (_viewHelper.playerTitle.target = adMediaElement);
+			adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();
 			_viewHelper.adBlockHeader.startCountdown(interruptInterval * 1000);
