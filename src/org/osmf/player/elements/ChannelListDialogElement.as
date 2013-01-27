@@ -1,14 +1,16 @@
 package org.osmf.player.elements {
+	import com.adobe.serialization.json.JSON;
+	import flash.display.Stage;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
+	import flash.events.FullScreenEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMetadata;
-	import org.osmf.layout.VerticalAlign;
 	import org.osmf.media.MediaElement;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.ChromeProvider;
@@ -17,7 +19,6 @@ package org.osmf.player.elements {
 	import org.osmf.player.configuration.PlayerConfiguration;
 	import org.osmf.traits.DisplayObjectTrait;
 	import org.osmf.traits.MediaTraitType;
-	import com.adobe.serialization.json.JSON;
 	
 	
 	public class ChannelListDialogElement extends MediaElement {
@@ -28,6 +29,7 @@ package org.osmf.player.elements {
 		private var channelListDialog:ChannelListDialog;
 		private var chromeProvider:ChromeProvider;
 		private var _configuration:PlayerConfiguration;
+		private var _stage:Stage;
 		
 		public function ChannelListDialogElement(configuration:PlayerConfiguration) {
 			_configuration = configuration;
@@ -38,10 +40,30 @@ package org.osmf.player.elements {
 			channelListDialog = chromeProvider.createChannelListDialog();
 			channelListDialog.measure();			
 			channelListDialog.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);			
+			if (channelListDialog.stage) {
+				addStageResizeListeners(null);
+			} else {
+				channelListDialog.addEventListener(Event.ADDED_TO_STAGE, addStageResizeListeners);
+			}
 			addMetadata(LayoutMetadata.LAYOUT_NAMESPACE, channelListDialog.layoutMetadata);
 			var viewable:DisplayObjectTrait = new DisplayObjectTrait(channelListDialog, channelListDialog.measuredWidth, channelListDialog.measuredHeight);
 			addTrait(MediaTraitType.DISPLAY_OBJECT, viewable);				
 			super.setupTraits();			
+		}
+		
+		private function addStageResizeListeners(e:Event):void {
+			channelListDialog.removeEventListener(Event.ADDED_TO_STAGE, addStageResizeListeners);
+			_stage = channelListDialog.stage;
+			_stage.addEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
+		}
+		
+		private function fullScreenSwitching(e:FullScreenEvent):void {
+			if (
+				(_stage.displayState == StageDisplayState.NORMAL) && 
+				channelListDialog.stage
+			) { 
+				dispatchEvent(new Event(ChannelListButton.LIST_CALL));
+			}
 		}
 		
 		public function renewContent(url:String):void {
@@ -81,7 +103,7 @@ package org.osmf.player.elements {
 					channel = group.addChannel(channelData);
 					channel.addEventListener(MouseEvent.MOUSE_DOWN, channelSelected);
 					if (programs[channel.srcId]) {
-						channel.setBroadcast(programs[channel.srcId].time,programs[channel.srcId].title)
+						channel.setBroadcast(programs[channel.srcId].time, programs[channel.srcId].title)
 					}
 				}
 				groups.push(group);
