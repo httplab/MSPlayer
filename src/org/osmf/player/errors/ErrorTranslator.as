@@ -141,6 +141,9 @@ package org.osmf.player.errors
 					case PLUGIN_FAILURE:
 						message = PLUGIN_FAILURE_ERROR;
 						break;
+					default: 
+						message = UNKNOWN_ERROR;
+						break;
 				}
 			}
 			

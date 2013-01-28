@@ -20,6 +20,12 @@
 package org.osmf.player.chrome.widgets
 {
 	import __AS3__.vec.Vector;
+	import flash.filters.DropShadowFilter;
+	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
+	import org.osmf.player.chrome.assets.AssetIDs;
+	import org.osmf.player.chrome.assets.FontAsset;
+	import org.osmf.player.chrome.ChromeProvider;
 	
 	import flash.events.MouseEvent;
 	
@@ -101,6 +107,15 @@ package org.osmf.player.chrome.widgets
 				captionLabel.text = currentAlert.caption;
 				messageLabel.text = currentAlert.message;
 				
+				var fontAsset:FontAsset = ChromeProvider.getInstance().assetManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
+				var regularFormat:TextFormat = fontAsset ? fontAsset.format : new TextFormat();
+				regularFormat.size = 13;
+				regularFormat.color = 0xFFFFFF;
+				regularFormat.align = TextFormatAlign.CENTER;
+				captionLabel.textFormat = regularFormat;
+				captionLabel.filters = [new DropShadowFilter(1, 90, 0, 1, 2, 2, 1, 3)];
+				messageLabel.textFormat = regularFormat;
+				messageLabel.filters = [new DropShadowFilter(1, 90, 0, 1, 2, 2, 1, 3)];
 				visible = true;
 			}
 		}
