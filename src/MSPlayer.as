@@ -353,10 +353,7 @@ package {
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
 				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
-				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
+				handleChannelListEvents();
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
@@ -379,6 +376,17 @@ package {
 			
 		}
 		
+		private function handleChannelListEvents():void {
+				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+		}
+		
 		private function liveResumingHack(e:Event):void {
 			if (_liveResuming) { return; }
 			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
@@ -389,12 +397,19 @@ package {
 			}
 		}
 		
-		private function switchChannelListVisible(e:Event):void {
-			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) ?
-				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList) :
+		private function showChannelList(e:Event):void {
+			!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
 				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
-			viewHelper.controlBar.processListState(viewHelper.mainContainer.containsMediaElement(viewHelper.channelList));
+			viewHelper.channelList.showDialog();
+			viewHelper.controlBar.processListState(true);
 		}
+		
+		private function hideChannelList(e:Event):void {
+			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList)
+			viewHelper.controlBar.processListState(false);
+		}
+		
 		
 		private function changeStreamQuality(e:Event):void {
 			var resource:MultiQualityStreamingResource = (e.currentTarget as MultiQualityStreamingResource);
@@ -659,7 +674,7 @@ package {
 				}
 			}
 			
-			viewHelper.playerTitle && (viewHelper.playerTitle .width = newWidth);
+			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
 		}
 		
 		private function onCurrentTimeChange(event:TimeEvent):void {

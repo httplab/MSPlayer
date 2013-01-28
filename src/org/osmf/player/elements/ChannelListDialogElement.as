@@ -1,7 +1,5 @@
 package org.osmf.player.elements {
 	import com.adobe.serialization.json.JSON;
-	import flash.display.Stage;
-	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.FullScreenEvent;
 	import flash.events.IOErrorEvent;
@@ -29,7 +27,6 @@ package org.osmf.player.elements {
 		private var channelListDialog:ChannelListDialog;
 		private var chromeProvider:ChromeProvider;
 		private var _configuration:PlayerConfiguration;
-		private var _stage:Stage;
 		
 		public function ChannelListDialogElement(configuration:PlayerConfiguration) {
 			_configuration = configuration;
@@ -40,6 +37,7 @@ package org.osmf.player.elements {
 			channelListDialog = chromeProvider.createChannelListDialog();
 			channelListDialog.measure();			
 			channelListDialog.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);			
+			channelListDialog.addEventListener(ChannelListButton.LIST_CLOSE_CALL, dispatchEvent);			
 			if (channelListDialog.stage) {
 				addStageResizeListeners(null);
 			} else {
@@ -53,17 +51,12 @@ package org.osmf.player.elements {
 		
 		private function addStageResizeListeners(e:Event):void {
 			channelListDialog.removeEventListener(Event.ADDED_TO_STAGE, addStageResizeListeners);
-			_stage = channelListDialog.stage;
-			_stage.addEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
+			channelListDialog.stage.removeEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
+			channelListDialog.stage.addEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
 		}
 		
 		private function fullScreenSwitching(e:FullScreenEvent):void {
-			if (
-				(_stage.displayState == StageDisplayState.NORMAL) && 
-				channelListDialog.stage
-			) { 
-				dispatchEvent(new Event(ChannelListButton.LIST_CALL));
-			}
+			dispatchEvent(new Event(ChannelListButton.LIST_CLOSE_CALL));
 		}
 		
 		public function renewContent(url:String):void {
@@ -118,13 +111,18 @@ package org.osmf.player.elements {
 			_jsCallbackFunctionName && 
 				ExternalInterface.available && 
 				ExternalInterface.call(_jsCallbackFunctionName, channel.srcId);
-			dispatchEvent(new Event(ChannelListButton.LIST_CALL));
+			dispatchEvent(new Event(ChannelListButton.LIST_CLOSE_CALL));
 			dispatchEvent(new Event(CHANNEL_CHANGED));
 		}
 		
 		private function loadFailed(e:Event):void {
 			//TODO: Tell about initialization failure
 			trace("Sry, guys, i tried to do my best");
+		}
+		
+		public function showDialog():void {
+			channelListDialog.x = 0;
+			channelListDialog.y = 0;
 		}
 		
 		public function set jsCallbackFunctionName(value:String):void {

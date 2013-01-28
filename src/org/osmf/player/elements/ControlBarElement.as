@@ -206,6 +206,7 @@ package org.osmf.player.elements {
 						break;
 					case WidgetIDs.CHANNEL_LIST_BUTTON: 
 						widget.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);
+						widget.addEventListener(ChannelListButton.LIST_CLOSE_CALL, dispatchEvent);
 						break;
 					default:
 						break;
