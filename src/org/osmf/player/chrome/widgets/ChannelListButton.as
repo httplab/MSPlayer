@@ -3,6 +3,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import org.osmf.events.ContainerChangeEvent;
+	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.layout.LayoutTargetEvent;
 	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetIDs;
@@ -45,7 +46,24 @@ package org.osmf.player.chrome.widgets {
 			} else {
 				super.setFace(face); 
 			}
-			
+		}
+		
+		/**
+		* OSMF-fight.
+		*/
+		
+		override public function get layoutMetadata():LayoutMetadata {
+			var toReturn:LayoutMetadata = super.layoutMetadata;
+			toReturn.includeInLayout = true;
+			return toReturn;
+		}
+		
+		override public function get measuredWidth():Number {
+			return currentFace.width;
+		}
+		
+		override public function get measuredHeight():Number {
+			return currentFace.height;
 		}
 	}		
 }
