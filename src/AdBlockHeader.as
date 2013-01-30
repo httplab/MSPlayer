@@ -1,15 +1,14 @@
 package {
-	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-	import flash.utils.Timer;
+	import org.osmf.events.TimeEvent;
+	import org.osmf.media.MediaPlayer;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
@@ -27,8 +26,7 @@ package {
 		static public const AD_BLOCK_TEXT:String = "Р Е К Л А М А";
 		
 		private var _container:Sprite;
-		private var _timer:Timer;
-		private var secondsLeft:int;
+		private var totalSeconds:int;
 		private var secondsTF:TextField;
 		private var adBlockTF:TextField;
 		private var boldFormat:TextFormat;
@@ -40,7 +38,6 @@ package {
 		
 		public function register(container:Sprite):void {
 			_container = container;
-			_timer = new Timer(1, 1);
 			initTextFormats();
 			initMainTextField();
 		}
@@ -69,7 +66,7 @@ package {
 			adBlockTF.selectable = false;
 		}
 		
-		private function initNewSecondsTextField():void {
+		private function initNewSecondsTextField(delay:Number, player:MediaPlayer):void {
 			secondsTF = new TextField();
 			secondsTF.alpha = .8;
 			secondsTF.defaultTextFormat = regularFormat;
@@ -78,9 +75,9 @@ package {
 			secondsTF.background = true;
 			secondsTF.backgroundColor = SECONDS_IDLE_BGCOLOR;
 			secondsTF.selectable = false;
-			_timer.removeEventListener(TimerEvent.TIMER, renderSeconds);
-			secondsLeft = _timer.repeatCount;
-			_timer.addEventListener(TimerEvent.TIMER, renderSeconds);
+			player.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, renderSeconds);
+			totalSeconds = delay;
+			player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, renderSeconds);
 			renderSeconds(null);
 			_container.addChild(secondsTF);
 		}
@@ -93,19 +90,14 @@ package {
 		* Public interface
 		*/
 		
-		public function startCountdown(delay:Number):void {
-			_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, readyToWork);
+		public function startCountdown(delay:Number, player:MediaPlayer):void {
 			adBlockTF.removeEventListener(Event.ENTER_FRAME, correspondContainerSize);
-			_timer.delay = 1000;
-			_timer.repeatCount = int(delay / _timer.delay);
 			if (delay > 0) {
-				initNewSecondsTextField();
+				initNewSecondsTextField(delay, player);
 			}
 			_container.addChild(adBlockTF);
 			correspondContainerSize(null);
 			adBlockTF.addEventListener(Event.ENTER_FRAME, correspondContainerSize);
-			_timer.addEventListener(TimerEvent.TIMER_COMPLETE, readyToWork);
-			_timer.start();
 		}
 		
 		/**
@@ -121,12 +113,22 @@ package {
 			}
 		}
 		
-		private function renderSeconds(e:TimerEvent):void {
-			secondsTF.text = DEFAULT_SECONDS_TEXT.split('|S|').join(secondsLeft--);
-			secondsTF.setTextFormat(regularFormat);
+		private function renderSeconds(e:TimeEvent):void {
+			if (!e) {
+				secondsTF.text = DEFAULT_SECONDS_TEXT.split('|S|').join(totalSeconds);
+				return;
+			}
+			e.currentTarget.removeEventListener(e.type, arguments.callee);
+			if (totalSeconds - int(e.time) > 0) {
+				e.currentTarget.addEventListener(e.type, arguments.callee);
+				secondsTF.text = DEFAULT_SECONDS_TEXT.split('|S|').join(totalSeconds - int(e.time));
+				secondsTF.setTextFormat(regularFormat);
+			} else {
+				readyToWork(e);
+			}
 		}
 		
-		private function readyToWork(e:TimerEvent):void {
+		private function readyToWork(e:Event):void {
 			if (secondsTF) {
 				secondsTF.removeEventListener(MouseEvent.ROLL_OVER, setOveredState);
 				secondsTF.removeEventListener(MouseEvent.ROLL_OUT, setReadyState);
@@ -173,16 +175,12 @@ package {
 			if (adBlockTF && adBlockTF.parent && adBlockTF.parent == _container) {
 				_container.removeChild(adBlockTF);
 			}
-			_timer.stop();
-			_timer.reset();
 			removeAllPossibeHandlers();
 			
 			secondsTF = null;
 		}
 		
 		private function removeAllPossibeHandlers():void {
-			_timer.removeEventListener(TimerEvent.TIMER, renderSeconds);
-			_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, readyToWork);
 			adBlockTF.removeEventListener(Event.ENTER_FRAME, correspondContainerSize);
 			if (secondsTF) {
 				secondsTF.removeEventListener(MouseEvent.ROLL_OVER, setOveredState);

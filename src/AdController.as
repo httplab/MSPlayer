@@ -146,7 +146,7 @@ package {
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();
 			interruptInterval = interruptInterval || adMediaElement.metadata.getValue('canBeSkipped') || 0;
-			_viewHelper.adBlockHeader.startCountdown(interruptInterval * 1000);
+			_viewHelper.adBlockHeader.startCountdown(interruptInterval, adMediaPlayer);
 			_viewHelper.adBlockHeader.addEventListener(AdBlockHeader.PASS_AD_REQUEST, interruptAllRolls);
 		}
 		
