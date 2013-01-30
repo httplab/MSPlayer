@@ -1,6 +1,7 @@
 package {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.external.ExternalInterface;
 	import flash.utils.Dictionary;
 	import org.osmf.elements.ImageElement;
 	import org.osmf.elements.ImageLoader;
@@ -83,9 +84,11 @@ package {
 			_vastLoadTrait = new VASTLoadTrait(_vastLoader, vastResource);
 			_vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onRollLoaderStateChange);
 			_vastLoader.load(_vastLoadTrait);
+			var loadStarted:Number = new Date().time;
 			function onRollLoaderStateChange(event:LoaderEvent):void {
 				if (event.newState == LoadState.READY) {
 					event.currentTarget.removeEventListener(LoadEvent.LOAD_STATE_CHANGE, arguments.callee);
+					ExternalInterface.available && ExternalInterface.call('console.log', "VAST responce time: " + (new Date().time - loadStarted) + " ms");
 					var generator:VASTMediaGenerator = new VASTMediaGenerator();
 					var mediaElements:Vector.<MediaElement> = generator.createMediaElements(
 						_vastLoadTrait.vastDocument
