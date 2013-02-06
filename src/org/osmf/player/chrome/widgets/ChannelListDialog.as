@@ -158,7 +158,7 @@ package org.osmf.player.chrome.widgets {
 		
 		private function onCloseButtonClick(e:MouseEvent):void {
 			e && e.updateAfterEvent();
-			dispatchEvent(new Event(ChannelListButton.LIST_CALL));
+			dispatchEvent(new Event(ChannelListButton.LIST_CLOSE_CALL));
 		}
 		
 		private function doExpand(e:MouseEvent):void {
