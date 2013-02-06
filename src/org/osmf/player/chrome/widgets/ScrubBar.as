@@ -10,6 +10,7 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.events.TimeEvent;
 	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.media.MediaElement;
+	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -243,6 +244,11 @@ package org.osmf.player.chrome.widgets {
 			updateCurrentWidget();
 		}
 		
+		override protected function setSuperVisible(value:Boolean):void {
+			trace(value);
+			super.setSuperVisible(value);
+		}
+		
 		public function get timeTrait():TimeTrait {
 			return media ? media.getTrait(MediaTraitType.TIME) as TimeTrait : null;
 		}
@@ -278,10 +284,10 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function get streamType():String {			
-			if (!media) {
+			if (!media || !media.resource || !(media.resource as StreamingURLResource)) {
 				return "";
 			}
-			return MediaElementUtils.getStreamType(media);
+			return (media.resource as StreamingURLResource).streamType;
 		}
 		
 		override public function get measuredHeight():Number {
