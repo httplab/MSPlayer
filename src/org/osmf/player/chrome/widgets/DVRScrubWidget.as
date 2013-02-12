@@ -16,9 +16,11 @@ package org.osmf.player.chrome.widgets {
 		private var _seekTo:Number;
 		private var _hintPosition:Number;
 		private var positionContainer:Sprite;
+		private var backDropRecordedRight:DisplayObject;
 		private var backDropLeft_position:DisplayObject;
 		private var backDropMiddle_position:DisplayObject;
 		private var backDropRight_position:DisplayObject;
+		private var backDropRecordedRightFace:String;
 		private var backDropLeftPositionFace:String;
 		private var backDropMiddlePositionFace:String;
 		private var backDropRightPositionFace:String;
@@ -31,6 +33,7 @@ package org.osmf.player.chrome.widgets {
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_WHITE_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_WHITE_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_WHITE_RIGHT;
+			backDropRecordedRightFace = AssetIDs.SCRUB_BAR_RECORDED_RIGHT;
 			
 			backDropLeftPositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_LEFT;
 			backDropMiddlePositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_MIDDLE;
@@ -42,6 +45,8 @@ package org.osmf.player.chrome.widgets {
 			
 			positionContainer = new Sprite();
 			
+			backDropRecordedRight = assetManager.getDisplayObject(backDropRecordedRightFace); 
+			backDropRecordedRight.visible = false;
 			backDropRecordedRight.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			
 			backDropLeft_position = assetManager.getDisplayObject(backDropLeftPositionFace); 
@@ -55,6 +60,8 @@ package org.osmf.player.chrome.widgets {
 			_positionMask = new Sprite();
 			positionContainer.addChild(_positionMask);
 			positionContainer.mask = _positionMask;
+			
+			container.addChild(backDropRecordedRight);
 			
 			addChild(container);
 			addChild(programContainer);
@@ -90,8 +97,7 @@ package org.osmf.player.chrome.widgets {
 			var mediaMetadata:MediaMetadata = media.metadata.getValue(MediaMetadata.ID) as MediaMetadata;
 			var mediaPlayer:StrobeMediaPlayer = mediaMetadata.mediaPlayer;
 			if (mediaPlayer.snapToLive()) {
-				backDropRecordedRight.filters = [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
-				backDropRecordedRight['gotoAndStop'](1);
+				backDropRecordedRight.visible = false;
 				playedPosition = NaN;
 			}
 		}
@@ -103,7 +109,7 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropMiddle_position.x = backDropLeft_position.width;
 			backDropRight_position.x = availableWidth - backDropRecordedRight.width;
-			
+			backDropRecordedRight.x = availableWidth - backDropRecordedRight.width;
 			seeker.point = new Point(width, height);
 		}
 		
@@ -114,7 +120,7 @@ package org.osmf.player.chrome.widgets {
 		private function onSeekerUpdate(event:Event):void {
 			_seekTo = seeker.position;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
-			backDropRecordedRight.filters = (_seekTo < 1) ? [] : [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
+			backDropRecordedRight.visible = (_seekTo < 1);
 		}
 		
 		private function onSeekerEnd(event:Event):void {

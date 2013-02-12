@@ -68,6 +68,7 @@ package org.osmf.player.chrome.assets
 		static public const SCRUB_BAR_SNOW_WHITE_MIDDLE:String = "scrubBarSnowWhiteMiddle";
 		static public const SCRUB_BAR_SNOW_WHITE_RIGHT:String = "scrubBarSnowWhiteRight";
 		
+		static public const SCRUB_BAR_LIVE_RIGHT:String = "scrubBarLiveRight";
 		static public const SCRUB_BAR_RECORDED_RIGHT:String = "scrubBarRecordedRight";
 		
 		public static const SCRUB_BAR_TIME_HINT:String = "scrubBarTimeHint";
