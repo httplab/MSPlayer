@@ -264,10 +264,11 @@ package org.osmf.player.chrome {
 		}
 		
 		override public function set width(value:Number):void {
-			if (_isExpanded && (value < MIN_EXPANDED_WITDH)) {
-				switchToCollapsedState();
+			if ((value/.7) < MIN_EXPANDED_WITDH) {
+				_isExpanded && switchToCollapsedState();
+				value /= .7;
 				value -= 40;
-			} else if (!_isExpanded && (value >= MIN_EXPANDED_WITDH)) {
+			} else if (!_isExpanded && (value/.7 >= MIN_EXPANDED_WITDH)) {
 				switchToExpandedState();
 			}
 			super.width = value;			
@@ -327,6 +328,10 @@ package org.osmf.player.chrome {
 		public function get widgets():Array{
 			trace("ControlBar: get widgets");
 			return _widgets;
+		}
+		
+		override public function get width():Number {
+			return _isExpanded ? super.width : (super.width + 40) * .7;
 		}
 		
 		// Internals

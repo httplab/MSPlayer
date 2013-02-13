@@ -651,6 +651,8 @@ package {
 				viewHelper.mainContainer.width = newWidth;
 				viewHelper.mainContainer.height = newHeigth;
 			}
+			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
+			newWidth *= .7;
 			// Propagate dimensions to the control bar:
 			if (viewHelper.controlBar) {
 				if (
@@ -668,13 +670,11 @@ package {
 							viewHelper.controlBar.width = MAX_OVER_WIDTH_TABLET;
 						break;
 						default:
-							viewHelper.controlBar.width = MAX_OVER_WIDTH;
+							viewHelper.controlBar.width = newWidth//MAX_OVER_WIDTH;
 						break;
 					}
 				}
 			}
-			
-			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
 		}
 		
 		private function onCurrentTimeChange(event:TimeEvent):void {
