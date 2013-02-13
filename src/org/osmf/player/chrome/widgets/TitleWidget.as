@@ -1,6 +1,7 @@
 package org.osmf.player.chrome.widgets {
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
+	import org.osmf.events.MediaElementEvent;
 	import org.osmf.media.MediaElement;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
@@ -44,6 +45,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function fit(value:Number):void {
+			renewTexts();
 			titleDisplayObject.bg.width = value;
 			titleDisplayObject.titleTxt.width = Math.max(.45 * value, 350);
 			titleDisplayObject.nameTxt.width = Math.max(.45 * value, 350);
@@ -83,6 +85,13 @@ package org.osmf.player.chrome.widgets {
 			}
 			fitTextHeight(titleDisplayObject.titleTxt);
 			fitTextHeight(titleDisplayObject.nameTxt);
+		}
+		
+		
+		override protected function onMediaElementTraitAdd(event:MediaElementEvent):void {
+			if (event.traitType == MediaTraitType.TIME) {
+				renewTexts();
+			}
 		}
 		
 		private function fitTextHeight(tf:TextField):void {
