@@ -15,6 +15,7 @@ package org.osmf.player.elements {
 	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
 	import org.osmf.player.configuration.PlayerConfiguration;
+	import org.osmf.player.utils.DateUtils;
 	import org.osmf.traits.DisplayObjectTrait;
 	import org.osmf.traits.MediaTraitType;
 	
@@ -70,6 +71,7 @@ package org.osmf.player.elements {
 		
 		private function parseLoadedData(e:Event):void {
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
+			DateUtils.renewDateDelta(Number(data.timestamp) * 1000);
 			var groups:Vector.<ChannelGroup> = new Vector.<ChannelGroup>();
 			var allChannels:ChannelGroup = new ChannelGroup(ALL_CHANNELS);
 			var channelData:Object;
@@ -78,7 +80,7 @@ package org.osmf.player.elements {
 			for each (var program:Object in data.programms) {
 				programs[program.channel_id] = {
 					title: program.title,
-					time: program.start
+					time: DateUtils.formatToClientTime(Number(program.start) * 1000)
 				}
 			}
 			for each (channelData in data.all_channels) {

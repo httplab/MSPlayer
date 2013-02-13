@@ -12,6 +12,7 @@ package {
 	import org.osmf.player.chrome.ControlBar;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.elements.ControlBarElement;
+	import org.osmf.player.utils.DateUtils;
 	
 	/**
 	 * ...
@@ -62,7 +63,7 @@ package {
 			_shedulesArray = [];
 			for each (var sheduleData:Object in shedules) {
 				var shedule:Object = {
-					start: Date.parse(sheduleData.start_at.split('-').join('/')),
+					start: DateUtils.formatToClientTime(Date.parse(sheduleData.start_at.split('-').join('/'))),
 					title: sheduleData.title
 				}
 				_shedulesArray.push(shedule);
