@@ -87,18 +87,19 @@ package {
 		
 		private var injector:InjectorModule;
 		private var pluginHostWhitelist:Vector.<String>;
-		private var mediaPlayerJSBridge:JavaScriptBridge = null;
+		//private var mediaPlayerJSBridge:JavaScriptBridge = null;
 		private var _media:MediaElement;
 		private var controlBarWidth:Number;
 		private var controlBarHeight:Number;
 		private var strobeWidth:Number;
 		private var strobeHeight:Number;
 		
-        private static const EXTERNAL_INTERFACE_ERROR_CALL:String = "function(playerId, code, message, detail)" + 
-		"{" + 
-		"if (onMediaPlaybackError != null)" +
-		"onMediaPlaybackError(playerId, code, message, detail);" +
-		"}";
+		//Will never be called in production
+        //private static const EXTERNAL_INTERFACE_ERROR_CALL:String = "function(playerId, code, message, detail)" + 
+		//"{" + 
+		//"if (onMediaPlaybackError != null)" +
+		//"onMediaPlaybackError(playerId, code, message, detail);" +
+		//"}";
 		
 		CONFIG::LOGGING {
 			protected var logger:StrobeLogger = Log.getLogger("StrobeMediaPlayback") as StrobeLogger;
@@ -158,18 +159,19 @@ package {
 			var drmManager:DRMManager = DRMManager.getDRMManager();
 			drmManager.addEventListener(DRMErrorEvent.DRM_ERROR, onDRMError);
 			initConfiguration();
-			if (
-				configuration.javascriptCallbackFunction != "" && 
-				ExternalInterface.available && 
-				mediaPlayerJSBridge == null
-			) {
-				mediaPlayerJSBridge = new JavaScriptBridge(
-					this, 
-					player, 
-					StrobeMediaPlayer, 
-					configuration.javascriptCallbackFunction
-				);
-			}
+			//Will never be called in production
+			//if (
+				//configuration.javascriptCallbackFunction != "" && 
+				//ExternalInterface.available && 
+				//mediaPlayerJSBridge == null
+			//) {
+				//mediaPlayerJSBridge = new JavaScriptBridge(
+					//this, 
+					//player, 
+					//StrobeMediaPlayer, 
+					//configuration.javascriptCallbackFunction
+				//);
+			//}
 		}
 		
 		private function initUncaughtErrorsHandler():void {
@@ -830,20 +832,21 @@ package {
 			}
 			reportError(message, nonTranslatedMessage);
 			// Forward the raw error message to JavaScript:
-			if (ExternalInterface.available) {
-				try {
-					ExternalInterface.call(
-						EXTERNAL_INTERFACE_ERROR_CALL,
-						ExternalInterface.objectID,
-						event.error.errorID, 
-						event.error.message, 
-						event.error.detail
-					);
-					JavaScriptBridge.error(event);
-				} catch(e:Error) {
-					trace(e.toString());
-				}
-			}
+			//Not available in production
+			//if (ExternalInterface.available) {
+				//try {
+					//ExternalInterface.call(
+						//EXTERNAL_INTERFACE_ERROR_CALL,
+						//ExternalInterface.objectID,
+						//event.error.errorID, 
+						//event.error.message, 
+						//event.error.detail
+					//);
+					//JavaScriptBridge.error(event);
+				//} catch(e:Error) {
+					//trace(e.toString());
+				//}
+			//}
 		}
 		
 		private function reportError(message:String, nonTranslatedMessage:String = ""):void {
