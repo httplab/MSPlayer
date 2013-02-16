@@ -6,6 +6,8 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.layout.LayoutTargetEvent;
 	import org.osmf.media.MediaElement;
+	import org.osmf.net.StreamingURLResource;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
 
 	public class ChannelListButton extends ButtonWidget {
@@ -35,8 +37,9 @@ package org.osmf.player.chrome.widgets {
 		override public function set media(value:MediaElement):void {
 			super.media = value;
 			if (media && media.metadata) {
-				mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
-				setSuperVisible(!media.metadata.getValue("Advertisement"));
+				var vis:Boolean = !media.metadata.getValue("Advertisement") && (streamType != StreamType.RECORDED);
+				mouseChildren = mouseEnabled = vis;
+				setSuperVisible(vis);
 			}
 		}
 		
@@ -48,6 +51,13 @@ package org.osmf.player.chrome.widgets {
 			}
 		}
 		
+		private function get streamType():String {
+			if (super.media && super.media.resource && (super.media.resource as StreamingURLResource)) {
+				return (super.media.resource as StreamingURLResource).streamType;
+			} 
+			return '';
+		}
+		
 		/**
 		* OSMF-fight.
 		*/
@@ -55,6 +65,7 @@ package org.osmf.player.chrome.widgets {
 		override public function get layoutMetadata():LayoutMetadata {
 			var toReturn:LayoutMetadata = super.layoutMetadata;
 			toReturn.includeInLayout = true;
+			toReturn.width = (streamType == StreamType.RECORDED) ? 0 : toReturn.width;
 			return toReturn;
 		}
 		
