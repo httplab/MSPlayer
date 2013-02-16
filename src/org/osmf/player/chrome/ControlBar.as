@@ -124,9 +124,9 @@ package org.osmf.player.chrome {
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
-			afterScrubSpacer = new Widget();
-			afterScrubSpacer.width = 10;
-			rightControls.addChildWidget(afterScrubSpacer);
+			//afterScrubSpacer = new Widget();
+			//afterScrubSpacer.width = 10;
+			//rightControls.addChildWidget(afterScrubSpacer);
 			
 			//ChannelListButton
 			channelListButton = new ChannelListButton();
@@ -199,7 +199,7 @@ package org.osmf.player.chrome {
 			addChildWidget(rightControls);
 			
 			rightControls.layoutMetadata.width = 
-				afterScrubSpacer.width + 
+				//afterScrubSpacer.width + 
 				channelListButton.layoutMetadata.width + 
 				afterChannelSpacer.width +
 				qualitySwitcherWidget.layoutMetadata.width +
@@ -229,7 +229,7 @@ package org.osmf.player.chrome {
 				afterPlaySpacer, 
 				leftControls,
 				scrubBar, 
-				afterScrubSpacer,
+				//afterScrubSpacer,
 				channelListButton,
 				afterChannelSpacer,
 				qualitySwitcherWidget, 
@@ -289,7 +289,7 @@ package org.osmf.player.chrome {
 			//rightControls.addChildWidget(freeModeContainerWidget);
 			rightControls.removeChildWidget(fullscreenContainerWidget);
 			rightControls.addChildWidget(fullscreenContainerWidget);
-			rightControls.layoutMetadata.width = afterScrubSpacer.width + 
+			rightControls.layoutMetadata.width = //afterScrubSpacer.width + 
 				channelListButton.layoutMetadata.width + 
 				afterChannelSpacer.width +
 				qualitySwitcherWidget.layoutMetadata.width +
@@ -306,7 +306,7 @@ package org.osmf.player.chrome {
 			rightControls.removeChildWidget(afterChannelSpacer);
 			rightControls.removeChildWidget(qualitySwitcherWidget);
 			rightControls.removeChildWidget(afterTimeSpacer);
-			rightControls.layoutMetadata.width = afterScrubSpacer.width + 
+			rightControls.layoutMetadata.width = //afterScrubSpacer.width + 
 				muteContainerWidget.layoutMetadata.width + 
 				fullscreenContainerWidget.layoutMetadata.width
 		}
@@ -374,7 +374,7 @@ package org.osmf.player.chrome {
 		private var afterTimeSpacer:Widget;
 		private var muteContainerWidget:Widget;
 		private var fullscreenContainerWidget:Widget;
-		private var afterScrubSpacer:Widget;
+		//private var afterScrubSpacer:Widget;
 		//private var fullWidthContainerWidget:Widget;
 		//private var freeModeContainerWidget:Widget;
 		_requiredTraits[0] = MediaTraitType.PLAY;

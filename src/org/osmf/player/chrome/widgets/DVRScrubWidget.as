@@ -3,6 +3,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.filters.GlowFilter;
 	import flash.geom.Point;
 	import org.osmf.player.chrome.assets.AssetIDs;
@@ -47,7 +48,7 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropRecordedRight = assetManager.getDisplayObject(backDropRecordedRightFace); 
 			backDropRecordedRight.visible = false;
-			backDropLiveRight.filters = [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
+			backDropLiveRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 			backDropRecordedRight.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			
 			backDropLeft_position = assetManager.getDisplayObject(backDropLeftPositionFace); 
@@ -100,7 +101,7 @@ package org.osmf.player.chrome.widgets {
 			if (mediaPlayer.snapToLive()) {
 				backDropRecordedRight.visible = false;
 				playedPosition = NaN;
-				backDropLiveRight.filters = [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
+				backDropLiveRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 			}
 		}
 		
@@ -123,7 +124,7 @@ package org.osmf.player.chrome.widgets {
 			_seekTo = seeker.position;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
 			backDropRecordedRight.visible = (_seekTo < 1);
-			backDropLiveRight.filters = backDropRecordedRight.visible ? [] : [new GlowFilter(0xff0000, 1, 18, 18, 1, 3)];
+			backDropLiveRight.filters = backDropRecordedRight.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 		}
 		
 		private function onSeekerEnd(event:Event):void {
