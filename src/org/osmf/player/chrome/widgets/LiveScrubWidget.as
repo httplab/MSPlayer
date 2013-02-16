@@ -12,7 +12,7 @@ package org.osmf.player.chrome.widgets {
 	public class LiveScrubWidget extends Widget {
 		protected var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
-		private var backDropLiveRight:DisplayObject;
+		protected var backDropLiveRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
