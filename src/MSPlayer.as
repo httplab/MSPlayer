@@ -113,6 +113,7 @@ package {
 		private var _adController:AdController;
 		private var _mainVideoTimeSetted:Boolean;
 		private var _liveResuming:Boolean;
+		private var _reconnectTimer:Timer;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -379,14 +380,14 @@ package {
 		}
 		
 		private function handleChannelListEvents():void {
-				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
-				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
-				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
-				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
-				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
 		}
 		
 		private function liveResumingHack(e:Event):void {
@@ -806,6 +807,13 @@ package {
 		private function onMediaError(event:MediaErrorEvent):void {
 				// Make sure this event gets handled only once:
 			new Ratchet().handleOtherEvent(event);
+			if (
+				event.error.errorID == MediaErrorCodes.NETSTREAM_STREAM_NOT_FOUND ||
+				event.error.detail.indexOf("2032") > -1
+			) {
+				reconnectRequest();
+				return;
+			}
 			player.removeEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			// Reset the current media:
 			player.media = null;
@@ -846,6 +854,26 @@ package {
 					//trace(e.toString());
 				//}
 			//}
+		}
+		
+		private function reconnectRequest():void {
+			if (!_reconnectTimer) {
+				_reconnectTimer = new Timer(loaderInfo.parameters.reconnectDelay || 1000, 1);
+				_reconnectTimer.addEventListener(TimerEvent.TIMER_COMPLETE, processReconnect);
+				_reconnectTimer.dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
+			} else {
+				_reconnectTimer.start();
+			}
+		}
+		
+		private function processReconnect(e:TimerEvent):void {
+			_reconnectTimer.stop();
+			_reconnectTimer.reset();
+			//if (viewHelper.alert) {
+				//viewHelper.mediaContainer.addMediaElement(viewHelper.alert);
+				//viewHelper.alert.alert("Error", ErrorTranslator.RECONNECT_TRIES);
+			//}
+			media = factory.createMediaElement(_media.resource);
 		}
 		
 		private function reportError(message:String, nonTranslatedMessage:String = ""):void {
