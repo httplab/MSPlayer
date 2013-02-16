@@ -264,12 +264,12 @@ package org.osmf.player.chrome {
 		}
 		
 		override public function set width(value:Number):void {
-			if ((value/.7) < MIN_EXPANDED_WITDH) {
+			if (value < MIN_EXPANDED_WITDH) {
 				_isExpanded && switchToCollapsedState();
-				value /= .7;
-				value -= 40;
-			} else if (!_isExpanded && (value/.7 >= MIN_EXPANDED_WITDH)) {
-				switchToExpandedState();
+				value = COLLAPSED_WIDTH;
+			} else {
+				!_isExpanded && switchToExpandedState();
+				value *= .7; 
 			}
 			super.width = value;			
 			validateNow();
@@ -330,10 +330,6 @@ package org.osmf.player.chrome {
 			return _widgets;
 		}
 		
-		override public function get width():Number {
-			return _isExpanded ? super.width : (super.width + 40) * .7;
-		}
-		
 		// Internals
 		//
 		
@@ -370,7 +366,8 @@ package org.osmf.player.chrome {
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		private var qualitySwitcherWidget:QualitySwitcherContainer;
 		private var _isExpanded:Boolean = true;
-		static public const MIN_EXPANDED_WITDH:Number = 350;
+		static public const MIN_EXPANDED_WITDH:Number = 500;
+		static public const COLLAPSED_WIDTH:Number = 255;
 		private var rightControls:Widget;
 		private var channelListButton:ChannelListButton;
 		private var afterChannelSpacer:Widget;

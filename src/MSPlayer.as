@@ -654,7 +654,6 @@ package {
 				viewHelper.mainContainer.height = newHeigth;
 			}
 			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
-			newWidth *= .7;
 			// Propagate dimensions to the control bar:
 			if (viewHelper.controlBar) {
 				if (
