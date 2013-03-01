@@ -294,6 +294,9 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_NORMAL, ASSET_channelListButton_normal);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_OVER, ASSET_channelListButton_over);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_DOWN, ASSET_channelListButton_selected);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_NORMAL, ASSET_channelListButton_collapsed_normal);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_OVER, ASSET_channelListButton_collapsed_over);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_DOWN, ASSET_channelListButton_collapsed_selected);
 		}
 		
 		private function onAssetsManagerComplete(event:Event):void

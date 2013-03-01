@@ -175,5 +175,9 @@ package org.osmf.player.chrome.assets
 		public static const CHANNEL_LIST_BUTTON_OVER:String = "channelListButtonOver";
 		public static const CHANNEL_LIST_BUTTON_DOWN:String = "channelListButtonDown";
 		public static const CHANNEL_LIST_BUTTON_NORMAL:String = "channelListButtonNormal";
+		
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_OVER:String = "channelListButtonCollapsedOver";
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_DOWN:String = "channelListButtonCollapsedDown";
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_NORMAL:String = "channelListButtonCollapsedNormal";
 	}
 }
