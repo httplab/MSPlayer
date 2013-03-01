@@ -13,6 +13,7 @@ package org.osmf.player.chrome.widgets {
 		protected var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
 		protected var backDropLiveRight:DisplayObject;
+		protected var backDropLiveCollapsedRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
@@ -21,10 +22,12 @@ package org.osmf.player.chrome.widgets {
 		protected var _programs:Array;
 		private var _programMask:Sprite;
 		private var _programsShiftTimer:Timer;
-		
+
+		protected var _isExpanded:Boolean;
 		protected var backDropLeftFace:String;
 		protected var backDropMiddleFace:String;
 		protected var backDropLiveRightFace:String;
+		protected var backDropLiveCollapsedRightFace:String;
 		protected var backDropLeftProgramFace:String;
 		protected var backDropMiddleProgramFace:String;
 		protected var backDropRightProgramFace:String;
@@ -35,6 +38,7 @@ package org.osmf.player.chrome.widgets {
 			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT; 	
 			backDropMiddleFace = AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE;
 			backDropLiveRightFace = AssetIDs.SCRUB_BAR_LIVE_RIGHT;
+			backDropLiveCollapsedRightFace = AssetIDs.SCRUB_BAR_LIVE_COLLAPSED_RIGHT;
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_GRAY_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_GRAY_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_GRAY_RIGHT;
@@ -51,6 +55,8 @@ package org.osmf.player.chrome.widgets {
 			backDropLeft = assetManager.getDisplayObject(backDropLeftFace); 
 			backDropMiddle = assetManager.getDisplayObject(backDropMiddleFace); 
 			backDropLiveRight = assetManager.getDisplayObject(backDropLiveRightFace); 
+			backDropLiveCollapsedRight = assetManager.getDisplayObject(backDropLiveCollapsedRightFace); 
+			backDropLiveCollapsedRight.visible = false;
 			backDropLeft_program = assetManager.getDisplayObject(backDropLeftProgramFace); 
 			backDropMiddle_program = assetManager.getDisplayObject(backDropMiddleProgramFace); 
 			backDropRight_program = assetManager.getDisplayObject(backDropRightProgramFace); 
@@ -58,6 +64,7 @@ package org.osmf.player.chrome.widgets {
 			container.addChild(backDropLeft);
 			container.addChild(backDropMiddle);
 			container.addChild(backDropLiveRight);
+			container.addChild(backDropLiveCollapsedRight);
 			
 			programContainer.addChild(backDropLeft_program);
 			programContainer.addChild(backDropMiddle_program);
@@ -68,14 +75,21 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
-			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
-			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
-			
 			backDropMiddle.x = backDropLeft.width;
-			backDropLiveRight.x = availableWidth - backDropLiveRight.width;
-			
 			backDropMiddle_program.x = backDropLeft_program.width;
-			backDropRight_program.x = availableWidth - backDropLiveRight.width;
+			
+			if (_isExpanded) {
+				backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
+				backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
+				backDropLiveRight.x = availableWidth - backDropLiveRight.width;
+				backDropRight_program.x = availableWidth - backDropLiveRight.width;
+			} else {
+				backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveCollapsedRight.width);
+				backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveCollapsedRight.width - backDropRight_program.width);
+				backDropLiveCollapsedRight.x = availableWidth - backDropLiveCollapsedRight.width;
+				backDropRight_program.x = availableWidth - backDropLiveCollapsedRight.width;
+			}
+			
 			recreateProgramsShiftTimer();
 			_programs && (programPositions = _programs);
 		}
@@ -125,6 +139,17 @@ package org.osmf.player.chrome.widgets {
 		
 		protected function get thims():Number {
 			return TWO_HOURS_IN_MILLISECONDS;
+		}
+		
+		public function set isExpanded(value:Boolean):void {
+			_isExpanded = value;
+			if (_isExpanded) {
+				backDropLiveRight.visible = true;
+				backDropLiveCollapsedRight.visible = false;
+			} else {
+				backDropLiveRight.visible = false;
+				backDropLiveCollapsedRight.visible = true;
+			}
 		}
 	}
 }

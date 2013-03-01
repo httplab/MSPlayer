@@ -110,7 +110,7 @@ package org.osmf.player.chrome {
 			addChildWidget(afterPlaySpacer);
 			
 			// Scrub bar
-			var scrubBar:ScrubBar = new ScrubBar();		
+			scrubBar = new ScrubBar();		
 			scrubBar.id = WidgetIDs.SCRUB_BAR;
 			scrubBar.layoutMetadata.percentWidth = 100;
 			scrubBar.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
@@ -297,7 +297,8 @@ package org.osmf.player.chrome {
 				muteContainerWidget.layoutMetadata.width + 
 				//fullWidthContainerWidget.layoutMetadata.width + 
 				//freeModeContainerWidget.layoutMetadata.width + 
-				fullscreenContainerWidget.layoutMetadata.width
+				fullscreenContainerWidget.layoutMetadata.width;
+			scrubBar.expanded = true;
 		}
 		
 		private function switchToCollapsedState():void {
@@ -308,7 +309,8 @@ package org.osmf.player.chrome {
 			rightControls.removeChildWidget(afterTimeSpacer);
 			rightControls.layoutMetadata.width = //afterScrubSpacer.width + 
 				muteContainerWidget.layoutMetadata.width + 
-				fullscreenContainerWidget.layoutMetadata.width
+				fullscreenContainerWidget.layoutMetadata.width;
+			scrubBar.expanded = false;
 		}
 		
 		override public function get height():Number {
@@ -374,6 +376,7 @@ package org.osmf.player.chrome {
 		private var afterTimeSpacer:Widget;
 		private var muteContainerWidget:Widget;
 		private var fullscreenContainerWidget:Widget;
+		private var scrubBar:ScrubBar;
 		//private var afterScrubSpacer:Widget;
 		//private var fullWidthContainerWidget:Widget;
 		//private var freeModeContainerWidget:Widget;

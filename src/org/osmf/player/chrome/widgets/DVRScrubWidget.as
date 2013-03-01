@@ -18,10 +18,12 @@ package org.osmf.player.chrome.widgets {
 		private var _hintPosition:Number;
 		private var positionContainer:Sprite;
 		private var backDropRecordedRight:DisplayObject;
+		private var backDropRecordedCollapsedRight:DisplayObject;
 		private var backDropLeft_position:DisplayObject;
 		private var backDropMiddle_position:DisplayObject;
 		private var backDropRight_position:DisplayObject;
 		private var backDropRecordedRightFace:String;
+		private var backDropRecordedCollapsedRightFace:String;
 		private var backDropLeftPositionFace:String;
 		private var backDropMiddlePositionFace:String;
 		private var backDropRightPositionFace:String;
@@ -35,6 +37,7 @@ package org.osmf.player.chrome.widgets {
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_WHITE_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_WHITE_RIGHT;
 			backDropRecordedRightFace = AssetIDs.SCRUB_BAR_RECORDED_RIGHT;
+			backDropRecordedCollapsedRightFace = AssetIDs.SCRUB_BAR_RECORDED_COLLAPSED_RIGHT;
 			
 			backDropLeftPositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_LEFT;
 			backDropMiddlePositionFace = AssetIDs.SCRUB_BAR_SNOW_WHITE_MIDDLE;
@@ -48,8 +51,12 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropRecordedRight = assetManager.getDisplayObject(backDropRecordedRightFace); 
 			backDropRecordedRight.visible = false;
+			backDropRecordedCollapsedRight = assetManager.getDisplayObject(backDropRecordedCollapsedRightFace); 
+			backDropRecordedCollapsedRight.visible = false;
 			backDropLiveRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
+			backDropLiveCollapsedRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 			backDropRecordedRight.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
+			backDropRecordedCollapsedRight.addEventListener(MouseEvent.MOUSE_DOWN, goToLive);
 			
 			backDropLeft_position = assetManager.getDisplayObject(backDropLeftPositionFace); 
 			backDropMiddle_position = assetManager.getDisplayObject(backDropMiddlePositionFace); 
@@ -64,6 +71,7 @@ package org.osmf.player.chrome.widgets {
 			positionContainer.mask = _positionMask;
 			
 			container.addChild(backDropRecordedRight);
+			container.addChild(backDropRecordedCollapsedRight);
 			
 			addChild(container);
 			addChild(programContainer);
@@ -100,19 +108,26 @@ package org.osmf.player.chrome.widgets {
 			var mediaPlayer:StrobeMediaPlayer = mediaMetadata.mediaPlayer;
 			if (mediaPlayer.snapToLive()) {
 				backDropRecordedRight.visible = false;
+				backDropRecordedCollapsedRight.visible = false;
 				playedPosition = NaN;
 				backDropLiveRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
+				backDropLiveCollapsedRight.filters = [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 			}
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
 			super.layout(availableWidth, availableHeight, deep);
 			
-			backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedRight.width);
-			
 			backDropMiddle_position.x = backDropLeft_position.width;
-			backDropRight_position.x = availableWidth - backDropRecordedRight.width;
-			backDropRecordedRight.x = availableWidth - backDropRecordedRight.width;
+			if (_isExpanded) {
+				backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedRight.width);
+				backDropRight_position.x = availableWidth - backDropRecordedRight.width;
+				backDropRecordedRight.x = availableWidth - backDropRecordedRight.width;
+			} else {
+				backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedCollapsedRight.width);
+				backDropRight_position.x = availableWidth - backDropRecordedCollapsedRight.width;
+				backDropRecordedCollapsedRight.x = availableWidth - backDropRecordedCollapsedRight.width;
+			}
 			seeker.point = new Point(width, height);
 		}
 		
@@ -123,8 +138,10 @@ package org.osmf.player.chrome.widgets {
 		private function onSeekerUpdate(event:Event):void {
 			_seekTo = seeker.position;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
-			backDropRecordedRight.visible = (_seekTo < 1);
+			backDropRecordedRight.visible = (_seekTo < 1) && _isExpanded;
+			backDropRecordedCollapsedRight.visible = (_seekTo < 1) && !_isExpanded;
 			backDropLiveRight.filters = backDropRecordedRight.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
+			backDropLiveCollapsedRight.filters = backDropRecordedCollapsedRight.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 		}
 		
 		private function onSeekerEnd(event:Event):void {
@@ -179,6 +196,18 @@ package org.osmf.player.chrome.widgets {
 			hours.length < 2 && (hours = "0" + hours);
 			toReturn =  hours + ":" + minutes;
 			return toReturn;
+		}
+		
+		override public function set isExpanded(value:Boolean):void {
+			super.isExpanded = value;
+			var recordedState:Boolean = backDropRecordedCollapsedRight.visible || backDropRecordedRight.visible;
+			if (_isExpanded) {
+				backDropRecordedRight.visible = recordedState;
+				backDropRecordedCollapsedRight.visible = false;
+			} else {
+				backDropRecordedRight.visible = false;
+				backDropRecordedCollapsedRight.visible = recordedState;
+			}
 		}
 	}
 }

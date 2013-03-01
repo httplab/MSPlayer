@@ -46,6 +46,7 @@ package org.osmf.player.chrome.widgets {
 		private var _pausedByCall:Boolean;
 		private var timeHint:TimeHintWidget;
 		private var textFormat:TextFormat;
+		private var _isExpanded:Boolean = true;
 		
 		/**
 		* OSMF overrides. Initial settings
@@ -111,7 +112,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function addShedules():void {
-			if ((media.resource) && (media.resource is MultiQualityStreamingResource)) {
+			if ((media.resource) && (media.resource is MultiQualityStreamingResource) && _currentSubWidget.hasOwnProperty('programPositions')) {
 				_currentSubWidget['programPositions'] = (media.resource as MultiQualityStreamingResource).shedulesArray;
 			}
 		}
@@ -141,9 +142,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function removeSubWidgetHandlers(currentSubWidget:Widget):void {
-			try {
-				_currentSubWidget['removeHandlers']();
-			} catch (e:Error) { }
+			_currentSubWidget.hasOwnProperty('removeHandlers') && _currentSubWidget['removeHandlers']();
 			_currentSubWidget.removeEventListener(PAUSE_CALL, pauseCallHandler);
 			_currentSubWidget.removeEventListener(PLAY_CALL, playCallHandler);
 			_currentSubWidget.removeEventListener(SEEK_CALL, seekCallHandler);
@@ -166,19 +165,18 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function seekCallHandler(e:Event):void {
-			if (!timeTrait || !seekTrait) { return; }
+			if (!timeTrait || !seekTrait || !_currentSubWidget.hasOwnProperty('seekTo')) { return; }
 			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
 			if (seekTrait.canSeekTo(time)) {
 				seekTrait.seek(time);
-				try {
-					_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0;
-				} catch (e:Error) {
-					//Current widget has no `played` position
-				}
+				_currentSubWidget.hasOwnProperty('playedPosition') && (_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0);
 			}
 		}
 		
 		private function showHintCallHandler(e:Event):void {
+			if (!_currentSubWidget.hasOwnProperty('hintPosition')) {
+				return;
+			}
 			if (_currentSubWidget == dvrScrub) {
 				timeHint.text = dvrScrub.programText;
 			} else {
@@ -274,6 +272,7 @@ package org.osmf.player.chrome.widgets {
 			if (_currentSubWidget) {
 				addSubWidgetHandlers(_currentSubWidget);
 				addChildWidget(_currentSubWidget);
+				_currentSubWidget.hasOwnProperty['isExpanded'] && (_currentSubWidget['isExpanded'] = _isExpanded);
 			}
 		}
 		
@@ -300,6 +299,11 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function get height():Number {
 			return vodScrub.height;
+		}
+		
+		public function set expanded(value:Boolean):void {
+			_isExpanded = value;
+			currentSubWidget = _currentSubWidget;
 		}
 	}
 }

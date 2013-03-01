@@ -186,7 +186,9 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SNOW_WHITE_RIGHT, ASSET_scrub_snowWhite_right);
 			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_RIGHT, ASSET_scrub_live_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_COLLAPSED_RIGHT, ASSET_scrub_live_collapsed_right);
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_RIGHT, ASSET_scrub_recorded_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_COLLAPSED_RIGHT, ASSET_scrub_recorded_collapsed_right);
 			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT, ASSET_time_hint);
 			
