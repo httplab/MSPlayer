@@ -142,7 +142,11 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function removeSubWidgetHandlers(currentSubWidget:Widget):void {
-			_currentSubWidget.hasOwnProperty('removeHandlers') && _currentSubWidget['removeHandlers']();
+			try {
+				_currentSubWidget['removeHandlers']();
+			} catch (e:Error) {
+				//Has no stage access
+			}
 			_currentSubWidget.removeEventListener(PAUSE_CALL, pauseCallHandler);
 			_currentSubWidget.removeEventListener(PLAY_CALL, playCallHandler);
 			_currentSubWidget.removeEventListener(SEEK_CALL, seekCallHandler);
@@ -187,7 +191,7 @@ package org.osmf.player.chrome.widgets {
 			timeHint.visible = true;
 			timeHint.x = _currentSubWidget.width * _currentSubWidget['hintPosition'];
 			timeHint.x -= timeHint.width / 2;
-			timeHint.y = -timeHint.height;
+			timeHint.y = -timeHint.height + 5;
 		}
 		
 		private function hideHintHandler(e:Event):void {
@@ -272,7 +276,11 @@ package org.osmf.player.chrome.widgets {
 			if (_currentSubWidget) {
 				addSubWidgetHandlers(_currentSubWidget);
 				addChildWidget(_currentSubWidget);
-				_currentSubWidget.hasOwnProperty['isExpanded'] && (_currentSubWidget['isExpanded'] = _isExpanded);
+				try {
+					(_currentSubWidget['isExpanded'] = _isExpanded);
+				} catch (e:Error) {
+					//Has now `isExpanded` setter.
+				}
 			}
 		}
 		

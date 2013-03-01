@@ -77,18 +77,12 @@ package org.osmf.player.chrome.widgets {
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
 			backDropMiddle.x = backDropLeft.width;
 			backDropMiddle_program.x = backDropLeft_program.width;
-			
-			if (_isExpanded) {
-				backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
-				backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
-				backDropLiveRight.x = availableWidth - backDropLiveRight.width;
-				backDropRight_program.x = availableWidth - backDropLiveRight.width;
-			} else {
-				backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveCollapsedRight.width);
-				backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveCollapsedRight.width - backDropRight_program.width);
-				backDropLiveCollapsedRight.x = availableWidth - backDropLiveCollapsedRight.width;
-				backDropRight_program.x = availableWidth - backDropLiveCollapsedRight.width;
-			}
+			backDropLiveCollapsedRight.x = 0;
+			backDropLiveRight.x = 0;
+			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLive.width);
+			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLive.width - backDropRight_program.width);
+			backDropLive.x = availableWidth - backDropLive.width;
+			backDropRight_program.x = availableWidth - backDropLive.width;
 			
 			recreateProgramsShiftTimer();
 			_programs && (programPositions = _programs);
@@ -130,7 +124,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		override public function get width():Number {
-			return container.width - backDropLiveRight.width;
+			return container.width - backDropLive.width;
 		}
 		
 		override public function get height():Number {
@@ -150,6 +144,10 @@ package org.osmf.player.chrome.widgets {
 				backDropLiveRight.visible = false;
 				backDropLiveCollapsedRight.visible = true;
 			}
+		}
+		
+		protected function get backDropLive():DisplayObject {
+			return _isExpanded ? backDropLiveRight : backDropLiveCollapsedRight;
 		}
 	}
 }

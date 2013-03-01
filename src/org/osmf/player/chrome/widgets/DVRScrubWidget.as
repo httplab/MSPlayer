@@ -93,7 +93,7 @@ package org.osmf.player.chrome.widgets {
 			if (mouseX / width <= 1) {
 				_hintPosition = mouseX / width;
 			} else {
-				_hintPosition = 1 + (backDropRecordedRight.width / width) / 2;
+				_hintPosition = 1 + (backDropRecorded.width / width) / 2;
 			}
 			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
 		}
@@ -117,17 +117,12 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
 			super.layout(availableWidth, availableHeight, deep);
-			
 			backDropMiddle_position.x = backDropLeft_position.width;
-			if (_isExpanded) {
-				backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedRight.width);
-				backDropRight_position.x = availableWidth - backDropRecordedRight.width;
-				backDropRecordedRight.x = availableWidth - backDropRecordedRight.width;
-			} else {
-				backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecordedCollapsedRight.width);
-				backDropRight_position.x = availableWidth - backDropRecordedCollapsedRight.width;
-				backDropRecordedCollapsedRight.x = availableWidth - backDropRecordedCollapsedRight.width;
-			}
+			backDropRecordedCollapsedRight.x = 0;
+			backDropRecordedRight.x = 0;
+			backDropMiddle_position.width = availableWidth - (backDropLeft.width + backDropRecorded.width);
+			backDropRight_position.x = availableWidth - backDropRecorded.width;
+			backDropRecorded.x = availableWidth - backDropRecorded.width;
 			seeker.point = new Point(width, height);
 		}
 		
@@ -140,8 +135,9 @@ package org.osmf.player.chrome.widgets {
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
 			backDropRecordedRight.visible = (_seekTo < 1) && _isExpanded;
 			backDropRecordedCollapsedRight.visible = (_seekTo < 1) && !_isExpanded;
-			backDropLiveRight.filters = backDropRecordedRight.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
-			backDropLiveCollapsedRight.filters = backDropRecordedCollapsedRight.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
+			backDropLiveRight.filters = [];
+			backDropLiveCollapsedRight.filters = [];
+			backDropLive.filters = backDropRecorded.visible ? [] : [new DropShadowFilter(0, 30, 0xd8292f, 1, 13, 13, 1, 3)];
 		}
 		
 		private function onSeekerEnd(event:Event):void {
@@ -208,6 +204,10 @@ package org.osmf.player.chrome.widgets {
 				backDropRecordedRight.visible = false;
 				backDropRecordedCollapsedRight.visible = recordedState;
 			}
+		}
+		
+		protected function get backDropRecorded():DisplayObject {
+			return _isExpanded ? backDropRecordedRight : backDropRecordedCollapsedRight;
 		}
 	}
 }

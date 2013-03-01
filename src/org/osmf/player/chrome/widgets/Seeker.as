@@ -29,8 +29,8 @@ package org.osmf.player.chrome.widgets {
 		private function stopSeekHandler(e:MouseEvent):void {
 			Mouse.show();
 			removeEventListener(MouseEvent.MOUSE_UP, stopSeekHandler);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, stopSeekHandler);
 			root.removeEventListener(MouseEvent.ROLL_OUT, stopSeekHandler);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, stopSeekHandler);
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, processSeekHandler);
 			e && processSeekHandler(e);
 			e && dispatchEvent(new Event(SEEK_END));
