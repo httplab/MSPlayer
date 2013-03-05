@@ -1,9 +1,19 @@
 package org.osmf.player.chrome.widgets {
+	import com.adobe.serialization.json.JSON;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.system.LoaderContext;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 
@@ -25,6 +35,10 @@ package org.osmf.player.chrome.widgets {
 		private var seeker:Seeker;
 		private var _seekTo:Number;
 		private var _hintPosition:Number;
+		private var _shotsURL:String;
+		private var _shotsNum:int;
+		private var _imagesArray:Vector.<Bitmap>;
+		private var _shotsLoaded:Boolean;
 		
 		public function VodScrubWidget() {
 			super();
@@ -148,6 +162,11 @@ package org.osmf.player.chrome.widgets {
 			seeker.removeHandlers();
 		}
 		
+		public function getShotAt(position:Number):DisplayObject {
+			if (!_shotsLoaded) { return new Sprite(); }
+			return _imagesArray[Math.min(int(position * _shotsNum), _shotsNum - 1)];
+		}
+		
 		override public function get width():Number {
 			return Math.max(emptyContainer.width, loadedContainer.width, playedContainer.width);
 		}
@@ -162,6 +181,56 @@ package org.osmf.player.chrome.widgets {
 		
 		public function get hintPosition():Number {
 			return _hintPosition;
+		}
+		
+		public function set shotsURL(value:String):void {
+			if (!value || _shotsURL == value) { return; }
+			_shotsURL = value;
+			var urlLoader:URLLoader = new URLLoader();
+			urlLoader.addEventListener(Event.COMPLETE, shotsInfoLoadedHandler);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, shotsInfoLoadingFailedHandler);
+			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, shotsInfoLoadingFailedHandler);
+			urlLoader.load(new URLRequest(_shotsURL));
+		}
+		
+		private function shotsInfoLoadingFailedHandler(e:Event):void {
+			_shotsURL = '';
+			_shotsNum = 0;
+			_shotsLoaded = false;
+			_imagesArray = null;
+		}
+		
+		private function shotsInfoLoadedHandler(e:Event):void {
+			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
+			_shotsNum = data.shots_lane_shots;
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, shotsInfoLoadingFailedHandler);
+			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, shotsInfoLoadingFailedHandler);
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, shotsImageLoadedHandler);
+			loader.load(new URLRequest(data.video_thumbnails_url), new LoaderContext(true));
+		}
+		
+		private function shotsImageLoadedHandler(e:Event):void {
+			var image:DisplayObject
+			try {
+				image = (e.currentTarget.content as DisplayObject);
+				if (!image) { throw new Error('No image', 404); }
+			} catch (error:Error) {
+				//Crossdomain access error
+				shotsInfoLoadingFailedHandler(e);
+				return;
+			}
+			_imagesArray = new Vector.<Bitmap>();
+			var shotWidth:Number = image.width / _shotsNum;
+			for (var i:int = 0; i < _shotsNum; i++) {
+				var bData:BitmapData = new BitmapData(shotWidth, image.height, false, 0);
+				var matrix:Matrix = new Matrix();
+				matrix.translate(-shotWidth * i, 0);
+				bData.draw(image, matrix, null, null, null, true);
+				var bitmap:Bitmap = new Bitmap(bData);
+				_imagesArray.push(bitmap);
+			}
+			_shotsLoaded = true;
 		}
 	}
 }

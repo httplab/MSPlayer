@@ -1,4 +1,5 @@
 package {
+	import com.adobe.serialization.json.JSON;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
@@ -8,8 +9,6 @@ package {
 	import flash.net.URLRequest;
 	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
-	import com.adobe.serialization.json.JSON;
-	import org.osmf.player.chrome.ControlBar;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.elements.ControlBarElement;
 	import org.osmf.player.utils.DateUtils;
@@ -114,6 +113,11 @@ package {
 				return getMetadataValue('filepath').toString();
 			}
 			return getMetadataValue('url').toString();
+		}
+		
+		public function get shotsURL():String {
+			if (streamType != StreamType.RECORDED) { return ''; }
+			return 'http://mp.httplab.ru:3000/api/tasks/' + getMetadataValue('task_id');
 		}
 		
 		override public function set streamType(value:String):void {

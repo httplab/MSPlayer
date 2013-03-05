@@ -74,6 +74,7 @@ package org.osmf.player.chrome.assets
 		static public const SCRUB_BAR_RECORDED_COLLAPSED_RIGHT:String = "scrubBarRecordedCollapsedRight";
 		
 		public static const SCRUB_BAR_TIME_HINT:String = "scrubBarTimeHint";
+		public static const SCRUB_BAR_TIME_HINT_CONTENT:String = "scrubBarTimeHintContent";
 		
 		public static const BACK_BUTTON_NORMAL:String = "backButtonNormal";
 		public static const BACK_BUTTON_DOWN:String = "backButtonDown";

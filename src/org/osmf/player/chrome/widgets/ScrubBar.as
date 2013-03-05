@@ -4,7 +4,6 @@ package org.osmf.player.chrome.widgets {
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Timer;
-	import org.osmf.elements.VideoElement;
 	import org.osmf.events.LoadEvent;
 	import org.osmf.events.MediaElementEvent;
 	import org.osmf.events.TimeEvent;
@@ -16,12 +15,10 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
 	import org.osmf.player.chrome.utils.FormatUtils;
-	import org.osmf.player.chrome.utils.MediaElementUtils;
 	import org.osmf.player.chrome.widgets.DVRScrubWidget;
 	import org.osmf.player.chrome.widgets.LiveScrubWidget;
 	import org.osmf.player.chrome.widgets.TimeHintWidget;
 	import org.osmf.player.chrome.widgets.Widget;
-	import org.osmf.player.media.StrobeMediaPlayer;
 	import org.osmf.player.metadata.MediaMetadata;
 	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
@@ -102,6 +99,7 @@ package org.osmf.player.chrome.widgets {
 					break;
 				case StreamType.RECORDED: 
 					currentSubWidget = vodScrub;
+					vodScrub.shotsURL = shotsURL;
 					break;
 				default: 
 					break;
@@ -183,6 +181,8 @@ package org.osmf.player.chrome.widgets {
 			}
 			if (_currentSubWidget == dvrScrub) {
 				timeHint.text = dvrScrub.programText;
+			} else if (_currentSubWidget == vodScrub) {
+				timeHint.content = vodScrub.getShotAt(_currentSubWidget['hintPosition']);
 			} else {
 				if (!timeTrait) { return;}
 				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * timeTrait.duration, timeTrait.duration)[0];	
@@ -295,6 +295,13 @@ package org.osmf.player.chrome.widgets {
 				return "";
 			}
 			return (media.resource as StreamingURLResource).streamType;
+		}
+		
+		private function get shotsURL():String {
+			if (!media || !media.resource || !(media.resource as MultiQualityStreamingResource)) {
+				return "";
+			}
+			return (media.resource as MultiQualityStreamingResource).shotsURL;
 		}
 		
 		override public function get measuredHeight():Number {

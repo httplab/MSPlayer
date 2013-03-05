@@ -21,17 +21,16 @@
 package org.osmf.player.chrome
 {
 	
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetLoader;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.BitmapResource;
 	import org.osmf.player.chrome.assets.FontResource;
 	import org.osmf.player.chrome.assets.SymbolResource;
+	
 
 	[Event(name="complete", type="flash.events.Event")]
 	
@@ -191,6 +190,7 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_COLLAPSED_RIGHT, ASSET_scrub_recorded_collapsed_right);
 			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT, ASSET_time_hint);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT_CONTENT, ASSET_time_hint_content);
 			
 			// Play button:
 			addEmbeddedSymbol(AssetIDs.PLAY_BUTTON_NORMAL, ASSET_play_normal);

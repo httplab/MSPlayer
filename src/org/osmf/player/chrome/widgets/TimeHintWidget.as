@@ -21,25 +21,28 @@
 package org.osmf.player.chrome.widgets
 {
 	import flash.display.DisplayObject;
-	import flash.text.TextField;
-	import flash.text.TextFormatAlign;
 	import org.osmf.player.chrome.assets.AssetIDs;
-	
 	import org.osmf.player.chrome.assets.AssetsManager;
-	import org.osmf.player.chrome.assets.FontAsset;
+	
 
 	public class TimeHintWidget extends LabelWidget {
 		public function TimeHintWidget() {
 			face = AssetIDs.SCRUB_BAR_TIME_HINT;
+			contentFace = AssetIDs.SCRUB_BAR_TIME_HINT_CONTENT;
 		}
 		
 		// Overrides
 		//
 		
-		override public function set text(value:String):void
-		{
-			if (value != text)
-			{
+		override public function configure(xml:XML, assetManager:AssetsManager):void {
+			super.configure(xml, assetManager);
+			
+			contentFaceDisplayObject = assetManager.getDisplayObject(contentFace);
+		}
+		
+		override public function set text(value:String):void {
+			content = null;
+			if (value != text) {
 				super.text = value;	
 				y = 10;
 				// center the text horizontally
@@ -60,6 +63,33 @@ package org.osmf.player.chrome.widgets
 			}
 		}
 		
+		public function set content(value:DisplayObject):void {
+			if (_content) {
+				removeChild(_content);
+				removeChild(contentFaceDisplayObject)
+			}
+			_content = value;
+			if (_content) {
+				_content.x = _content.y = 7;
+				var scale:Number = 104 / _content.width;
+				_content.scaleX = scale;
+				_content.scaleY = scale;
+				contentFaceDisplayObject.height = 31 + _content.height;
+				addChild(contentFaceDisplayObject);
+				addChild(_content);
+			}
+		}
+		
+		override public function get width():Number {
+			if (!_content) { return super.width; }
+			return contentFaceDisplayObject.width;
+		}
+		
+		override public function get height():Number {
+			if (!_content) { return super.height; }
+			return contentFaceDisplayObject.height + 15;
+		}
+		
 		// Internals
 		//
 		
@@ -67,5 +97,8 @@ package org.osmf.player.chrome.widgets
 		// need different spacing and propagate the properties in xml skin file
 		private var _topPaddings:Number = -3;
 		private var _availableBubbleHeight:uint = 19;
+		private var _content:DisplayObject;
+		private var contentFace:String;
+		private var contentFaceDisplayObject:DisplayObject;
 	}
 }
