@@ -21,8 +21,8 @@ package org.osmf.player.chrome.widgets {
 			stage.addEventListener(MouseEvent.MOUSE_UP, stopSeekHandler);
 			root.addEventListener(MouseEvent.ROLL_OUT, stopSeekHandler);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, processSeekHandler);
-			e && processSeekHandler(e);
 			e && dispatchEvent(new Event(SEEK_START));
+			e && processSeekHandler(e);
 			e && e.updateAfterEvent();
 		}
 		

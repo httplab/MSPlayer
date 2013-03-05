@@ -6,6 +6,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.utils.Timer;
 	import org.osmf.events.LoadEvent;
 	import org.osmf.events.MediaElementEvent;
+	import org.osmf.events.SeekEvent;
 	import org.osmf.events.TimeEvent;
 	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.media.MediaElement;
@@ -44,6 +45,7 @@ package org.osmf.player.chrome.widgets {
 		private var timeHint:TimeHintWidget;
 		private var textFormat:TextFormat;
 		private var _isExpanded:Boolean = true;
+		private var _timeToSeek:Number;
 		
 		/**
 		* OSMF overrides. Initial settings
@@ -157,6 +159,18 @@ package org.osmf.player.chrome.widgets {
 				playTrait.play();
 				_pausedByCall = false;
 			}
+			if (!isNaN(_timeToSeek)) {
+				seekTrait.seek(_timeToSeek);
+				seekTrait.addEventListener(SeekEvent.SEEKING_CHANGE, seekingCompletedHandler);
+				_timeToSeek = NaN;
+			} else {
+				currentPositionTimer.start();
+			}
+		}
+		
+		private function seekingCompletedHandler(e:SeekEvent):void {
+			e.currentTarget.removeEventListener(e.type, arguments.callee);
+			currentPositionTimer.start();
 		}
 		
 		private function pauseCallHandler(e:Event):void {
@@ -164,13 +178,14 @@ package org.osmf.player.chrome.widgets {
 				playTrait.pause();
 				_pausedByCall = true;
 			}
+			currentPositionTimer.stop();
 		}
 		
 		private function seekCallHandler(e:Event):void {
 			if (!timeTrait || !seekTrait || !_currentSubWidget.hasOwnProperty('seekTo')) { return; }
 			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
 			if (seekTrait.canSeekTo(time)) {
-				seekTrait.seek(time);
+				_timeToSeek = time;
 				_currentSubWidget.hasOwnProperty('playedPosition') && (_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0);
 			}
 		}
