@@ -66,7 +66,9 @@ package org.osmf.player.chrome.widgets
 		public function set content(value:DisplayObject):void {
 			if (_content) {
 				removeChild(_content);
-				removeChild(contentFaceDisplayObject)
+				removeChild(contentFaceDisplayObject);
+				addChild(textField);
+				textField.y -= _content.y + _content.height;
 			}
 			_content = value;
 			if (_content) {
@@ -75,8 +77,11 @@ package org.osmf.player.chrome.widgets
 				_content.scaleX = scale;
 				_content.scaleY = scale;
 				contentFaceDisplayObject.height = 31 + _content.height;
+				textField.y += _content.y + _content.height;
+				textField.x = (contentFaceDisplayObject.width - textField.textWidth) / 2;
 				addChild(contentFaceDisplayObject);
 				addChild(_content);
+				addChild(textField);
 			}
 		}
 		

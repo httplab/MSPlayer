@@ -196,11 +196,12 @@ package org.osmf.player.chrome.widgets {
 			}
 			if (_currentSubWidget == dvrScrub) {
 				timeHint.text = dvrScrub.programText;
-			} else if (_currentSubWidget == vodScrub && vodScrub.shotsLoaded) {
-				timeHint.content = vodScrub.getShotAt(_currentSubWidget['hintPosition']);
 			} else {
 				if (!timeTrait) { return;}
 				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * timeTrait.duration, timeTrait.duration)[0];	
+				if (_currentSubWidget == vodScrub && vodScrub.shotsLoaded) {
+					timeHint.content = vodScrub.getShotAt(_currentSubWidget['hintPosition']);
+				}
 			}
 			timeHint.textFormat = textFormat;
 			timeHint.visible = true;
