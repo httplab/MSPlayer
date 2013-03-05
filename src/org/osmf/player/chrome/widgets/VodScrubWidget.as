@@ -193,6 +193,10 @@ package org.osmf.player.chrome.widgets {
 			urlLoader.load(new URLRequest(_shotsURL));
 		}
 		
+		public function get shotsLoaded():Boolean {
+			return _shotsLoaded;
+		}
+		
 		private function shotsInfoLoadingFailedHandler(e:Event):void {
 			_shotsURL = '';
 			_shotsNum = 0;
