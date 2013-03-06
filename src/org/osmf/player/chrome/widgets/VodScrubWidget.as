@@ -189,7 +189,7 @@ package org.osmf.player.chrome.widgets {
 				clear();
 				if (isNaN(value)) { return; }
 				beginFill(0, 1);
-				drawRect(value * width - .5, 0, 1, height);
+				drawRect(int(value * width), 0, .5, height);
 				endFill();
 			}
 		}
