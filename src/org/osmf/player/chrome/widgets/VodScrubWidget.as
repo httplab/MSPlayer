@@ -9,6 +9,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.filters.ColorMatrixFilter;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.net.URLLoader;
@@ -27,11 +28,16 @@ package org.osmf.player.chrome.widgets {
 		private var backDropLeft_empty:DisplayObject;
 		private var backDropMiddle_empty:DisplayObject;
 		private var backDropRight_empty:DisplayObject;
+		private var backDropLeft_highlight:DisplayObject;
+		private var backDropMiddle_highlight:DisplayObject;
+		private var backDropRight_highlight:DisplayObject;
 		private var emptyContainer:Sprite;
 		private var loadedContainer:Sprite;
 		private var playedContainer:Sprite;
+		private var highLightContainer:Sprite;
 		private var _loadedMask:Sprite;
 		private var _playedMask:Sprite;
+		private var _highlightMask:Sprite;
 		private var seeker:Seeker;
 		private var _seekTo:Number;
 		private var _hintPosition:Number;
@@ -50,6 +56,7 @@ package org.osmf.player.chrome.widgets {
 			emptyContainer = new Sprite();
 			loadedContainer = new Sprite();
 			playedContainer = new Sprite();
+			highLightContainer = new Sprite();
 			
 			emptyContainer.mouseEnabled = loadedContainer.mouseEnabled = playedContainer.mouseEnabled = false;
 			
@@ -64,6 +71,10 @@ package org.osmf.player.chrome.widgets {
 			backDropLeft_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_LEFT); 
 			backDropMiddle_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_MIDDLE); 
 			backDropRight_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_RIGHT); 
+			
+			backDropLeft_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_LEFT); 
+			backDropMiddle_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_MIDDLE); 
+			backDropRight_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_RIGHT); 
 			
 			emptyContainer.addChild(backDropLeft_empty);
 			emptyContainer.addChild(backDropMiddle_empty);
@@ -83,9 +94,25 @@ package org.osmf.player.chrome.widgets {
 			playedContainer.mask = _playedMask;
 			playedContainer.addChild(_playedMask);
 			
+			highLightContainer.addChild(backDropLeft_highlight);
+			highLightContainer.addChild(backDropMiddle_highlight);
+			highLightContainer.addChild(backDropRight_highlight);
+			_highlightMask = new Sprite();
+			highLightContainer.mask = _highlightMask;
+			highLightContainer.addChild(_highlightMask);
+			
+			var matrix:Array = new Array();
+            matrix = matrix.concat([1, 0, 0, 0, 255]); // red
+            matrix = matrix.concat([0, 1, 0, 0, 255]); // green
+            matrix = matrix.concat([0, 0, 1, 0, 255]); // blue
+            matrix = matrix.concat([0, 0, 0, 1, 0]); // alpha
+			
+			highLightContainer.filters = [new ColorMatrixFilter(matrix)];
+			
 			addChild(emptyContainer);
 			addChild(loadedContainer);
 			addChild(playedContainer);
+			addChild(highLightContainer);
 			
 			seeker = new Seeker();
 			seeker.addEventListener(Seeker.SEEK_START, onSeekerStart);
@@ -103,6 +130,7 @@ package org.osmf.player.chrome.widgets {
 			backDropMiddle_empty.width = availableWidth - (backDropLeft_empty.width + backDropRight_empty.width);
 			backDropMiddle_loaded.width = availableWidth - (backDropLeft_loaded.width + backDropRight_loaded.width);
 			backDropMiddle_played.width = availableWidth - (backDropLeft_played.width + backDropRight_played.width);
+			backDropMiddle_highlight.width = availableWidth - (backDropLeft_highlight.width + backDropRight_highlight.width);
 			
 			backDropMiddle_empty.x = backDropLeft_empty.width;
 			backDropRight_empty.x = availableWidth - backDropRight_empty.width;
@@ -112,15 +140,21 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropMiddle_played.x = backDropLeft_played.width;
 			backDropRight_played.x = availableWidth - backDropRight_played.width;
+			
+			backDropMiddle_highlight.x = backDropLeft_highlight.width;
+			backDropRight_highlight.x = availableWidth - backDropRight_highlight.width;
+			
 			seeker.point = new Point(width, height);
 		}
 		
 		private function onSeekerStart(event:Event):void {
 			dispatchEvent(new Event(ScrubBar.PAUSE_CALL));
+			highlightPosition = NaN;
 		}
 		
 		private function onSeekerUpdate(event:Event):void {
 			_seekTo = seeker.position;
+			highlightPosition = NaN;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
 		}
 		
@@ -130,10 +164,12 @@ package org.osmf.player.chrome.widgets {
 		
 		private function callShowHint(e:MouseEvent):void {
 			_hintPosition = mouseX / width;
+			highlightPosition = _hintPosition;
 			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL))
 		}
 		
 		private function callHideHint(e:MouseEvent):void {
+			highlightPosition = NaN;
 			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
 		}
 		
@@ -144,6 +180,16 @@ package org.osmf.player.chrome.widgets {
 				clear();
 				beginFill(0, 1);
 				drawRect(0, 0, value * width, height);
+				endFill();
+			}
+		}
+		
+		public function set highlightPosition(value:Number):void {
+			with (_highlightMask.graphics) {
+				clear();
+				if (isNaN(value)) { return; }
+				beginFill(0, 1);
+				drawRect(value * width - .5, 0, 1, height);
 				endFill();
 			}
 		}
