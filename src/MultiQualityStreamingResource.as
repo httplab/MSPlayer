@@ -1,4 +1,5 @@
 package {
+	import com.adobe.serialization.json.JSON;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
@@ -8,10 +9,9 @@ package {
 	import flash.net.URLRequest;
 	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
-	import com.adobe.serialization.json.JSON;
-	import org.osmf.player.chrome.ControlBar;
 	import org.osmf.player.chrome.widgets.QualitySwitcherContainer;
 	import org.osmf.player.elements.ControlBarElement;
+	import org.osmf.player.utils.DateUtils;
 	
 	/**
 	 * ...
@@ -27,6 +27,7 @@ package {
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
 		private var _shedulesArray:Array;
+		private var _currentTitle:String = '';
 		
 		public function MultiQualityStreamingResource(srcId:int, streamType:String = '') {
 			super('', streamType);
@@ -56,11 +57,12 @@ package {
 				}
 				versionsArray.push(versionData);
 			}
+			_currentTitle = (data.info ? data.info.title : '') || '';
 			var shedules:Object = (data.info ? data.info.shedule : { } ) || { }
 			_shedulesArray = [];
 			for each (var sheduleData:Object in shedules) {
 				var shedule:Object = {
-					start: Date.parse(sheduleData.start_at.split('-').join('/')),
+					start: DateUtils.formatToClientTime(Date.parse(sheduleData.start_at.split('-').join('/'))),
 					title: sheduleData.title
 				}
 				_shedulesArray.push(shedule);
@@ -96,6 +98,10 @@ package {
 				if (version.resolution) {
 					qualities.push(version.resolution.split("x")[1]);
 				} else if (version.quality) {
+					version.quality = version.quality.replace('low', 'Низкое');
+					version.quality = version.quality.replace('medium', 'Хорошее');
+					version.quality = version.quality.replace('hight', 'Высокое');
+					version.quality = version.quality.replace('high', 'Высокое');
 					qualities.push(version.quality);
 				}
 			}
@@ -109,6 +115,11 @@ package {
 			return getMetadataValue('url').toString();
 		}
 		
+		public function get shotsURL():String {
+			if (streamType != StreamType.RECORDED) { return ''; }
+			return 'http://mp.httplab.ru:3000/api/tasks/' + getMetadataValue('task_id');
+		}
+		
 		override public function set streamType(value:String):void {
 			if (streamType == StreamType.RECORDED) { return; }
 			super.streamType = value;
@@ -116,6 +127,10 @@ package {
 		
 		public function get shedulesArray():Array {
 			return _shedulesArray.concat();
+		}
+		
+		public function get currentTitle():String {
+			return _currentTitle;
 		}
 		
 		/**

@@ -30,8 +30,10 @@ package org.osmf.player.chrome {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.widgets.AutoHideWidget;
 	import org.osmf.player.chrome.widgets.ChannelListButton;
+	import org.osmf.player.chrome.widgets.FreeModeButton;
 	import org.osmf.player.chrome.widgets.FullScreenEnterButton;
 	import org.osmf.player.chrome.widgets.FullScreenLeaveButton;
+	import org.osmf.player.chrome.widgets.FullWidthButton;
 	import org.osmf.player.chrome.widgets.MuteButton;
 	import org.osmf.player.chrome.widgets.PauseButton;
 	import org.osmf.player.chrome.widgets.PlayButton;
@@ -108,7 +110,7 @@ package org.osmf.player.chrome {
 			addChildWidget(afterPlaySpacer);
 			
 			// Scrub bar
-			var scrubBar:ScrubBar = new ScrubBar();		
+			scrubBar = new ScrubBar();		
 			scrubBar.id = WidgetIDs.SCRUB_BAR;
 			scrubBar.layoutMetadata.percentWidth = 100;
 			scrubBar.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
@@ -116,42 +118,41 @@ package org.osmf.player.chrome {
 			addChildWidget(scrubBar);
 			
 			// Right side
- 			var rightControls:Widget = new Widget();
-			rightControls.layoutMetadata.percentWidth = 100;
+ 			rightControls = new Widget();
 			rightControls.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
-			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.LEFT;
+			rightControls.layoutMetadata.horizontalAlign = HorizontalAlign.RIGHT;
 			rightControls.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			
 			// Spacer
-			var afterScrubSpacer:Widget = new Widget();
-			afterScrubSpacer.width = 10;
-			rightControls.addChildWidget(afterScrubSpacer);
+			//afterScrubSpacer = new Widget();
+			//afterScrubSpacer.width = 10;
+			//rightControls.addChildWidget(afterScrubSpacer);
 			
 			//ChannelListButton
-			var channelListButton:ChannelListButton = new ChannelListButton();
+			channelListButton = new ChannelListButton();
 			channelListButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			channelListButton.layoutMetadata.width = 33;
 			channelListButton.id = WidgetIDs.CHANNEL_LIST_BUTTON;
 			rightControls.addChildWidget(channelListButton);
 			
-			var afterChannelSpacer:Widget = new Widget();
+			afterChannelSpacer = new Widget();
 			afterChannelSpacer.width = 10;
 			rightControls.addChildWidget(afterChannelSpacer);
 			
 			// Quality switcher
 			qualitySwitcherWidget = new QualitySwitcherContainer();
-			qualitySwitcherWidget.layoutMetadata.percentWidth = 10;
+			qualitySwitcherWidget.layoutMetadata.scaleMode = ScaleMode.NONE;
 			qualitySwitcherWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
-			qualitySwitcherWidget.layoutMetadata.width = 45;
+			qualitySwitcherWidget.layoutMetadata.width = 48	;
 			qualitySwitcherWidget.id = WidgetIDs.QUALITY_SWITCHER_WIDGET;
 			rightControls.addChildWidget(qualitySwitcherWidget);
 			
 			// Spacer
-			var afterTimeSpacer:Widget = new Widget();
+			afterTimeSpacer = new Widget();
 			afterTimeSpacer.width = 5;
 			rightControls.addChildWidget(afterTimeSpacer);
 			
-			var muteContainerWidget:Widget = new Widget();
+			muteContainerWidget = new Widget();
 			muteContainerWidget.layoutMetadata.width = 38;
 			muteContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.addChildWidget(muteContainerWidget);
@@ -163,22 +164,54 @@ package org.osmf.player.chrome {
 			muteButton.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			muteContainerWidget.addChildWidget(muteButton);
 			
-			var fullscreenContainerWidget:Widget = new Widget();
+			//fullWidthContainerWidget = new Widget();
+			//fullWidthContainerWidget.layoutMetadata.width = 30;
+			//fullWidthContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//fullWidthContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
+			//rightControls.addChildWidget(fullWidthContainerWidget);
+			//
+			//var fullWidthButton:FullWidthButton = new FullWidthButton();
+			//fullWidthButton.id = WidgetIDs.FULL_WIDTH_BUTTON; 
+			//fullWidthContainerWidget.addChildWidget(fullWidthButton);
+			//
+			//freeModeContainerWidget = new Widget();
+			//freeModeContainerWidget.layoutMetadata.width = 29;
+			//freeModeContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			//freeModeContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
+			//rightControls.addChildWidget(freeModeContainerWidget);
+			//
+			//var freeModeButton:FreeModeButton = new FreeModeButton();
+			//freeModeButton.id = WidgetIDs.FREE_MODE_BUTTON; 
+			//freeModeContainerWidget.addChildWidget(freeModeButton);
+			
+			fullscreenContainerWidget = new Widget();
 			fullscreenContainerWidget.layoutMetadata.width = 26;
 			fullscreenContainerWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			fullscreenContainerWidget.layoutMetadata.layoutMode = LayoutMode.HORIZONTAL;
 			rightControls.addChildWidget(fullscreenContainerWidget);
 			
 			// FullScreen			
-			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
-			fullscreenContainerWidget.addChildWidget(fullscreenLeaveButton);
+			fullscreenEnterButton = new FullScreenEnterButton();
 			fullscreenEnterButton.id = WidgetIDs.FULL_SCREEN_ENTER_BUTTON; 
 			fullscreenContainerWidget.addChildWidget(fullscreenEnterButton);
+			var fullscreenLeaveButton:FullScreenLeaveButton = new FullScreenLeaveButton();
+			fullscreenContainerWidget.addChildWidget(fullscreenLeaveButton);
 			addChildWidget(rightControls);
+			
+			rightControls.layoutMetadata.width = 
+				//afterScrubSpacer.width + 
+				channelListButton.layoutMetadata.width + 
+				afterChannelSpacer.width +
+				qualitySwitcherWidget.layoutMetadata.width +
+				afterTimeSpacer.width +
+				muteContainerWidget.layoutMetadata.width + 
+				//fullWidthContainerWidget.layoutMetadata.width + 
+				//freeModeContainerWidget.layoutMetadata.width+ 
+				fullscreenContainerWidget.layoutMetadata.width;
 			
 			// Spacer
 			var afterFullScreenSpacer:Widget = new Widget();
-			afterFullScreenSpacer.width = 20;
+			afterFullScreenSpacer.width = 10;
 			addChildWidget(afterFullScreenSpacer);
 			
 			var rightMargin:Widget = new Widget();
@@ -196,13 +229,17 @@ package org.osmf.player.chrome {
 				afterPlaySpacer, 
 				leftControls,
 				scrubBar, 
-				afterScrubSpacer,
+				//afterScrubSpacer,
 				channelListButton,
 				afterChannelSpacer,
 				qualitySwitcherWidget, 
 				afterTimeSpacer,
 				muteContainerWidget,
 				muteButton, 
+				//fullWidthContainerWidget,
+				//fullWidthButton,
+				//freeModeContainerWidget,
+				//freeModeButton,
 				fullscreenContainerWidget,
 				fullscreenEnterButton,
 				fullscreenLeaveButton, 
@@ -224,6 +261,56 @@ package org.osmf.player.chrome {
 					widget.height = height;
 				}
 			}
+		}
+		
+		override public function set width(value:Number):void {
+			if (value < MIN_EXPANDED_WITDH) {
+				_isExpanded && switchToCollapsedState();
+				value = COLLAPSED_WIDTH;
+			} else {
+				!_isExpanded && switchToExpandedState();
+				value *= .7; 
+			}
+			super.width = value;			
+			validateNow();
+		}
+		
+		private function switchToExpandedState():void {
+			_isExpanded = true;
+			rightControls.addChildWidget(channelListButton);
+			rightControls.addChildWidget(afterChannelSpacer);
+			rightControls.addChildWidget(qualitySwitcherWidget);
+			rightControls.addChildWidget(afterTimeSpacer);
+			rightControls.removeChildWidget(muteContainerWidget);
+			rightControls.addChildWidget(muteContainerWidget);
+			//rightControls.removeChildWidget(fullWidthContainerWidget);
+			//rightControls.addChildWidget(fullWidthContainerWidget);
+			//rightControls.removeChildWidget(freeModeContainerWidget);
+			//rightControls.addChildWidget(freeModeContainerWidget);
+			rightControls.removeChildWidget(fullscreenContainerWidget);
+			rightControls.addChildWidget(fullscreenContainerWidget);
+			rightControls.layoutMetadata.width = //afterScrubSpacer.width + 
+				channelListButton.layoutMetadata.width + 
+				afterChannelSpacer.width +
+				qualitySwitcherWidget.layoutMetadata.width +
+				afterTimeSpacer.width +
+				muteContainerWidget.layoutMetadata.width + 
+				//fullWidthContainerWidget.layoutMetadata.width + 
+				//freeModeContainerWidget.layoutMetadata.width + 
+				fullscreenContainerWidget.layoutMetadata.width;
+			scrubBar.expanded = true;
+		}
+		
+		private function switchToCollapsedState():void {
+			_isExpanded = false;
+			rightControls.removeChildWidget(channelListButton);
+			rightControls.removeChildWidget(afterChannelSpacer);
+			rightControls.removeChildWidget(qualitySwitcherWidget);
+			rightControls.removeChildWidget(afterTimeSpacer);
+			rightControls.layoutMetadata.width = //afterScrubSpacer.width + 
+				muteContainerWidget.layoutMetadata.width + 
+				fullscreenContainerWidget.layoutMetadata.width;
+			scrubBar.expanded = false;
 		}
 		
 		override public function get height():Number {
@@ -257,7 +344,7 @@ package org.osmf.player.chrome {
 					widget.configure(<default/>, assetManager);					
 				}
 			}
-		}		
+		}
 		
 		override protected function processRequiredTraitsAvailable(element:MediaElement):void {
 			super.processRequiredTraitsAvailable(element);
@@ -269,7 +356,7 @@ package org.osmf.player.chrome {
 			visible = false;
 		}
 		
-		private var fullscreenEnterButton:FullScreenEnterButton = new FullScreenEnterButton();
+		private var fullscreenEnterButton:FullScreenEnterButton;
 		
 		private var playTrait:PlayTrait;
 		
@@ -280,6 +367,19 @@ package org.osmf.player.chrome {
 		private var _widgets:Array;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		private var qualitySwitcherWidget:QualitySwitcherContainer;
+		private var _isExpanded:Boolean = true;
+		static public const MIN_EXPANDED_WITDH:Number = 500;
+		static public const COLLAPSED_WIDTH:Number = 255;
+		private var rightControls:Widget;
+		private var channelListButton:ChannelListButton;
+		private var afterChannelSpacer:Widget;
+		private var afterTimeSpacer:Widget;
+		private var muteContainerWidget:Widget;
+		private var fullscreenContainerWidget:Widget;
+		private var scrubBar:ScrubBar;
+		//private var afterScrubSpacer:Widget;
+		//private var fullWidthContainerWidget:Widget;
+		//private var freeModeContainerWidget:Widget;
 		_requiredTraits[0] = MediaTraitType.PLAY;
 	}
 }

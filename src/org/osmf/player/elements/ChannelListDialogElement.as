@@ -1,23 +1,23 @@
 package org.osmf.player.elements {
+	import com.adobe.serialization.json.JSON;
 	import flash.events.Event;
+	import flash.events.FullScreenEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMetadata;
-	import org.osmf.layout.VerticalAlign;
 	import org.osmf.media.MediaElement;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.widgets.ChannelListButton;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
 	import org.osmf.player.configuration.PlayerConfiguration;
+	import org.osmf.player.utils.DateUtils;
 	import org.osmf.traits.DisplayObjectTrait;
 	import org.osmf.traits.MediaTraitType;
-	import com.adobe.serialization.json.JSON;
 	
 	
 	public class ChannelListDialogElement extends MediaElement {
@@ -38,10 +38,26 @@ package org.osmf.player.elements {
 			channelListDialog = chromeProvider.createChannelListDialog();
 			channelListDialog.measure();			
 			channelListDialog.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);			
+			channelListDialog.addEventListener(ChannelListButton.LIST_CLOSE_CALL, dispatchEvent);			
+			if (channelListDialog.stage) {
+				addStageResizeListeners(null);
+			} else {
+				channelListDialog.addEventListener(Event.ADDED_TO_STAGE, addStageResizeListeners);
+			}
 			addMetadata(LayoutMetadata.LAYOUT_NAMESPACE, channelListDialog.layoutMetadata);
 			var viewable:DisplayObjectTrait = new DisplayObjectTrait(channelListDialog, channelListDialog.measuredWidth, channelListDialog.measuredHeight);
 			addTrait(MediaTraitType.DISPLAY_OBJECT, viewable);				
 			super.setupTraits();			
+		}
+		
+		private function addStageResizeListeners(e:Event):void {
+			channelListDialog.removeEventListener(Event.ADDED_TO_STAGE, addStageResizeListeners);
+			channelListDialog.stage.removeEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
+			channelListDialog.stage.addEventListener(FullScreenEvent.FULL_SCREEN, fullScreenSwitching);
+		}
+		
+		private function fullScreenSwitching(e:FullScreenEvent):void {
+			dispatchEvent(new Event(ChannelListButton.LIST_CLOSE_CALL));
 		}
 		
 		public function renewContent(url:String):void {
@@ -55,6 +71,7 @@ package org.osmf.player.elements {
 		
 		private function parseLoadedData(e:Event):void {
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
+			DateUtils.renewDateDelta(Number(data.timestamp) * 1000);
 			var groups:Vector.<ChannelGroup> = new Vector.<ChannelGroup>();
 			var allChannels:ChannelGroup = new ChannelGroup(ALL_CHANNELS);
 			var channelData:Object;
@@ -63,7 +80,7 @@ package org.osmf.player.elements {
 			for each (var program:Object in data.programms) {
 				programs[program.channel_id] = {
 					title: program.title,
-					time: program.start
+					time: DateUtils.formatToClientTime(Number(program.start) * 1000)
 				}
 			}
 			for each (channelData in data.all_channels) {
@@ -81,7 +98,7 @@ package org.osmf.player.elements {
 					channel = group.addChannel(channelData);
 					channel.addEventListener(MouseEvent.MOUSE_DOWN, channelSelected);
 					if (programs[channel.srcId]) {
-						channel.setBroadcast(programs[channel.srcId].time,programs[channel.srcId].title)
+						channel.setBroadcast(programs[channel.srcId].time, programs[channel.srcId].title)
 					}
 				}
 				groups.push(group);
@@ -96,12 +113,18 @@ package org.osmf.player.elements {
 			_jsCallbackFunctionName && 
 				ExternalInterface.available && 
 				ExternalInterface.call(_jsCallbackFunctionName, channel.srcId);
+			dispatchEvent(new Event(ChannelListButton.LIST_CLOSE_CALL));
 			dispatchEvent(new Event(CHANNEL_CHANGED));
 		}
 		
 		private function loadFailed(e:Event):void {
 			//TODO: Tell about initialization failure
 			trace("Sry, guys, i tried to do my best");
+		}
+		
+		public function showDialog():void {
+			channelListDialog.x = 0;
+			channelListDialog.y = 0;
 		}
 		
 		public function set jsCallbackFunctionName(value:String):void {

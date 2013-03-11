@@ -4,23 +4,22 @@ package org.osmf.player.chrome.widgets {
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Timer;
-	import org.osmf.elements.VideoElement;
 	import org.osmf.events.LoadEvent;
 	import org.osmf.events.MediaElementEvent;
+	import org.osmf.events.SeekEvent;
 	import org.osmf.events.TimeEvent;
 	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.media.MediaElement;
+	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
 	import org.osmf.player.chrome.utils.FormatUtils;
-	import org.osmf.player.chrome.utils.MediaElementUtils;
 	import org.osmf.player.chrome.widgets.DVRScrubWidget;
 	import org.osmf.player.chrome.widgets.LiveScrubWidget;
 	import org.osmf.player.chrome.widgets.TimeHintWidget;
 	import org.osmf.player.chrome.widgets.Widget;
-	import org.osmf.player.media.StrobeMediaPlayer;
 	import org.osmf.player.metadata.MediaMetadata;
 	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
@@ -45,6 +44,8 @@ package org.osmf.player.chrome.widgets {
 		private var _pausedByCall:Boolean;
 		private var timeHint:TimeHintWidget;
 		private var textFormat:TextFormat;
+		private var _isExpanded:Boolean = true;
+		private var _timeToSeek:Number;
 		
 		/**
 		* OSMF overrides. Initial settings
@@ -100,6 +101,7 @@ package org.osmf.player.chrome.widgets {
 					break;
 				case StreamType.RECORDED: 
 					currentSubWidget = vodScrub;
+					vodScrub.shotsURL = shotsURL;
 					break;
 				default: 
 					break;
@@ -110,7 +112,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function addShedules():void {
-			if ((media.resource) && (media.resource is MultiQualityStreamingResource)) {
+			if ((media.resource) && (media.resource is MultiQualityStreamingResource) && _currentSubWidget.hasOwnProperty('programPositions')) {
 				_currentSubWidget['programPositions'] = (media.resource as MultiQualityStreamingResource).shedulesArray;
 			}
 		}
@@ -120,7 +122,10 @@ package org.osmf.player.chrome.widgets {
 		*/
 		
 		private function currentTimeChangedHandler(e:Event):void {
-			timeTrait && (vodScrub.playedPosition = timeTrait.currentTime / timeTrait.duration);
+			playTrait && 
+				timeTrait &&
+				playTrait.playState == PlayState.PLAYING &&
+				(vodScrub.playedPosition = timeTrait.currentTime / timeTrait.duration);
 		}
 		
 		private function bytesLoadedChangedHandler(e:Event):void {
@@ -139,7 +144,9 @@ package org.osmf.player.chrome.widgets {
 		private function removeSubWidgetHandlers(currentSubWidget:Widget):void {
 			try {
 				_currentSubWidget['removeHandlers']();
-			} catch (e:Error) { }
+			} catch (e:Error) {
+				//Has no stage access
+			}
 			_currentSubWidget.removeEventListener(PAUSE_CALL, pauseCallHandler);
 			_currentSubWidget.removeEventListener(PLAY_CALL, playCallHandler);
 			_currentSubWidget.removeEventListener(SEEK_CALL, seekCallHandler);
@@ -152,6 +159,18 @@ package org.osmf.player.chrome.widgets {
 				playTrait.play();
 				_pausedByCall = false;
 			}
+			if (!isNaN(_timeToSeek)) {
+				seekTrait.seek(_timeToSeek);
+				seekTrait.addEventListener(SeekEvent.SEEKING_CHANGE, seekingCompletedHandler);
+				_timeToSeek = NaN;
+			} else {
+				currentPositionTimer.start();
+			}
+		}
+		
+		private function seekingCompletedHandler(e:SeekEvent):void {
+			e.currentTarget.removeEventListener(e.type, arguments.callee);
+			currentPositionTimer.start();
 		}
 		
 		private function pauseCallHandler(e:Event):void {
@@ -159,34 +178,36 @@ package org.osmf.player.chrome.widgets {
 				playTrait.pause();
 				_pausedByCall = true;
 			}
+			currentPositionTimer.stop();
 		}
 		
 		private function seekCallHandler(e:Event):void {
-			if (!timeTrait && !seekTrait) { return; }
+			if (!timeTrait || !seekTrait || !_currentSubWidget.hasOwnProperty('seekTo')) { return; }
 			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
 			if (seekTrait.canSeekTo(time)) {
-				if (playTrait && playTrait.playState == PlayState.STOPPED) {
-					if (playTrait.canPause) {
-						playTrait.play();
-						playTrait.pause();
-					}
-				}
-				seekTrait.seek(time);
+				_timeToSeek = time;
+				_currentSubWidget.hasOwnProperty('playedPosition') && (_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0);
 			}
 		}
 		
 		private function showHintCallHandler(e:Event):void {
-			if (_currentSubWidget != vodScrub) {
-				timeHint.text = _currentSubWidget['programText'];
+			if (!_currentSubWidget.hasOwnProperty('hintPosition')) {
+				return;
+			}
+			if (_currentSubWidget == dvrScrub) {
+				timeHint.text = dvrScrub.programText;
 			} else {
 				if (!timeTrait) { return;}
 				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * timeTrait.duration, timeTrait.duration)[0];	
+				if (_currentSubWidget == vodScrub && vodScrub.shotsLoaded) {
+					timeHint.content = vodScrub.getShotAt(_currentSubWidget['hintPosition']);
+				}
 			}
 			timeHint.textFormat = textFormat;
 			timeHint.visible = true;
-			timeHint.x = width * _currentSubWidget['hintPosition'];
+			timeHint.x = _currentSubWidget.width * _currentSubWidget['hintPosition'];
 			timeHint.x -= timeHint.width / 2;
-			timeHint.y = -timeHint.height;
+			timeHint.y = -timeHint.height + 5;
 		}
 		
 		private function hideHintHandler(e:Event):void {
@@ -235,10 +256,15 @@ package org.osmf.player.chrome.widgets {
 				onMediaElementTraitAdd(traitAddEvent);
 			}
             if (media && media.metadata) {
-                visible = !media.metadata.getValue("Advertisement");
+                setSuperVisible(!media.metadata.getValue("Advertisement"));
             }
 			onMediaElementTraitRemove(null);
 			updateCurrentWidget();
+		}
+		
+		override protected function setSuperVisible(value:Boolean):void {
+			trace(value);
+			super.setSuperVisible(value);
 		}
 		
 		public function get timeTrait():TimeTrait {
@@ -266,6 +292,11 @@ package org.osmf.player.chrome.widgets {
 			if (_currentSubWidget) {
 				addSubWidgetHandlers(_currentSubWidget);
 				addChildWidget(_currentSubWidget);
+				try {
+					(_currentSubWidget['isExpanded'] = _isExpanded);
+				} catch (e:Error) {
+					//Has now `isExpanded` setter.
+				}
 			}
 		}
 		
@@ -276,10 +307,17 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function get streamType():String {			
-			if (!media) {
+			if (!media || !media.resource || !(media.resource as StreamingURLResource)) {
 				return "";
 			}
-			return MediaElementUtils.getStreamType(media);
+			return (media.resource as StreamingURLResource).streamType;
+		}
+		
+		private function get shotsURL():String {
+			if (!media || !media.resource || !(media.resource as MultiQualityStreamingResource)) {
+				return "";
+			}
+			return (media.resource as MultiQualityStreamingResource).shotsURL;
 		}
 		
 		override public function get measuredHeight():Number {
@@ -292,6 +330,11 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function get height():Number {
 			return vodScrub.height;
+		}
+		
+		public function set expanded(value:Boolean):void {
+			_isExpanded = value;
+			currentSubWidget = _currentSubWidget;
 		}
 	}
 }

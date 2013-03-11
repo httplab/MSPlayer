@@ -3,35 +3,42 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
+	import flash.filters.GlowFilter;
+	import flash.utils.Timer;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	
 	public class LiveScrubWidget extends Widget {
-		private var backDropLeft:DisplayObject;
+		protected var backDropLeft:DisplayObject;
 		private var backDropMiddle:DisplayObject;
 		protected var backDropLiveRight:DisplayObject;
+		protected var backDropLiveCollapsedRight:DisplayObject;
 		private var backDropLeft_program:DisplayObject;
 		private var backDropMiddle_program:DisplayObject;
 		private var backDropRight_program:DisplayObject;
 		protected var container:Sprite;
-		private var programContainer:Sprite;
+		protected var programContainer:Sprite;
+		protected var _programs:Array;
 		private var _programMask:Sprite;
-		private var _programs:Array;
-		private var _hintPosition:Number;
-		private var programs:Array;
-		
+		private var _programsShiftTimer:Timer;
+
+		protected var _isExpanded:Boolean;
 		protected var backDropLeftFace:String;
 		protected var backDropMiddleFace:String;
 		protected var backDropLiveRightFace:String;
+		protected var backDropLiveCollapsedRightFace:String;
 		protected var backDropLeftProgramFace:String;
 		protected var backDropMiddleProgramFace:String;
 		protected var backDropRightProgramFace:String;
+		public static const TWO_HOURS_IN_MILLISECONDS:Number = (1000 * 3600 * 2);
 		
 		public function LiveScrubWidget() {
 			super();
-			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT;
+			backDropLeftFace = AssetIDs.SCRUB_BAR_DARK_GRAY_LEFT; 	
 			backDropMiddleFace = AssetIDs.SCRUB_BAR_DARK_GRAY_MIDDLE;
 			backDropLiveRightFace = AssetIDs.SCRUB_BAR_LIVE_RIGHT;
+			backDropLiveCollapsedRightFace = AssetIDs.SCRUB_BAR_LIVE_COLLAPSED_RIGHT;
 			backDropLeftProgramFace = AssetIDs.SCRUB_BAR_GRAY_LEFT;
 			backDropMiddleProgramFace = AssetIDs.SCRUB_BAR_GRAY_MIDDLE;
 			backDropRightProgramFace = AssetIDs.SCRUB_BAR_GRAY_RIGHT;
@@ -48,7 +55,8 @@ package org.osmf.player.chrome.widgets {
 			backDropLeft = assetManager.getDisplayObject(backDropLeftFace); 
 			backDropMiddle = assetManager.getDisplayObject(backDropMiddleFace); 
 			backDropLiveRight = assetManager.getDisplayObject(backDropLiveRightFace); 
-			
+			backDropLiveCollapsedRight = assetManager.getDisplayObject(backDropLiveCollapsedRightFace); 
+			backDropLiveCollapsedRight.visible = false;
 			backDropLeft_program = assetManager.getDisplayObject(backDropLeftProgramFace); 
 			backDropMiddle_program = assetManager.getDisplayObject(backDropMiddleProgramFace); 
 			backDropRight_program = assetManager.getDisplayObject(backDropRightProgramFace); 
@@ -56,6 +64,7 @@ package org.osmf.player.chrome.widgets {
 			container.addChild(backDropLeft);
 			container.addChild(backDropMiddle);
 			container.addChild(backDropLiveRight);
+			container.addChild(backDropLiveCollapsedRight);
 			
 			programContainer.addChild(backDropLeft_program);
 			programContainer.addChild(backDropMiddle_program);
@@ -63,28 +72,38 @@ package org.osmf.player.chrome.widgets {
 			_programMask = new Sprite();
 			programContainer.mask = _programMask;
 			programContainer.addChild(_programMask);
-			
-			addChild(container);
-			addChild(programContainer);
-			
-			addEventListener(MouseEvent.ROLL_OVER, callShowHint);
-			addEventListener(MouseEvent.MOUSE_MOVE, callShowHint);
-			addEventListener(MouseEvent.ROLL_OUT, callHideHint);
 		}
 		
 		override public function layout(availableWidth:Number, availableHeight:Number, deep:Boolean = true):void {
-			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLiveRight.width);
-			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLiveRight.width - backDropRight_program.width);
-			
 			backDropMiddle.x = backDropLeft.width;
-			backDropLiveRight.x = availableWidth - backDropLiveRight.width;
-			
 			backDropMiddle_program.x = backDropLeft_program.width;
-			backDropRight_program.x = availableWidth - backDropLiveRight.width;
+			backDropLiveCollapsedRight.x = 0;
+			backDropLiveRight.x = 0;
+			backDropMiddle.width = availableWidth - (backDropLeft.width + backDropLive.width);
+			backDropMiddle_program.width = availableWidth - (backDropLeft_program.width + backDropLive.width - backDropRight_program.width);
+			backDropLive.x = availableWidth - backDropLive.width;
+			backDropRight_program.x = availableWidth - backDropLive.width;
+			
+			recreateProgramsShiftTimer();
+			_programs && (programPositions = _programs);
+		}
+		
+		private function recreateProgramsShiftTimer():void {
+			if (_programsShiftTimer) {
+				_programsShiftTimer.stop();
+				_programsShiftTimer.reset();
+				_programsShiftTimer = null;
+			}
+			_programsShiftTimer = new Timer(thims / width, 0);
+			_programsShiftTimer.addEventListener(TimerEvent.TIMER, shiftPrograms);
+			_programsShiftTimer.start();
+		}
+		
+		private function shiftPrograms(e:TimerEvent):void {
+			_programs && (programPositions = _programs);
 		}
 		
 		public function set programPositions(value:Array):void {
-			var thims:Number = (1000 * 3600 * 2);
 			var currentDate:Date = new Date();
 			var twoHoursAgo:Date = new Date(currentDate.valueOf() - thims);
 			_programs = value;
@@ -104,48 +123,31 @@ package org.osmf.player.chrome.widgets {
 			}
 		}
 		
-		private function callShowHint(e:MouseEvent):void {
-			if (mouseX / width <= 1) {
-				_hintPosition = mouseX / width;
-				dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL));
-			} else {
-				callHideHint(e);
-			}
-		}
-		
-		private function callHideHint(e:MouseEvent):void {
-			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
-		}
-		
 		override public function get width():Number {
-			return container.width - backDropLiveRight.width + backDropLeft.width;
+			return container.width - backDropLive.width;
 		}
 		
 		override public function get height():Number {
 			return container.height;
 		}
 		
-		public function get hintPosition():Number {
-			return _hintPosition;
+		protected function get thims():Number {
+			return TWO_HOURS_IN_MILLISECONDS;
 		}
 		
-		public function get programText():String {
-			if (!_programs || !_programs.length) { return ""; }
-			var toReturn:String = "";
-			var maxPosition:Number = -20;
-			for each (var program:Object in _programs) {
-				if (_hintPosition < program.position) { continue; }
-				if (maxPosition < program.position) {
-					maxPosition = program.position;
-					var date:Date = new Date(program.start);
-					var minutes:String = String(date.getMinutes());
-					var hours:String = String(date.getHours());
-					minutes.length < 2 && (minutes = "0" + minutes);
-					hours.length < 2 && (hours = "0" + hours);
-					toReturn =  hours + ":" + minutes + "\n" + program.title;
-				}
+		public function set isExpanded(value:Boolean):void {
+			_isExpanded = value;
+			if (_isExpanded) {
+				backDropLiveRight.visible = true;
+				backDropLiveCollapsedRight.visible = false;
+			} else {
+				backDropLiveRight.visible = false;
+				backDropLiveCollapsedRight.visible = true;
 			}
-			return toReturn;
+		}
+		
+		protected function get backDropLive():DisplayObject {
+			return _isExpanded ? backDropLiveRight : backDropLiveCollapsedRight;
 		}
 	}
 }

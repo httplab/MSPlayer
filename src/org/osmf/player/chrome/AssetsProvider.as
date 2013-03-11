@@ -21,17 +21,16 @@
 package org.osmf.player.chrome
 {
 	
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetLoader;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.BitmapResource;
 	import org.osmf.player.chrome.assets.FontResource;
 	import org.osmf.player.chrome.assets.SymbolResource;
+	
 
 	[Event(name="complete", type="flash.events.Event")]
 	
@@ -181,10 +180,17 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_MIDDLE, ASSET_scrub_white_middle);
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_WHITE_RIGHT, ASSET_scrub_white_right);
 			
-			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_RIGHT, ASSET_scrub_recorded_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SNOW_WHITE_LEFT, ASSET_scrub_snowWhite_left);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SNOW_WHITE_MIDDLE, ASSET_scrub_snowWhite_middle);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_SNOW_WHITE_RIGHT, ASSET_scrub_snowWhite_right);
+			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_RIGHT, ASSET_scrub_live_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_LIVE_COLLAPSED_RIGHT, ASSET_scrub_live_collapsed_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_RIGHT, ASSET_scrub_recorded_right);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_RECORDED_COLLAPSED_RIGHT, ASSET_scrub_recorded_collapsed_right);
 			
 			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT, ASSET_time_hint);
+			addEmbeddedSymbol(AssetIDs.SCRUB_BAR_TIME_HINT_CONTENT, ASSET_time_hint_content);
 			
 			// Play button:
 			addEmbeddedSymbol(AssetIDs.PLAY_BUTTON_NORMAL, ASSET_play_normal);
@@ -241,6 +247,14 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.FULL_SCREEN_LEAVE_DOWN, ASSET_fullscreen_off_selected);
 			addEmbeddedSymbol(AssetIDs.FULL_SCREEN_LEAVE_OVER, ASSET_fullscreen_off_over);
 			
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_NORMAL, ASSET_full_width_normal);
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_DOWN, ASSET_full_width_selected);
+			addEmbeddedSymbol(AssetIDs.FULL_WIDTH_OVER, ASSET_full_width_over);
+			
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_NORMAL, ASSET_free_mode_normal);
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_DOWN, ASSET_free_mode_selected);
+			addEmbeddedSymbol(AssetIDs.FREE_MODE_OVER, ASSET_free_mode_over);
+			
 			// Authentication dialog:
 			addEmbeddedSymbol(AssetIDs.AUTH_BACKDROP, ASSET_auth_backdrop);
 			addEmbeddedSymbol(AssetIDs.AUTH_SUBMIT_BUTTON_NORMAL, ASSET_button_normal);
@@ -267,6 +281,8 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.HD_ON, ASSET_hd_on);
 			addEmbeddedSymbol(AssetIDs.HD_OFF, ASSET_hd_off);
 			
+			addEmbeddedSymbol(AssetIDs.PLAYER_TITLE, ASSET_player_title);
+			
 			// Buffering overlay:
 			addEmbeddedSymbol(AssetIDs.BUFFERING_OVERLAY, ASSET_BufferingOverlay);
 			
@@ -278,7 +294,9 @@ package org.osmf.player.chrome
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_NORMAL, ASSET_channelListButton_normal);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_OVER, ASSET_channelListButton_over);
 			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_DOWN, ASSET_channelListButton_selected);
-
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_NORMAL, ASSET_channelListButton_collapsed_normal);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_OVER, ASSET_channelListButton_collapsed_over);
+			addEmbeddedSymbol(AssetIDs.CHANNEL_LIST_BUTTON_COLLAPSED_DOWN, ASSET_channelListButton_collapsed_selected);
 		}
 		
 		private function onAssetsManagerComplete(event:Event):void

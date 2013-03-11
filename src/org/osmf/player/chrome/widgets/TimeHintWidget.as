@@ -21,25 +21,28 @@
 package org.osmf.player.chrome.widgets
 {
 	import flash.display.DisplayObject;
-	import flash.text.TextField;
-	import flash.text.TextFormatAlign;
 	import org.osmf.player.chrome.assets.AssetIDs;
-	
 	import org.osmf.player.chrome.assets.AssetsManager;
-	import org.osmf.player.chrome.assets.FontAsset;
+	
 
 	public class TimeHintWidget extends LabelWidget {
 		public function TimeHintWidget() {
 			face = AssetIDs.SCRUB_BAR_TIME_HINT;
+			contentFace = AssetIDs.SCRUB_BAR_TIME_HINT_CONTENT;
 		}
 		
 		// Overrides
 		//
 		
-		override public function set text(value:String):void
-		{
-			if (value != text)
-			{
+		override public function configure(xml:XML, assetManager:AssetsManager):void {
+			super.configure(xml, assetManager);
+			
+			contentFaceDisplayObject = assetManager.getDisplayObject(contentFace);
+		}
+		
+		override public function set text(value:String):void {
+			content = null;
+			if (value != text) {
 				super.text = value;	
 				y = 10;
 				// center the text horizontally
@@ -48,8 +51,48 @@ package org.osmf.player.chrome.widgets
 				textField.x = getChildAt(0).width/2 - textField.width/2;
 				// get the bubble height and substract the stem and the shadow to 
 				// find the vertically available space to center in   
-				textField.y = _topPaddings + (_availableBubbleHeight - parseInt(textField.getTextFormat().size.toString())) / 2;
+				var size:Number = 12;
+				if (
+					textField && 
+					textField.getTextFormat() && 
+					textField.getTextFormat().size
+				) {
+					size = parseInt(textField.getTextFormat().size.toString());
+				}
+				textField.y = _topPaddings + (_availableBubbleHeight - size) / 2
 			}
+		}
+		
+		public function set content(value:DisplayObject):void {
+			if (_content) {
+				removeChild(_content);
+				removeChild(contentFaceDisplayObject);
+				addChild(textField);
+				textField.y -= _content.y + _content.height;
+			}
+			_content = value;
+			if (_content) {
+				_content.x = _content.y = 7;
+				var scale:Number = 104 / _content.width;
+				_content.scaleX = scale;
+				_content.scaleY = scale;
+				contentFaceDisplayObject.height = 31 + _content.height;
+				textField.y += _content.y + _content.height;
+				textField.x = (contentFaceDisplayObject.width - textField.textWidth) / 2;
+				addChild(contentFaceDisplayObject);
+				addChild(_content);
+				addChild(textField);
+			}
+		}
+		
+		override public function get width():Number {
+			if (!_content) { return super.width; }
+			return contentFaceDisplayObject.width;
+		}
+		
+		override public function get height():Number {
+			if (!_content) { return super.height; }
+			return contentFaceDisplayObject.height + 15;
 		}
 		
 		// Internals
@@ -59,5 +102,8 @@ package org.osmf.player.chrome.widgets
 		// need different spacing and propagate the properties in xml skin file
 		private var _topPaddings:Number = -3;
 		private var _availableBubbleHeight:uint = 19;
+		private var _content:DisplayObject;
+		private var contentFace:String;
+		private var contentFaceDisplayObject:DisplayObject;
 	}
 }

@@ -1,6 +1,7 @@
 package {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.external.ExternalInterface;
 	import flash.utils.Dictionary;
 	import org.osmf.elements.ImageElement;
 	import org.osmf.elements.ImageLoader;
@@ -15,7 +16,9 @@ package {
 	import org.osmf.media.MediaElement;
 	import org.osmf.media.MediaPlayerState;
 	import org.osmf.media.URLResource;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.events.WidgetEvent;
+	import org.osmf.player.elements.ControlBarElement;
 	import org.osmf.player.media.StrobeMediaFactory;
 	import org.osmf.player.media.StrobeMediaPlayer;
 	import org.osmf.player.metadata.MediaMetadata;
@@ -58,19 +61,19 @@ package {
 			_factory = factory;
 		}
 		
-		public function checkForAd(loaderParams:Object):void {
+		public function checkForAd(loaderParams:Object, streamType:String, liveResumingHack:Boolean = false):void {
 			_loaderParams = loaderParams;
-			if (_loaderParams.preRoll) {
+			if (!liveResumingHack && _loaderParams.preRoll) {
 				var interruptInterval:int = int(_loaderParams.preRollInterrupt) || int(_loaderParams.interrupt) || 0;
 				prepareLinearAd(_loaderParams.preRoll, true, interruptInterval);
             }
-            if (_loaderParams.streamType != "live" && _loaderParams.midRoll && _loaderParams.midRollTime) {
+            if (streamType != StreamType.LIVE && _loaderParams.midRoll && _loaderParams.midRollTime) {
                 _player.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, checkForMidrollNeed);
             }
-            if (_loaderParams.streamType != "live" && _loaderParams.pauseRoll) {
-				_viewHelper.controlBar.addEventListener("playButtonClick", planPauseRoll);
+            if (streamType != StreamType.LIVE && _loaderParams.pauseRoll) {
+				_viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, planPauseRoll, false, int.MAX_VALUE);
 			}
-            if (_loaderParams.streamType == "recorded" && _loaderParams.postRoll) {
+            if (streamType == StreamType.RECORDED && _loaderParams.postRoll) {
                 _player.addEventListener(TimeEvent.COMPLETE, planPostRoll);
             }
 		}
@@ -81,14 +84,16 @@ package {
 			_vastLoadTrait = new VASTLoadTrait(_vastLoader, vastResource);
 			_vastLoader.addEventListener(LoaderEvent.LOAD_STATE_CHANGE, onRollLoaderStateChange);
 			_vastLoader.load(_vastLoadTrait);
+			var loadStarted:Number = new Date().time;
 			function onRollLoaderStateChange(event:LoaderEvent):void {
 				if (event.newState == LoadState.READY) {
 					event.currentTarget.removeEventListener(LoadEvent.LOAD_STATE_CHANGE, arguments.callee);
+					ExternalInterface.available && ExternalInterface.call('console.log', "VAST responce time: " + (new Date().time - loadStarted) + " ms");
 					var generator:VASTMediaGenerator = new VASTMediaGenerator();
 					var mediaElements:Vector.<MediaElement> = generator.createMediaElements(
 						_vastLoadTrait.vastDocument
 					);
-					_linearAdsQueue.push([mediaElements[0], true, resumePlaybackAfterAd, interruptInterval]);
+					mediaElements.length && _linearAdsQueue.push([mediaElements[0], true, resumePlaybackAfterAd, interruptInterval]);
 					continueAdvertising();
 				}
 			}
@@ -130,15 +135,18 @@ package {
 			adMediaPlayer.media.metadata.addValue("Advertisement", "1");
 			if (pauseMainMediaWhilePlayingAd) {
 				dispatchEvent(new Event(PAUSE_MAIN_VIDEO_REQUEST));
-				displayNonLinearAd();
+				//displayNonLinearAd();
 			}
 			var mediaMetadata:MediaMetadata = new MediaMetadata();
 			mediaMetadata.mediaPlayer = adMediaPlayer;
 			adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
 			_viewHelper.controlBar && (_viewHelper.controlBar.target = adMediaElement);
+			_viewHelper.playerTitle && (_viewHelper.playerTitle.target = adMediaElement);
+			adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();
-			_viewHelper.adBlockHeader.startCountdown(interruptInterval * 1000);
+			interruptInterval = interruptInterval || adMediaElement.metadata.getValue('canBeSkipped') || 0;
+			_viewHelper.adBlockHeader.startCountdown(interruptInterval, adMediaPlayer);
 			_viewHelper.adBlockHeader.addEventListener(AdBlockHeader.PASS_AD_REQUEST, interruptAllRolls);
 		}
 		
@@ -247,6 +255,8 @@ package {
 		
 		private function planPauseRoll(e:Event):void {
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
+			e.stopImmediatePropagation();
+			e.preventDefault();
 			prepareLinearAd(_loaderParams.pauseRoll);
 		}
 		
