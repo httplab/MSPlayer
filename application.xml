@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<application xmlns="http://ns.adobe.com/air/application/3.6">
+	
+	<id>osmfair</id> 
+	<versionNumber>1.0.01</versionNumber> 
+	<filename>osmfair</filename> 
+	
+	<name>osmf-air</name> 
+	<description></description> 
+	<copyright></copyright> 
+	
+	<initialWindow> 
+		<title>osmf-air</title> 
+		<content>osmfair.swf</content> 
+		<systemChrome>standard</systemChrome> 
+		<transparent>false</transparent> 
+		<visible>true</visible> 
+		<minimizable>true</minimizable> 
+		<maximizable>true</maximizable> 
+		<resizable>true</resizable> 
+	</initialWindow> 
+	<installFolder>HTTPLab/OSMFTester</installFolder>
+	<programMenuFolder>OSMFTester</programMenuFolder>
+	<!-- 
+	More options:
+	http://livedocs.adobe.com/flex/3/html/File_formats_1.html#1043413
+	-->
+</application>

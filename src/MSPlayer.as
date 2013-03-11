@@ -114,6 +114,8 @@ package {
 		private var _mainVideoTimeSetted:Boolean;
 		private var _liveResuming:Boolean;
 		private var _reconnectTimer:Timer;
+		private var _channelsData:Array;
+		private var _checkingTimer:Timer;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -130,7 +132,7 @@ package {
 		
 		private function onAddedToStage(event:Event):void {
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			initialize(loaderInfo.parameters, stage, loaderInfo, null);
+			initialize(parararapms, stage, loaderInfo, null);
 		}
 		
 		/**
@@ -214,7 +216,7 @@ package {
 			configuration = injector.getInstance(PlayerConfiguration);
 			var configurationLoader:ConfigurationLoader = injector.getInstance(ConfigurationLoader);
 			configurationLoader.addEventListener(Event.COMPLETE, onConfigurationReady);
-			configurationLoader.load(loaderInfo.parameters, configuration);
+			configurationLoader.load(parararapms, configuration);
 		}
 		
 		private function initSkins():void {
@@ -260,7 +262,7 @@ package {
 		private function initPlugins():Vector.<MediaResourceBase> {
 			var pluginConfigurations:Vector.<MediaResourceBase> = ConfigurationUtils.transformDynamicObjectToMediaResourceBases(configuration.plugins);
 			var pluginResource:MediaResourceBase;	
-			pluginResource = new URLResource(loaderInfo.parameters.GTrackPluginURL || 'GTrackPlugin.swf');
+			pluginResource = new URLResource(parararapms.GTrackPluginURL || 'GTrackPlugin.swf');
 			var contentFile:ByteArray = new GAConfigClass();
 			var contentStr:String = contentFile.readUTFBytes( contentFile.length );
 			pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
@@ -283,7 +285,8 @@ package {
 			factory = injector.getInstance(MediaFactory);
 			var pluginLoader:PluginLoader = new PluginLoader(pluginConfigurations, factory, pluginHostWhitelist);
 			pluginLoader.haltOnError = configuration.haltOnError;
-			pluginLoader.addEventListener(Event.COMPLETE, loadMedia);
+			//pluginLoader.addEventListener(Event.COMPLETE, loadMedia);
+			pluginLoader.addEventListener(Event.COMPLETE, startCheckingSequence);
 			pluginLoader.addEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			pluginLoader.loadPlugins();
 		}
@@ -332,6 +335,36 @@ package {
 		* Run-time methods. All loaded, start playback
 		*/
 		
+		private function startCheckingSequence(e:Event):void {
+			if (viewHelper.channelList.contentRenewed) {
+				contentListGettedHandler(null);
+			} else {
+				viewHelper.channelList.addEventListener(Event.COMPLETE, contentListGettedHandler);
+			}
+		}
+		
+		private function contentListGettedHandler(e:Event):void {
+			e && e.currentTarget.removeEventListener(e.type, arguments.callee);
+			_channelsData = viewHelper.channelList.allChannelsData;
+			_checkingTimer = new Timer(parararapms.checkingTimerDelay, 1);
+			_checkingTimer.addEventListener(TimerEvent.TIMER_COMPLETE, sendCheckingInfo)
+			checkNextChannel();
+		}
+		
+		private function sendCheckingInfo(e:TimerEvent):void {
+			//TODO: Here will be info sending
+			checkNextChannel();
+		}
+		
+		private function checkNextChannel():void {
+			var nextChannel:Object = _channelsData.shift();
+			configuration.srcId = (nextChannel.title) ? (nextChannel.id) : (nextChannel.url.split('/#tv/')[1]);
+			configuration.type = StreamType.LIVE;
+			configuration.resource.streamType = StreamType.LIVE;
+			_channelsData.push(nextChannel);
+			loadMedia();
+		}
+		
 		/**
 		* Loads the media or displays an error message on fail.
 		*/
@@ -368,15 +401,16 @@ package {
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
-			var streamType:String = resource['streamType'] || loaderInfo.parameters.streamType;
-			_adController.checkForAd(loaderInfo.parameters, streamType, _liveResuming);
+			var streamType:String = resource['streamType'] || parararapms.streamType;
+			_adController.checkForAd(parararapms, streamType, _liveResuming);
 			_liveResuming = false;
-			viewHelper.channelList.jsCallbackFunctionName = loaderInfo.parameters.channelChangedCallback;
+			viewHelper.channelList.jsCallbackFunctionName = parararapms.channelChangedCallback;
 			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
 			viewHelper.channelList.addEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
 			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
 			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
-			
+			_checkingTimer.reset();
+			_checkingTimer.start();
 		}
 		
 		private function handleChannelListEvents():void {
@@ -446,7 +480,7 @@ package {
 		private function setCurrentVideoTime(e:BufferEvent):void {
 			if (e.buffering) { return; }
 			e.currentTarget.removeEventListener(e.type, arguments.callee);
-			SOWrapper.setCurrentVideoTime(player, loaderInfo.parameters);
+			SOWrapper.setCurrentVideoTime(player, parararapms);
 			SOWrapper.processPlayer(player);
 			_mainVideoTimeSetted = true;
 		}
@@ -858,7 +892,7 @@ package {
 		
 		private function reconnectRequest():void {
 			if (!_reconnectTimer) {
-				_reconnectTimer = new Timer(loaderInfo.parameters.reconnectDelay || 1000, 1);
+				_reconnectTimer = new Timer(parararapms.reconnectDelay || 1000, 1);
 				_reconnectTimer.addEventListener(TimerEvent.TIMER_COMPLETE, processReconnect);
 				_reconnectTimer.dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
 			} else {
@@ -956,6 +990,32 @@ package {
 					}
 				);
 				timer.start();
+			}
+		}
+		
+		private function get parararapms():Object {
+			return {
+				streamType: "recorded",
+				//streamType: "live",
+				autoPlay: true,
+				type: "live", 
+				srcId: "638",
+				//src: "rtmp://live.tvhello.ru/vod/mp4:conv/Ya-Pohudey/pohudeyu_12/pohudeyu_12_480p.mp4",
+				//src: "http://v.cdn.tvhello.ru/conv/Roliki/tv_tnt_rstv/tv_tnt_rstv_480p.mp4",
+				//src: "http://players.edgesuite.net/videos/big_buck_bunny/bbb_448x252.mp4",
+				//src: "http://193.34.211.18:1935/dvr/dw-europe.360kbps.stream/manifest.f4m?DVR",
+				//src: "http://osmf.org/videos/cathy2.flv",
+				//src: "rtmp://flideo-wn0.infox.ru/o2tv/o2tv720",
+				showVideoInfo: false,
+				GTrackPluginURL: 'GTrackPlugin.swf',
+				channelChangedCallback: 'someFunctionName',
+				//preRoll: "http://data.videonow.ru/?profile_id=1%26format=vast%26container=preroll",
+				//midRoll: "http://cdn1.eyewonder.com/200125/instream/osmf/vast_1_linear_flv.xml",
+				//midRollTime: 120,
+				//pauseRoll: "http://data.videonow.ru/?profile_id=1%26format=vast%26container=pauseroll",
+				//postRoll: "http://data.videonow.ru/?profile_id=1%26format=vast%26container=postroll",
+				reconnectDelay: 1000,
+				checkingTimerDelay: 5000
 			}
 		}
 	}

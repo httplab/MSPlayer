@@ -28,6 +28,8 @@ package org.osmf.player.elements {
 		private var channelListDialog:ChannelListDialog;
 		private var chromeProvider:ChromeProvider;
 		private var _configuration:PlayerConfiguration;
+		private var _contentRenewed:Boolean;
+		private var _allChannelsData:Array;
 		
 		public function ChannelListDialogElement(configuration:PlayerConfiguration) {
 			_configuration = configuration;
@@ -83,6 +85,7 @@ package org.osmf.player.elements {
 					time: DateUtils.formatToClientTime(Number(program.start) * 1000)
 				}
 			}
+			_allChannelsData = data.all_channels;
 			for each (channelData in data.all_channels) {
 				channel = allChannels.addChannel(channelData);
 				channel.addEventListener(MouseEvent.MOUSE_DOWN, channelSelected);
@@ -104,6 +107,8 @@ package org.osmf.player.elements {
 				groups.push(group);
 			}
 			channelListDialog.content = groups;
+			dispatchEvent(new Event(Event.COMPLETE));
+			_contentRenewed = true;
 		}
 		
 		private function channelSelected(e:MouseEvent):void {
@@ -129,6 +134,14 @@ package org.osmf.player.elements {
 		
 		public function set jsCallbackFunctionName(value:String):void {
 			_jsCallbackFunctionName = value;
+		}
+		
+		public function get contentRenewed():Boolean {
+			return _contentRenewed;
+		}
+		
+		public function get allChannelsData():Array {
+			return _allChannelsData;
 		}
 	}
 }
