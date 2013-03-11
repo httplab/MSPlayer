@@ -253,6 +253,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function checkForDraggerAvailability():void {
+			if (_arrowsContainer.visible || _isHided) { return; }
 			_dragger.visible = (_contentContainer.height > _mask.height);
 			if (!_dragger.visible) { return; }
 			var maxListDeltaY:Number = maxListY - TOP_GAP;
@@ -295,12 +296,14 @@ package org.osmf.player.chrome.widgets {
 			_contentContainer.visible = !_isHided;
 			back.visible = !_isHided;
 			closeButton.visible = !_isHided;
+			_dragger.visible = false;
 			_arrowsContainer.visible = false;
 		}
 		
 		public function showArrows():void {
 			_contentContainer.visible = false;
 			back.visible = false;
+			_dragger.visible = false;
 			closeButton.visible = false;
 			_arrowsContainer.visible = !_isHided;
 			parent && placeArrows();
