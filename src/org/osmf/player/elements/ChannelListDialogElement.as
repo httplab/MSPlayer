@@ -157,5 +157,18 @@ package org.osmf.player.elements {
 				channelListDialog && channelListDialog.show();
 			}
 		}
+		
+		public function set media(value:MediaElement):void {
+			if (!value) {
+				return;
+			}
+            if (value && value.metadata) {
+                if (!value.metadata.getValue("Advertisement")) {
+					channelListDialog && channelListDialog.show();
+				} else {
+					channelListDialog && channelListDialog.hide();
+				}
+            }
+		}
 	}
 }

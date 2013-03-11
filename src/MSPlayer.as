@@ -760,6 +760,7 @@ package {
 					viewHelper.mediaContainer.addMediaElement(_media);
 					!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
 						viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+					viewHelper.channelList.media = _media;
 					viewHelper.channelList.collapse();
                     // Forward a reference to controlBar:
 					viewHelper.controlBar && (viewHelper.controlBar.target = _media);
