@@ -49,7 +49,7 @@ package org.osmf.player.chrome.widgets {
 			titleDisplayObject.bg.width = value;
 			titleDisplayObject.titleTxt.width = Math.max(.45 * value, 350);
 			titleDisplayObject.nameTxt.width = Math.max(.45 * value, 350);
-			titleDisplayObject.nameTxt.x = width - titleDisplayObject.nameTxt.width - titleDisplayObject.titleTxt.x;
+			titleDisplayObject.nameTxt.x = value - titleDisplayObject.nameTxt.width - titleDisplayObject.titleTxt.x;
 			fitTextHeight(titleDisplayObject.nameTxt);
 			fitTextHeight(titleDisplayObject.titleTxt);
 		}
