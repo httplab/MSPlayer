@@ -264,7 +264,7 @@ package org.osmf.player.chrome {
 		}
 		
 		override public function set width(value:Number):void {
-			if (value < MIN_EXPANDED_WITDH) {
+			if (value < MIN_EXPANDED_WIDTH) {
 				_isExpanded && switchToCollapsedState();
 				value = COLLAPSED_WIDTH;
 			} else {
@@ -368,7 +368,7 @@ package org.osmf.player.chrome {
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		private var qualitySwitcherWidget:QualitySwitcherContainer;
 		private var _isExpanded:Boolean = true;
-		static public const MIN_EXPANDED_WITDH:Number = 500;
+		static public const MIN_EXPANDED_WIDTH:Number = 500;
 		static public const COLLAPSED_WIDTH:Number = 255;
 		private var rightControls:Widget;
 		private var channelListButton:ChannelListButton;
