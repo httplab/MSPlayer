@@ -1,7 +1,5 @@
 package org.osmf.player.chrome.widgets {
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.InteractiveObject;
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -9,10 +7,6 @@ package org.osmf.player.chrome.widgets {
 	import flash.geom.Rectangle;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-	import org.osmf.layout.HorizontalAlign;
-	import org.osmf.layout.LayoutMode;
-	import org.osmf.layout.VerticalAlign;
-	import org.osmf.media.MediaElement;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.Channel;
@@ -26,11 +20,16 @@ package org.osmf.player.chrome.widgets {
 		private var _content:Vector.<ChannelGroup>;
 		private var _contentContainer:Sprite;
 		private var _currentGroup:ChannelGroup;
+		private var _currentChannel:Channel;
 		private var back:ASSET_ChannelsListBack;
 		private var _mask:Sprite;
 		private var _dragger:MovieClip;
 		private var _tweener:Tweener;
 		private var _correctionTweener:Tweener;
+		private var _arrowsContainer:Sprite;
+		private var _leftArrow:Sprite;
+		private var _rightArrow:Sprite;
+		private var _isHided:Boolean;
 		
 		/**
 		* Init-time methods
@@ -41,6 +40,7 @@ package org.osmf.player.chrome.widgets {
 			addChild(back);
 			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
 			prepareContentContainer();
+			prepateArrowsContainer();
 			prepareCloseButton();
 			closeButton.configure(xml, assetManager);
 			closeButton.x = back.width - 35;
@@ -63,6 +63,27 @@ package org.osmf.player.chrome.widgets {
 			_contentContainer.mask = _mask;
 			addChild(_mask);
 			addChild(_contentContainer);
+		}
+		
+		private function prepateArrowsContainer():void {
+			_arrowsContainer = new Sprite();
+			_leftArrow = new Sprite();
+			_rightArrow = new Sprite();
+			_leftArrow.addChild(new Bitmap(new ASSET_previous_channel()));
+			_rightArrow.addChild(new Bitmap(new ASSET_next_channel()));
+			_arrowsContainer.addChild(_leftArrow);
+			_arrowsContainer.addChild(_rightArrow);
+			_leftArrow.addEventListener(MouseEvent.MOUSE_DOWN, selectPreviousChannel);
+			_rightArrow.addEventListener(MouseEvent.MOUSE_DOWN, selectNextChannel);
+			addChild(_arrowsContainer);
+		}
+		
+		private function selectPreviousChannel(e:MouseEvent):void {
+			_currentChannel.previousChannel.dispatchEvent(e);
+		}
+		
+		private function selectNextChannel(e:MouseEvent):void {
+			_currentChannel.nextChannel.dispatchEvent(e);
 		}
 		
 		private function initDragger():void {
@@ -249,20 +270,14 @@ package org.osmf.player.chrome.widgets {
 		* OSMF vs. Developers fight
 		*/
 		
-		override public function set media(value:MediaElement):void {
-			super.media = value;
-			if (media && media.metadata) {
-				mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
-				setSuperVisible(!media.metadata.getValue("Advertisement"));
-			}
-		}
-		
 		override public function set x(value:Number):void {
 			parent && (super.x = (parent.width - back.width) / 2);
+			parent && placeArrows();
 		}
 		
 		override public function set y(value:Number):void {
 			parent && (super.y = (parent.height - back.height) / 2);
+			parent && placeArrows();
 		}
 		
 		override public function measure(deep:Boolean = true):void {
@@ -270,9 +285,50 @@ package org.osmf.player.chrome.widgets {
 			return;
 		}
 		
+		public function showDialog():void {
+			x = 0;
+			y = 0;
+			_contentContainer.visible = !_isHided;
+			back.visible = !_isHided;
+			closeButton.visible = !_isHided;
+			_arrowsContainer.visible = false;
+		}
+		
+		public function showArrows():void {
+			_contentContainer.visible = false;
+			back.visible = false;
+			closeButton.visible = false;
+			_arrowsContainer.visible = !_isHided;
+			parent && placeArrows();
+		}
+		
+		private function placeArrows():void {
+			_leftArrow.x = -parent.width / 2;
+			_rightArrow.x = parent.width / 2 - _rightArrow.width;
+			_arrowsContainer.x = back.width / 2;
+			_arrowsContainer.y = (back.height - _arrowsContainer.height) / 2;
+		}
+		
+		public function show():void {
+			_isHided = false;
+			showArrows();
+		}
+		
+		public function hide():void {
+			_isHided = true;
+			_contentContainer.visible = false;
+			back.visible = false;
+			closeButton.visible = false;
+			_arrowsContainer.visible = false;
+		}
+		
 		override public function set height(value:Number):void {
 			//TODO: Handle shrinking for little containers
 			return;
 		}
+		
+		public function set currentChannel(value:Channel):void {
+			_currentChannel = value;
+		}		
 	}
 }

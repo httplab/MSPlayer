@@ -380,14 +380,14 @@ package {
 		}
 		
 		private function handleChannelListEvents():void {
-			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
-			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
-			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
-			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
-			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
-			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, expandChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, expandChannelList);
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, collapseChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, collapseChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, expandChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, expandChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, collapseChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, collapseChannelList);
 		}
 		
 		private function liveResumingHack(e:Event):void {
@@ -400,16 +400,17 @@ package {
 			}
 		}
 		
-		private function showChannelList(e:Event):void {
-			!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
-				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
-			viewHelper.channelList.showDialog();
+		private function expandChannelList(e:Event):void {
+			//!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+				//viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+			viewHelper.channelList.expand();
 			viewHelper.controlBar.processListState(true);
 		}
 		
-		private function hideChannelList(e:Event):void {
-			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
-				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList)
+		private function collapseChannelList(e:Event):void {
+			//viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+				//viewHelper.mainContainer.removeMediaElement(viewHelper.channelList)
+			viewHelper.channelList.collapse();
 			viewHelper.controlBar.processListState(false);
 		}
 		
@@ -655,6 +656,7 @@ package {
 				viewHelper.mainContainer.height = newHeigth;
 			}
 			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
+			viewHelper.channelList && (viewHelper.channelList.width = newWidth);
 			// Propagate dimensions to the control bar:
 			if (viewHelper.controlBar) {
 				if (
@@ -756,6 +758,9 @@ package {
 				_media = player.media = value;
                 if (_media) {
 					viewHelper.mediaContainer.addMediaElement(_media);
+					!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+						viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+					viewHelper.channelList.collapse();
                     // Forward a reference to controlBar:
 					viewHelper.controlBar && (viewHelper.controlBar.target = _media);
 					// Forward a reference to controlBar:

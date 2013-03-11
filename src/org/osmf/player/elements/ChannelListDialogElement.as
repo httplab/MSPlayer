@@ -19,9 +19,9 @@ package org.osmf.player.elements {
 	import org.osmf.traits.DisplayObjectTrait;
 	import org.osmf.traits.MediaTraitType;
 	
-	
 	public class ChannelListDialogElement extends MediaElement {
 		private var _jsCallbackFunctionName:String = '';
+		static private const MIN_EXPANDED_WIDTH:Number = 500;
 		static public const CHANNEL_CHANGED:String = "channelChanged";
 		static public const ALL_CHANNELS:String = "Все каналы";
 		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://www.tvbreak.ru/api/tvslice";
@@ -91,7 +91,7 @@ package org.osmf.player.elements {
 				}
 			}
 			groups.push(allChannels);
-			var group:ChannelGroup
+			var group:ChannelGroup;
 			for each (var groupData:Object in data.categories) {
 				group = new ChannelGroup(groupData.category_name);
 				for each (channelData in groupData.programs) {
@@ -101,13 +101,27 @@ package org.osmf.player.elements {
 						channel.setBroadcast(programs[channel.srcId].time, programs[channel.srcId].title)
 					}
 				}
+				if (!group.firstChannel) { 
+					continue;
+				}
+				if (groups.length && groups[groups.length - 1]) {
+					var previousGroup:ChannelGroup = groups[groups.length - 1];
+					group.previousGroup = previousGroup;
+					previousGroup.nextGroup = group;
+				}
 				groups.push(group);
 			}
+			if (groups.length) {
+				groups[0].previousGroup = groups[groups.length - 1];
+				groups[groups.length - 1].nextGroup = groups[0];
+			}
 			channelListDialog.content = groups;
+			channelListDialog.currentChannel = channel;
 		}
 		
 		private function channelSelected(e:MouseEvent):void {
 			var channel:Channel = (e.currentTarget as Channel);
+			channelListDialog.currentChannel = channel;
 			_configuration.srcId = channel.srcId;
 			_configuration.type = StreamType.LIVE;
 			_jsCallbackFunctionName && 
@@ -122,13 +136,24 @@ package org.osmf.player.elements {
 			trace("Sry, guys, i tried to do my best");
 		}
 		
-		public function showDialog():void {
-			channelListDialog.x = 0;
-			channelListDialog.y = 0;
+		public function expand():void {
+			channelListDialog.showDialog();
+		}
+		
+		public function collapse():void {
+			channelListDialog.showArrows();
 		}
 		
 		public function set jsCallbackFunctionName(value:String):void {
 			_jsCallbackFunctionName = value;
+		}
+		
+		public function set width(value:Number):void {
+			if (value < MIN_EXPANDED_WIDTH) {
+				channelListDialog && channelListDialog.hide();
+			} else {
+				channelListDialog && channelListDialog.show();
+			}
 		}
 	}
 }

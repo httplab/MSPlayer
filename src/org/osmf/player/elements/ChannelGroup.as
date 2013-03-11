@@ -1,4 +1,5 @@
 package org.osmf.player.elements {
+	import org.osmf.player.elements.ChannelGroup;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -66,6 +67,11 @@ package org.osmf.player.elements {
 			channel.srcId = (channelData.title) ? (channelData.id) : (channelData.url.split('/#tv/')[1]);
 			channel.access = channelData.access;
 			channel.authAccess = channelData.auth_access;
+			if (channels.length && channels[channels.length - 1]) {
+				var previousChannel:Channel = channels[channels.length - 1];
+				channel.previousChannel = previousChannel;
+				previousChannel.nextChannel = channel;
+			}
 			channels.push(channel);
 			_mask.width = channel.width;
 			channel.y = _channelsContaner.height;
@@ -108,6 +114,22 @@ package org.osmf.player.elements {
 		
 		override public function get height():Number {
 			return bg.height + _mask.height;
+		}
+		
+		public function set previousGroup(value:ChannelGroup):void {
+			channels[0].previousChannel = value.lastChannel;
+		}
+		
+		public function set nextGroup(value:ChannelGroup):void {
+			channels[channels.length - 1].nextChannel = value.firstChannel;
+		}
+		
+		public function get firstChannel():Channel {
+			return channels.length ? channels[0] : null; //Getter will be used as flag too. If it return `null` - group will be ignored.
+		}
+		
+		public function get lastChannel():Channel {
+			return channels[channels.length - 1];
 		}
 	}
 }

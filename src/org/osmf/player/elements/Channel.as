@@ -1,10 +1,13 @@
 package org.osmf.player.elements {
 	import flash.display.InteractiveObject;
+	import org.osmf.player.elements.Channel;
 	public class Channel extends ASSET_Channel {
 		private var _height:Number;
 		public var srcId:int;
 		public var access:Boolean;
 		public var authAccess:Boolean;
+		public var previousChannel:Channel;
+		public var nextChannel:Channel;
 		
 		public function Channel(name:String, bgIdx:Boolean) {
 			!bgIdx && bg.gotoAndStop(2);
