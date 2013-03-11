@@ -23,11 +23,15 @@ package org.osmf.player.chrome
 	import flash.errors.IllegalOperationError;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.filters.DropShadowFilter;
+	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	import org.osmf.layout.ScaleMode;
+	import org.osmf.player.chrome.assets.FontAsset;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
+	import org.osmf.player.chrome.widgets.TitleWidget;
 	
 	import org.osmf.layout.HorizontalAlign;
 	import org.osmf.layout.LayoutMode;
@@ -222,9 +226,17 @@ package org.osmf.player.chrome
 			closeButton.id = WidgetIDs.CLOSE_BUTTON;
 			alertDialog.addChildWidget(closeButton);
 			
+			var fontAsset:FontAsset = assetManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
+			var regularFormat:TextFormat = fontAsset ? fontAsset.format : new TextFormat();
+			regularFormat.size = 13;
+			regularFormat.color = 0xFFFFFF;
+			regularFormat.align = TextFormatAlign.CENTER;
+			
 			var captionLabel:LabelWidget = new LabelWidget();
 			captionLabel.id = WidgetIDs.CAPTION_LABEL;
 			captionLabel.height = 0;
+			captionLabel.textFormat = regularFormat;
+			captionLabel.filters = [new DropShadowFilter(1, 90, 0, 1, 2, 2, 1, 3)];
 			alertDialog.addChildWidget(captionLabel);
 			
 			var messageLabel:LabelWidget = new LabelWidget();
@@ -233,9 +245,9 @@ package org.osmf.player.chrome
 			messageLabel.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			messageLabel.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
 			messageLabel.layoutMetadata.percentWidth = 100;
-			messageLabel.fontSize = 16;
-			messageLabel.align = TextFormatAlign.CENTER;
-				
+			messageLabel.textFormat = regularFormat;
+			messageLabel.filters = [new DropShadowFilter(1, 90, 0, 1, 2, 2, 1, 3)];
+			
 			alertDialog.addChildWidget(messageLabel);
 
 			configureWidgets([closeButton, captionLabel, messageLabel, alertDialog]);
@@ -275,29 +287,32 @@ package org.osmf.player.chrome
 			
 			return errorWidget;
 		}
-
-		public function createControlBar():IControlBar
-		{
+		
+		public function createPlayerTitle():TitleWidget {
+			var titleWidget:TitleWidget = new TitleWidget();
+			titleWidget.configure(<default/>,  assetsProvider.assetsManager)
+			return titleWidget;
+		}
+		
+		public function createControlBar():IControlBar {
 			var controlBar:ControlBar = new ControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createSmartphoneControlBar():IControlBar
-		{
+		public function createSmartphoneControlBar():IControlBar {
 			var controlBar:SmartphoneControlBar = new SmartphoneControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createTabletControlBar():IControlBar
-		{
+		public function createTabletControlBar():IControlBar {
 			var controlBar:TabletControlBar = new TabletControlBar();
 			controlBar.configure(<default/>,  assetsProvider.assetsManager)
 			return controlBar;
 		}
 		
-		public function createVolumeControlBar():VolumeControlBar{
+		public function createVolumeControlBar():VolumeControlBar {
 			var volumeBar:VolumeControlBar = new VolumeControlBar();
 			volumeBar.configure(<default/>,  assetsProvider.assetsManager)
 			return volumeBar;

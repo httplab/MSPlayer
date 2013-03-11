@@ -88,6 +88,7 @@ package org.osmf.player.chrome.widgets
 		public function set textFormat(value:TextFormat):void
 		{
 			textField.defaultTextFormat = value;
+			textField.setTextFormat(value);
 		}
 		
 		// Overrides

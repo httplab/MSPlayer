@@ -64,10 +64,17 @@ package org.osmf.player.chrome.assets
 		static public const SCRUB_BAR_DARK_GRAY_MIDDLE:String = "scrubBarDarkGrayMiddle";
 		static public const SCRUB_BAR_DARK_GRAY_RIGHT:String = "scrubBarDarkGrayRight";
 		
-		static public const SCRUB_BAR_RECORDED_RIGHT:String = "scrubBarRecordedRight";
+		static public const SCRUB_BAR_SNOW_WHITE_LEFT:String = "scrubBarSnowWhiteLeft";
+		static public const SCRUB_BAR_SNOW_WHITE_MIDDLE:String = "scrubBarSnowWhiteMiddle";
+		static public const SCRUB_BAR_SNOW_WHITE_RIGHT:String = "scrubBarSnowWhiteRight";
+		
 		static public const SCRUB_BAR_LIVE_RIGHT:String = "scrubBarLiveRight";
+		static public const SCRUB_BAR_LIVE_COLLAPSED_RIGHT:String = "scrubBarLiveCollapsedRight";
+		static public const SCRUB_BAR_RECORDED_RIGHT:String = "scrubBarRecordedRight";
+		static public const SCRUB_BAR_RECORDED_COLLAPSED_RIGHT:String = "scrubBarRecordedCollapsedRight";
 		
 		public static const SCRUB_BAR_TIME_HINT:String = "scrubBarTimeHint";
+		public static const SCRUB_BAR_TIME_HINT_CONTENT:String = "scrubBarTimeHintContent";
 		
 		public static const BACK_BUTTON_NORMAL:String = "backButtonNormal";
 		public static const BACK_BUTTON_DOWN:String = "backButtonDown";
@@ -124,8 +131,18 @@ package org.osmf.player.chrome.assets
 		public static const FULL_SCREEN_LEAVE_DOWN:String = "fullScreenLeaveButtonDown";
 		public static const FULL_SCREEN_LEAVE_OVER:String = "fullScreenLeaveButtonOver";
 		
+		public static const FULL_WIDTH_NORMAL:String = "fullWidthLeaveNormal";
+		public static const FULL_WIDTH_DOWN:String = "fullWidthLeaveDown";
+		public static const FULL_WIDTH_OVER:String = "fullWidthLeaveOver";
+		
+		public static const FREE_MODE_NORMAL:String = "freeModeLeaveNormal";
+		public static const FREE_MODE_DOWN:String = "freeModeLeaveDown";
+		public static const FREE_MODE_OVER:String = "freeModeLeaveOver";
+		
 		public static const HD_ON:String = "hdOn";
 		public static const HD_OFF:String = "hdOff";
+		
+		public static const PLAYER_TITLE:String = "playerTitle";
 		
 		public static const PREVIOUS_BUTTON_NORMAL:String = "previousButtonNormal";
 		public static const PREVIOUS_BUTTON_DOWN:String = "previousButtonDown";
@@ -159,5 +176,9 @@ package org.osmf.player.chrome.assets
 		public static const CHANNEL_LIST_BUTTON_OVER:String = "channelListButtonOver";
 		public static const CHANNEL_LIST_BUTTON_DOWN:String = "channelListButtonDown";
 		public static const CHANNEL_LIST_BUTTON_NORMAL:String = "channelListButtonNormal";
+		
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_OVER:String = "channelListButtonCollapsedOver";
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_DOWN:String = "channelListButtonCollapsedDown";
+		public static const CHANNEL_LIST_BUTTON_COLLAPSED_NORMAL:String = "channelListButtonCollapsedNormal";
 	}
 }

@@ -25,11 +25,13 @@ package {
 	import flash.ui.Mouse;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
+	import io.ratchet.notifier.Ratchet;
 	import org.osmf.elements.*;
 	import org.osmf.events.*;
 	import org.osmf.layout.*;
 	import org.osmf.logging.Log;
 	import org.osmf.media.*;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.ChromeProvider;
 	import org.osmf.player.chrome.configuration.ConfigurationUtils;
@@ -73,8 +75,9 @@ package {
 		[Embed(source='../assets/GAConfig.xml', mimeType="application/octet-stream")]
 			private static const GAConfigClass:Class;
 			
+		public static const RATCHET_ACCESS_TOKEN:String = "584b28b15c44406884afbeab3709761f";
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
-		private static const MAX_OVER_WIDTH:int = 350;
+		private static const MAX_OVER_WIDTH:int = 400;
 		private static const MAX_OVER_WIDTH_SMARTPHONE:int = 550;
 		private static const MAX_OVER_WIDTH_TABLET:int = 600;
 		private static const MEDIA_PLAYER:String = "org.osmf.media.MediaPlayer";
@@ -84,18 +87,19 @@ package {
 		
 		private var injector:InjectorModule;
 		private var pluginHostWhitelist:Vector.<String>;
-		private var mediaPlayerJSBridge:JavaScriptBridge = null;
+		//private var mediaPlayerJSBridge:JavaScriptBridge = null;
 		private var _media:MediaElement;
 		private var controlBarWidth:Number;
 		private var controlBarHeight:Number;
 		private var strobeWidth:Number;
 		private var strobeHeight:Number;
 		
-        private static const EXTERNAL_INTERFACE_ERROR_CALL:String = "function(playerId, code, message, detail)" + 
-		"{" + 
-		"if (onMediaPlaybackError != null)" +
-		"onMediaPlaybackError(playerId, code, message, detail);" +
-		"}";
+		//Will never be called in production
+        //private static const EXTERNAL_INTERFACE_ERROR_CALL:String = "function(playerId, code, message, detail)" + 
+		//"{" + 
+		//"if (onMediaPlaybackError != null)" +
+		//"onMediaPlaybackError(playerId, code, message, detail);" +
+		//"}";
 		
 		CONFIG::LOGGING {
 			protected var logger:StrobeLogger = Log.getLogger("StrobeMediaPlayback") as StrobeLogger;
@@ -108,6 +112,8 @@ package {
 		private var viewHelper:ViewHelper;
 		private var _adController:AdController;
 		private var _mainVideoTimeSetted:Boolean;
+		private var _liveResuming:Boolean;
+		private var _reconnectTimer:Timer;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -138,7 +144,14 @@ package {
 		* Init-time methods
 		*/
 		
+		private function isDebug():Boolean {
+			//TODO: Should be false, when production
+			return true;
+		}
+		
 		public function initialize(parameters:Object, stage:Stage, loaderInfo:LoaderInfo, pluginHostWhitelist:Array):void {
+			var environment:String = isDebug() ? "development" : "production";
+			Ratchet.init(this, RATCHET_ACCESS_TOKEN, environment);
 			injector = new InjectorModule();
 			initUncaughtErrorsHandler();
 			initPluginsWhitelist(pluginHostWhitelist);
@@ -147,18 +160,19 @@ package {
 			var drmManager:DRMManager = DRMManager.getDRMManager();
 			drmManager.addEventListener(DRMErrorEvent.DRM_ERROR, onDRMError);
 			initConfiguration();
-			if (
-				configuration.javascriptCallbackFunction != "" && 
-				ExternalInterface.available && 
-				mediaPlayerJSBridge == null
-			) {
-				mediaPlayerJSBridge = new JavaScriptBridge(
-					this, 
-					player, 
-					StrobeMediaPlayer, 
-					configuration.javascriptCallbackFunction
-				);
-			}
+			//Will never be called in production
+			//if (
+				//configuration.javascriptCallbackFunction != "" && 
+				//ExternalInterface.available && 
+				//mediaPlayerJSBridge == null
+			//) {
+				//mediaPlayerJSBridge = new JavaScriptBridge(
+					//this, 
+					//player, 
+					//StrobeMediaPlayer, 
+					//configuration.javascriptCallbackFunction
+				//);
+			//}
 		}
 		
 		private function initUncaughtErrorsHandler():void {
@@ -246,13 +260,11 @@ package {
 		private function initPlugins():Vector.<MediaResourceBase> {
 			var pluginConfigurations:Vector.<MediaResourceBase> = ConfigurationUtils.transformDynamicObjectToMediaResourceBases(configuration.plugins);
 			var pluginResource:MediaResourceBase;	
-			if (loaderInfo.parameters.GTrackPluginURL) {
-				pluginResource = new URLResource(loaderInfo.parameters.GTrackPluginURL);
-				var contentFile:ByteArray = new GAConfigClass();
-				var contentStr:String = contentFile.readUTFBytes( contentFile.length );
-				pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
-				pluginConfigurations.push(pluginResource);
-			}
+			pluginResource = new URLResource(loaderInfo.parameters.GTrackPluginURL || 'GTrackPlugin.swf');
+			var contentFile:ByteArray = new GAConfigClass();
+			var contentStr:String = contentFile.readUTFBytes( contentFile.length );
+			pluginResource.addMetadataValue('http://www.realeyes.com/osmf/plugins/tracking/google', new XML(contentStr));
+			pluginConfigurations.push(pluginResource);
 			CONFIG::LOGGING {
 				var p:uint = 0;
 				for each(pluginResource in pluginConfigurations) {
@@ -288,7 +300,8 @@ package {
 			initSkins();
 		}
 		
-		private function onSkinLoaderFailure(event:Event):void {
+		private function onSkinLoaderFailure(event:ErrorEvent):void {
+			Ratchet.handleErrorEvent(event);
 			trace("WARNING: failed to load skin file at " + configuration.skin);
 			onSkinLoaderComplete();
 		}
@@ -343,10 +356,7 @@ package {
 				resource = (e.currentTarget as MultiQualityStreamingResource);
 				e.currentTarget.addEventListener(e.type, changeStreamQuality);
 				(resource as MultiQualityStreamingResource).registerOwnButton(viewHelper.controlBar);
-				viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
-				viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, switchChannelListVisible);
+				handleChannelListEvents();
 			}
 			CONFIG::LOGGING {
 				logger.trackObject("AssetResource", resource);
@@ -358,19 +368,51 @@ package {
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
 			_adController.addEventListener(AdController.RESUME_MAIN_VIDEO_REQUEST, resumeMainVideoAfterAd);
-			_adController.checkForAd(loaderInfo.parameters);
+			var streamType:String = resource['streamType'] || loaderInfo.parameters.streamType;
+			_adController.checkForAd(loaderInfo.parameters, streamType, _liveResuming);
+			_liveResuming = false;
 			viewHelper.channelList.jsCallbackFunctionName = loaderInfo.parameters.channelChangedCallback;
 			viewHelper.channelList.removeEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
 			viewHelper.channelList.addEventListener(ChannelListDialogElement.CHANNEL_CHANGED, loadMedia);
+			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
+			viewHelper.controlBar.addEventListener(ControlBarElement.PLAY_BUTTON_CLICK, liveResumingHack);
 			
 		}
 		
-		private function switchChannelListVisible(e:Event):void {
-			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) ?
-				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList) :
-				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
-			viewHelper.controlBar.processListState(viewHelper.mainContainer.containsMediaElement(viewHelper.channelList));
+		private function handleChannelListEvents():void {
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.controlBar.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.channelList.removeEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CALL, showChannelList);
+			viewHelper.controlBar.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
+			viewHelper.channelList.addEventListener(ChannelListButton.LIST_CLOSE_CALL, hideChannelList);
 		}
+		
+		private function liveResumingHack(e:Event):void {
+			if (_liveResuming) { return; }
+			var resource:MultiQualityStreamingResource = _media ? (_media.resource as MultiQualityStreamingResource) : null;
+			if (resource && (resource.streamType == StreamType.LIVE)) {
+				_liveResuming = true;
+				media = null;
+				loadMedia(e);
+			}
+		}
+		
+		private function showChannelList(e:Event):void {
+			!viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+				viewHelper.mainContainer.addMediaElement(viewHelper.channelList);
+			viewHelper.channelList.showDialog();
+			viewHelper.controlBar.processListState(true);
+		}
+		
+		private function hideChannelList(e:Event):void {
+			viewHelper.mainContainer.containsMediaElement(viewHelper.channelList) &&
+				viewHelper.mainContainer.removeMediaElement(viewHelper.channelList)
+			viewHelper.controlBar.processListState(false);
+		}
+		
 		
 		private function changeStreamQuality(e:Event):void {
 			var resource:MultiQualityStreamingResource = (e.currentTarget as MultiQualityStreamingResource);
@@ -385,16 +427,20 @@ package {
 		
 		private function resumeMainVideoAfterAd(e:Event):void {
 			// WORKAROUND: http://bugs.adobe.com/jira/browse/ST-397 - GPU Decoding issue on stagevideo: Win7, Flash Player version WIN 10,2,152,26 (debug)
-			viewHelper.controlBar.enableMultiQualityButton();
-			player.play();
-			if (viewHelper.controlBar) {
-				viewHelper.controlBar.target = player.media;
+			if (player.state == PlayState.PAUSED && !_liveResuming) {
+				player.play();
+				liveResumingHack(e);
+			} else {
+				player.play();
 			}
+			viewHelper.controlBar && (viewHelper.controlBar.target = player.media);
+			viewHelper.playerTitle && (viewHelper.playerTitle.target = _media);
 		}
 		
 		private function restoreMainVideoAfterAd(e:Event):void {
 			SOWrapper.processPlayer(player);
 			viewHelper.mediaContainer.addMediaElement(player.media);
+			liveResumingHack(e);
 		}
 		
 		private function setCurrentVideoTime(e:BufferEvent):void {
@@ -421,12 +467,10 @@ package {
 			if (e) {
 				e.currentTarget.removeEventListener(e.type, arguments.callee);
 			}
-			//TODO: Remove, when we will have own Media and Traits for multi-quality streaming:
-			viewHelper.controlBar.disableMultiQualityButton();
 			if (viewHelper.mediaContainer.containsMediaElement(player.media)) {
 				viewHelper.mediaContainer.removeMediaElement(player.media);
 			} else {
-				player.media.addEventListener(ContainerChangeEvent.CONTAINER_CHANGE, removeMainVideoFromContainer);
+				player && player.media && player.media.addEventListener(ContainerChangeEvent.CONTAINER_CHANGE, removeMainVideoFromContainer);
 			}
 		}
 		
@@ -610,6 +654,7 @@ package {
 				viewHelper.mainContainer.width = newWidth;
 				viewHelper.mainContainer.height = newHeigth;
 			}
+			viewHelper.playerTitle && (viewHelper.playerTitle.width = newWidth);
 			// Propagate dimensions to the control bar:
 			if (viewHelper.controlBar) {
 				if (
@@ -627,7 +672,7 @@ package {
 							viewHelper.controlBar.width = MAX_OVER_WIDTH_TABLET;
 						break;
 						default:
-							viewHelper.controlBar.width = MAX_OVER_WIDTH;
+							viewHelper.controlBar.width = newWidth//MAX_OVER_WIDTH;
 						break;
 					}
 				}
@@ -713,6 +758,8 @@ package {
 					viewHelper.mediaContainer.addMediaElement(_media);
                     // Forward a reference to controlBar:
 					viewHelper.controlBar && (viewHelper.controlBar.target = _media);
+					// Forward a reference to controlBar:
+					viewHelper.playerTitle && (viewHelper.playerTitle.target = _media);
 					// Forward a reference to login window:
 					viewHelper.loginWindow && (viewHelper.loginWindow.target = _media);
                 }
@@ -758,18 +805,26 @@ package {
 		*/
 		
 		private function onMediaError(event:MediaErrorEvent):void {
-			// Make sure this event gets handled only once:
+				// Make sure this event gets handled only once:
+			new Ratchet().handleOtherEvent(event);
+			if (
+				event.error.errorID == MediaErrorCodes.NETSTREAM_STREAM_NOT_FOUND ||
+				event.error.detail.indexOf("2032") > -1
+			) {
+				reconnectRequest();
+				return;
+			}
 			player.removeEventListener(MediaErrorEvent.MEDIA_ERROR, onMediaError);
 			// Reset the current media:
 			player.media = null;
 			media = null;
 			// Translate error message:
 			var message:String;
-			if (configuration.verbose) {
-				message = event.error.message + "\n" + event.error.detail;
-			} else {
+			var nonTranslatedMessage:String = event.error.message + "\n" + event.error.detail;
+			if (!configuration.verbose) {
 				message = ErrorTranslator.translate(event.error).message;
 			}
+			!message && (message = nonTranslatedMessage);
 			CONFIG::FLASH_10_1 {
 				var tokens:Array = Capabilities.version.split(/[\s,]/);
 				var flashPlayerMajorVersion:int = parseInt(tokens[1]);
@@ -782,25 +837,54 @@ package {
 					}
 				}
 			}
-			reportError(message);
+			reportError(message, nonTranslatedMessage);
 			// Forward the raw error message to JavaScript:
-			if (ExternalInterface.available) {
-				try {
-					ExternalInterface.call(
-						EXTERNAL_INTERFACE_ERROR_CALL,
-						ExternalInterface.objectID,
-						event.error.errorID, 
-						event.error.message, 
-						event.error.detail
-					);
-					JavaScriptBridge.error(event);
-				} catch(e:Error) {
-					trace(e.toString());
-				}
+			//Not available in production
+			//if (ExternalInterface.available) {
+				//try {
+					//ExternalInterface.call(
+						//EXTERNAL_INTERFACE_ERROR_CALL,
+						//ExternalInterface.objectID,
+						//event.error.errorID, 
+						//event.error.message, 
+						//event.error.detail
+					//);
+					//JavaScriptBridge.error(event);
+				//} catch(e:Error) {
+					//trace(e.toString());
+				//}
+			//}
+		}
+		
+		private function reconnectRequest():void {
+			if (!_reconnectTimer) {
+				_reconnectTimer = new Timer(loaderInfo.parameters.reconnectDelay || 1000, 1);
+				_reconnectTimer.addEventListener(TimerEvent.TIMER_COMPLETE, processReconnect);
+				_reconnectTimer.dispatchEvent(new TimerEvent(TimerEvent.TIMER_COMPLETE));
+			} else {
+				_reconnectTimer.start();
 			}
 		}
 		
-		private function reportError(message:String):void {
+		private function processReconnect(e:TimerEvent):void {
+			_reconnectTimer.stop();
+			_reconnectTimer.reset();
+			//if (viewHelper.alert) {
+				//viewHelper.mediaContainer.addMediaElement(viewHelper.alert);
+				//viewHelper.alert.alert("Error", ErrorTranslator.RECONNECT_TRIES);
+			//}
+			media = factory.createMediaElement(_media.resource);
+		}
+		
+		private function reportError(message:String, nonTranslatedMessage:String = ""):void {
+			//try { 
+				//TODO: Remove on release!
+				//throw new Error(nonTranslatedMessage || message, int(8036 * Math.random()));
+			//} catch (e:Error) {
+				//Ratchet.handleError(e);
+				//return;
+				//throw e;
+			//}
 			// If an alert widget is available, use it. Otherwise, trace the message:
 			if (viewHelper.alert) {
 				if (_media && viewHelper.mediaContainer.containsMediaElement(_media)) {
@@ -826,6 +910,7 @@ package {
 		}
 		
 		private function onDRMError(event:DRMErrorEvent):void {
+			Ratchet.handleErrorEvent(event);
 			switch(event.errorID) {
 				// Use the following link for the error codes
 				// http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/runtimeErrors.html
@@ -850,6 +935,7 @@ package {
 		
 		CONFIG::FLASH_10_1 {
 			private function onUncaughtError(event:UncaughtErrorEvent):void {
+				Ratchet.handleErrorEvent(event);
 				event.preventDefault();
 				var timer:Timer = new Timer(3000, 1);
 				var mediaError:MediaError = new MediaError(

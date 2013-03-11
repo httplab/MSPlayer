@@ -1,9 +1,20 @@
 package org.osmf.player.chrome.widgets {
+	import com.adobe.serialization.json.JSON;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.filters.ColorMatrixFilter;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.system.LoaderContext;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 
@@ -17,14 +28,23 @@ package org.osmf.player.chrome.widgets {
 		private var backDropLeft_empty:DisplayObject;
 		private var backDropMiddle_empty:DisplayObject;
 		private var backDropRight_empty:DisplayObject;
+		private var backDropLeft_highlight:DisplayObject;
+		private var backDropMiddle_highlight:DisplayObject;
+		private var backDropRight_highlight:DisplayObject;
 		private var emptyContainer:Sprite;
 		private var loadedContainer:Sprite;
 		private var playedContainer:Sprite;
+		private var highLightContainer:Sprite;
 		private var _loadedMask:Sprite;
 		private var _playedMask:Sprite;
+		private var _highlightMask:Sprite;
 		private var seeker:Seeker;
 		private var _seekTo:Number;
 		private var _hintPosition:Number;
+		private var _shotsURL:String;
+		private var _shotsNum:int;
+		private var _imagesArray:Vector.<Bitmap>;
+		private var _shotsLoaded:Boolean;
 		
 		public function VodScrubWidget() {
 			super();
@@ -36,6 +56,7 @@ package org.osmf.player.chrome.widgets {
 			emptyContainer = new Sprite();
 			loadedContainer = new Sprite();
 			playedContainer = new Sprite();
+			highLightContainer = new Sprite();
 			
 			emptyContainer.mouseEnabled = loadedContainer.mouseEnabled = playedContainer.mouseEnabled = false;
 			
@@ -50,6 +71,10 @@ package org.osmf.player.chrome.widgets {
 			backDropLeft_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_LEFT); 
 			backDropMiddle_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_MIDDLE); 
 			backDropRight_empty = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_GRAY_RIGHT); 
+			
+			backDropLeft_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_LEFT); 
+			backDropMiddle_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_MIDDLE); 
+			backDropRight_highlight = assetManager.getDisplayObject(AssetIDs.SCRUB_BAR_WHITE_RIGHT); 
 			
 			emptyContainer.addChild(backDropLeft_empty);
 			emptyContainer.addChild(backDropMiddle_empty);
@@ -69,9 +94,25 @@ package org.osmf.player.chrome.widgets {
 			playedContainer.mask = _playedMask;
 			playedContainer.addChild(_playedMask);
 			
+			highLightContainer.addChild(backDropLeft_highlight);
+			highLightContainer.addChild(backDropMiddle_highlight);
+			highLightContainer.addChild(backDropRight_highlight);
+			_highlightMask = new Sprite();
+			highLightContainer.mask = _highlightMask;
+			highLightContainer.addChild(_highlightMask);
+			
+			var matrix:Array = new Array();
+            matrix = matrix.concat([1, 0, 0, 0, 255]); // red
+            matrix = matrix.concat([0, 1, 0, 0, 255]); // green
+            matrix = matrix.concat([0, 0, 1, 0, 255]); // blue
+            matrix = matrix.concat([0, 0, 0, 1, 0]); // alpha
+			
+			highLightContainer.filters = [new ColorMatrixFilter(matrix)];
+			
 			addChild(emptyContainer);
 			addChild(loadedContainer);
 			addChild(playedContainer);
+			addChild(highLightContainer);
 			
 			seeker = new Seeker();
 			seeker.addEventListener(Seeker.SEEK_START, onSeekerStart);
@@ -89,6 +130,7 @@ package org.osmf.player.chrome.widgets {
 			backDropMiddle_empty.width = availableWidth - (backDropLeft_empty.width + backDropRight_empty.width);
 			backDropMiddle_loaded.width = availableWidth - (backDropLeft_loaded.width + backDropRight_loaded.width);
 			backDropMiddle_played.width = availableWidth - (backDropLeft_played.width + backDropRight_played.width);
+			backDropMiddle_highlight.width = availableWidth - (backDropLeft_highlight.width + backDropRight_highlight.width);
 			
 			backDropMiddle_empty.x = backDropLeft_empty.width;
 			backDropRight_empty.x = availableWidth - backDropRight_empty.width;
@@ -98,15 +140,21 @@ package org.osmf.player.chrome.widgets {
 			
 			backDropMiddle_played.x = backDropLeft_played.width;
 			backDropRight_played.x = availableWidth - backDropRight_played.width;
+			
+			backDropMiddle_highlight.x = backDropLeft_highlight.width;
+			backDropRight_highlight.x = availableWidth - backDropRight_highlight.width;
+			
 			seeker.point = new Point(width, height);
 		}
 		
 		private function onSeekerStart(event:Event):void {
 			dispatchEvent(new Event(ScrubBar.PAUSE_CALL));
+			highlightPosition = NaN;
 		}
 		
 		private function onSeekerUpdate(event:Event):void {
 			_seekTo = seeker.position;
+			highlightPosition = NaN;
 			dispatchEvent(new Event(ScrubBar.SEEK_CALL));
 		}
 		
@@ -116,10 +164,12 @@ package org.osmf.player.chrome.widgets {
 		
 		private function callShowHint(e:MouseEvent):void {
 			_hintPosition = mouseX / width;
+			highlightPosition = _hintPosition;
 			dispatchEvent(new Event(ScrubBar.SHOW_HINT_CALL))
 		}
 		
 		private function callHideHint(e:MouseEvent):void {
+			highlightPosition = NaN;
 			dispatchEvent(new Event(ScrubBar.HIDE_HINT_CALL));
 		}
 		
@@ -130,6 +180,16 @@ package org.osmf.player.chrome.widgets {
 				clear();
 				beginFill(0, 1);
 				drawRect(0, 0, value * width, height);
+				endFill();
+			}
+		}
+		
+		public function set highlightPosition(value:Number):void {
+			with (_highlightMask.graphics) {
+				clear();
+				if (isNaN(value)) { return; }
+				beginFill(0, 1);
+				drawRect(int(value * width), 0, .5, height);
 				endFill();
 			}
 		}
@@ -148,6 +208,11 @@ package org.osmf.player.chrome.widgets {
 			seeker.removeHandlers();
 		}
 		
+		public function getShotAt(position:Number):DisplayObject {
+			if (!_shotsLoaded) { return new Sprite(); }
+			return _imagesArray[Math.min(int(position * _shotsNum), _shotsNum - 1)];
+		}
+		
 		override public function get width():Number {
 			return Math.max(emptyContainer.width, loadedContainer.width, playedContainer.width);
 		}
@@ -162,6 +227,60 @@ package org.osmf.player.chrome.widgets {
 		
 		public function get hintPosition():Number {
 			return _hintPosition;
+		}
+		
+		public function set shotsURL(value:String):void {
+			if (!value || _shotsURL == value) { return; }
+			_shotsURL = value;
+			var urlLoader:URLLoader = new URLLoader();
+			urlLoader.addEventListener(Event.COMPLETE, shotsInfoLoadedHandler);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, shotsInfoLoadingFailedHandler);
+			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, shotsInfoLoadingFailedHandler);
+			urlLoader.load(new URLRequest(_shotsURL));
+		}
+		
+		public function get shotsLoaded():Boolean {
+			return _shotsLoaded;
+		}
+		
+		private function shotsInfoLoadingFailedHandler(e:Event):void {
+			_shotsURL = '';
+			_shotsNum = 0;
+			_shotsLoaded = false;
+			_imagesArray = null;
+		}
+		
+		private function shotsInfoLoadedHandler(e:Event):void {
+			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
+			_shotsNum = data.shots_lane_shots;
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, shotsInfoLoadingFailedHandler);
+			loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, shotsInfoLoadingFailedHandler);
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, shotsImageLoadedHandler);
+			loader.load(new URLRequest(data.video_thumbnails_url), new LoaderContext(true));
+		}
+		
+		private function shotsImageLoadedHandler(e:Event):void {
+			var image:DisplayObject
+			try {
+				image = (e.currentTarget.content as DisplayObject);
+				if (!image) { throw new Error('No image', 404); }
+			} catch (error:Error) {
+				//Crossdomain access error
+				shotsInfoLoadingFailedHandler(e);
+				return;
+			}
+			_imagesArray = new Vector.<Bitmap>();
+			var shotWidth:Number = image.width / _shotsNum;
+			for (var i:int = 0; i < _shotsNum; i++) {
+				var bData:BitmapData = new BitmapData(shotWidth, image.height, false, 0);
+				var matrix:Matrix = new Matrix();
+				matrix.translate(-shotWidth * i, 0);
+				bData.draw(image, matrix, null, null, null, true);
+				var bitmap:Bitmap = new Bitmap(bData);
+				_imagesArray.push(bitmap);
+			}
+			_shotsLoaded = true;
 		}
 	}
 }

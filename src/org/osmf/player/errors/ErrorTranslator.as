@@ -36,19 +36,24 @@ package org.osmf.player.errors
 	public class ErrorTranslator
 	{
 		internal static const UNKNOWN_ERROR:String
-			= "An unknown error occured. We apologize for the inconvenience.";
+			= "Ошибка.\nПожалуйста, обновите страницу.";
+			//= "An unknown error occured. We apologize for the inconvenience.";
 		
 		internal static const GENERIC_ERROR:String
-			= "We are having problems with playback. We apologize for the inconvenience.";
+			= "Ошибка.\nПожалуйста, обновите страницу.";
+			//= "We are having problems with playback. We apologize for the inconvenience.";
 			
 		internal static const NETWORK_ERROR:String
-			= "We are unable to connect to the network. We apologize for the inconvenience.";
+			= "Мы потеряли связь с сервером.\nПожалуйста, проверьте своё интернет-соединение.";
+			//= "We are unable to connect to the network. We apologize for the inconvenience.";
 			
 		internal static const NOT_FOUND_ERROR:String
-			= "We are unable to connect to the content you’ve requested. We apologize for the inconvenience.";
+			= "К сожалению, запрашиваемый материал сейчас недоступен.\nПриносим свои извинения.";
+			//= "We are unable to connect to the content you’ve requested. We apologize for the inconvenience.";
 			
 		internal static const PLUGIN_FAILURE_ERROR:String
-			= "We are unable to initialize the player. We apologize for the inconvenience.";
+			= "Ошибка.\nПожалуйста, обновите страницу.";
+			//= "We are unable to initialize the player. We apologize for the inconvenience.";
 		
 		/* static */
 		public static function translate(error:Error):Error
@@ -135,6 +140,9 @@ package org.osmf.player.errors
 						break;
 					case PLUGIN_FAILURE:
 						message = PLUGIN_FAILURE_ERROR;
+						break;
+					default: 
+						message = UNKNOWN_ERROR;
 						break;
 				}
 			}

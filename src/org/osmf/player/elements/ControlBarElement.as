@@ -42,6 +42,7 @@ package org.osmf.player.elements {
 	* 
 	*/ 
 	public class ControlBarElement extends MediaElement {
+		static public const PLAY_BUTTON_CLICK:String = "playButtonClick";
 		private var _target:MediaElement;
 		private var controlBar:IControlBar;
 		private var chromeProvider:ChromeProvider;
@@ -199,12 +200,13 @@ package org.osmf.player.elements {
 							MouseEvent.CLICK, 
 							function(evt:MouseEvent):void {
 								trace("play button click");
-								dispatchEvent(new Event("playButtonClick"));
+								dispatchEvent(new Event(PLAY_BUTTON_CLICK));
 							}
 						);
 						break;
 					case WidgetIDs.CHANNEL_LIST_BUTTON: 
 						widget.addEventListener(ChannelListButton.LIST_CALL, dispatchEvent);
+						widget.addEventListener(ChannelListButton.LIST_CLOSE_CALL, dispatchEvent);
 						break;
 					default:
 						break;
@@ -223,15 +225,6 @@ package org.osmf.player.elements {
 			(controlBar as Widget).visible = false;
 		}
 		
-		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource
-		public function configureStreamQualitySwitcher(availableStreams:Array):void {
-			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			if (!widget) { return; }
-			widget.registerQualities(availableStreams);
-			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
-		}
-		
-		//TODO: Close interface, when channels list has own show button
 		public function getQualitySwitcherWidget():QualitySwitcherContainer {
 			for each(var widget:Widget in controlBar.widgets) {
 				if (widget is QualitySwitcherContainer) {
@@ -241,14 +234,12 @@ package org.osmf.player.elements {
 			return null;
 		}
 		
-		public function disableMultiQualityButton():void {
+		//TODO: Should be removed, when multi-quality streaming trait will be added by the MultiQualityStreamingResource
+		public function configureStreamQualitySwitcher(availableStreams:Array):void {
 			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			widget && (widget.visible = false);
-		}
-		
-		public function enableMultiQualityButton():void {
-			var widget:QualitySwitcherContainer = getQualitySwitcherWidget();
-			widget && (widget.visible = true);
+			if (!widget) { return; }
+			widget.registerQualities(availableStreams);
+			widget.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, dispatchEvent);
 		}
 		
 		public function processListState(listIsOpened:Boolean):void {

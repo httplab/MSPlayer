@@ -20,6 +20,7 @@
 package org.osmf.player.chrome.widgets {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.external.ExternalInterface;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	
 	import org.osmf.player.chrome.assets.AssetIDs;
@@ -34,11 +35,13 @@ package org.osmf.player.chrome.widgets {
 			upFace = AssetIDs.PLAY_BUTTON_NORMAL
 			downFace = AssetIDs.PLAY_BUTTON_DOWN;
 			overFace = AssetIDs.PLAY_BUTTON_OVER;
+			ExternalInterface.available && ExternalInterface.addCallback('playPlayback', onMouseClick);
 		}
 		// Overrides
 		//
 		
 		override protected function onMouseClick(event:MouseEvent):void {
+			if (!visible) { return; }
 			var playable:PlayTrait = media.getTrait(MediaTraitType.PLAY) as PlayTrait;
 			playable.play();
 //			event.stopImmediatePropagation();
