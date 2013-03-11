@@ -75,6 +75,10 @@ package org.osmf.player.chrome.widgets {
 			_arrowsContainer.addChild(_rightArrow);
 			_leftArrow.addEventListener(MouseEvent.MOUSE_DOWN, selectPreviousChannel);
 			_rightArrow.addEventListener(MouseEvent.MOUSE_DOWN, selectNextChannel);
+			_leftArrow.buttonMode = true;
+			_rightArrow.buttonMode = true;
+			_leftArrow.useHandCursor = true;
+			_rightArrow.useHandCursor = true;
 			addChild(_arrowsContainer);
 		}
 		
