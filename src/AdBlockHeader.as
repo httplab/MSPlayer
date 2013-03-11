@@ -47,9 +47,12 @@ package {
 			var fontAsset:FontAsset = assetsManager.getAsset(AssetIDs.TAHOMA) as FontAsset;
 			regularFormat = fontAsset ? fontAsset.format : new TextFormat();
 			regularFormat.size = 12;
+			regularFormat.color = 0xffffff;
 			regularFormat.align = TextFormatAlign.CENTER;
 			fontAsset = assetsManager.getAsset(AssetIDs.TAHOMA_BOLD) as FontAsset;
 			boldFormat = fontAsset ? fontAsset.format : new TextFormat();
+			boldFormat.color = 0xffffff;
+			boldFormat.align = TextFormatAlign.CENTER;
 			boldFormat.size = 12;
 			boldFormat.align = TextFormatAlign.CENTER;
 		}
