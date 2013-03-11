@@ -96,6 +96,9 @@ package org.osmf.player.elements {
 				group = new ChannelGroup(groupData.category_name);
 				for each (channelData in groupData.programs) {
 					channel = group.addChannel(channelData);
+					if (int(channel.srcId) == _configuration.srcId) {
+						channelListDialog.currentChannel = channel;
+					}
 					channel.addEventListener(MouseEvent.MOUSE_DOWN, channelSelected);
 					if (programs[channel.srcId]) {
 						channel.setBroadcast(programs[channel.srcId].time, programs[channel.srcId].title)
@@ -116,7 +119,6 @@ package org.osmf.player.elements {
 				groups[groups.length - 1].nextGroup = groups[0];
 			}
 			channelListDialog.content = groups;
-			channelListDialog.currentChannel = channel;
 		}
 		
 		private function channelSelected(e:MouseEvent):void {
