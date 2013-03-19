@@ -71,7 +71,7 @@ package org.osmf.player.elements {
 		
 		private function parseLoadedData(e:Event):void {
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
-			DateUtils.renewDateDelta(Number(data.timestamp) * 1000);
+			DateUtils.renewDateDelta(String(data.dateStringUTC));
 			var groups:Vector.<ChannelGroup> = new Vector.<ChannelGroup>();
 			var allChannels:ChannelGroup = new ChannelGroup(ALL_CHANNELS);
 			var channelData:Object;
@@ -80,7 +80,7 @@ package org.osmf.player.elements {
 			for each (var program:Object in data.programms) {
 				programs[program.channel_id] = {
 					title: program.title,
-					time: DateUtils.formatToClientTime(Number(program.start) * 1000)
+					time: DateUtils.formatToClientTime(String(program.startUTC))
 				}
 			}
 			for each (channelData in data.all_channels) {

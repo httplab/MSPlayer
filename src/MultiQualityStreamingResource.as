@@ -62,7 +62,7 @@ package {
 			_shedulesArray = [];
 			for each (var sheduleData:Object in shedules) {
 				var shedule:Object = {
-					start: DateUtils.formatToClientTime(Date.parse(sheduleData.start_at.split('-').join('/'))),
+					start: DateUtils.formatToClientTime(String(sheduleData.startAtUTC)),
 					title: sheduleData.title
 				}
 				_shedulesArray.push(shedule);
