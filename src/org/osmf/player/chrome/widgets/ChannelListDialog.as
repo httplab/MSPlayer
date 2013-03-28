@@ -69,8 +69,8 @@ package org.osmf.player.chrome.widgets {
 			_arrowsContainer = new Sprite();
 			_leftArrow = new Sprite();
 			_rightArrow = new Sprite();
-			_leftArrow.addChild(new Bitmap(new ASSET_previous_channel()));
-			_rightArrow.addChild(new Bitmap(new ASSET_next_channel()));
+			_leftArrow.addChild(new ASSET_previous_channel());
+			_rightArrow.addChild(new ASSET_next_channel());
 			_arrowsContainer.addChild(_leftArrow);
 			_arrowsContainer.addChild(_rightArrow);
 			_leftArrow.addEventListener(MouseEvent.MOUSE_DOWN, selectPreviousChannel);
