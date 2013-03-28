@@ -21,8 +21,8 @@ package {
 		private var _srcId:int;
 		private var _src:String;
 		
-		static public const RECORDED_DATA_REQUEST:String = "http://new.tvbreak.ru/api/player/movies/|SRCID|/source.json";
-		static public const LIVE_DATA_REQUEST:String = "http://new.tvbreak.ru/api/player/tv/|SRCID|/source.json";
+		static public const RECORDED_DATA_REQUEST:String = "http://tvbreak.ru/api/movies/|SRCID|/source.json";
+		static public const LIVE_DATA_REQUEST:String = "http://tvbreak.ru/api/tv/|SRCID|/source.json";
 		static public const STREAM_CHANGED:String = "streamChanged";
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
