@@ -1,12 +1,15 @@
 package org.osmf.player.chrome.widgets {
 	import flash.display.Bitmap;
+	import flash.display.BlendMode;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
+	import flash.utils.Timer;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.Channel;
@@ -30,12 +33,18 @@ package org.osmf.player.chrome.widgets {
 		private var _leftArrow:Sprite;
 		private var _rightArrow:Sprite;
 		private var _isHided:Boolean;
+		private var autoHideTimer:Timer;
 		
 		/**
 		* Init-time methods
 		*/
 		
 		override public function configure(xml:XML, assetManager:AssetsManager):void {
+			if (stage) {
+				initAutoHiding();
+			} else {
+				addEventListener(Event.ADDED_TO_STAGE, initAutoHiding);
+			}
 			back = new ASSET_ChannelsListBack();
 			addChild(back);
 			TOP_GAP = back.titleText.y * 2 + back.titleText.textHeight;
@@ -49,6 +58,27 @@ package org.osmf.player.chrome.widgets {
 			addEventListener(MouseEvent.ROLL_OVER, catchMouse);
 			addEventListener(MouseEvent.ROLL_OUT, releaseMouse);
 			addEventListener(MouseEvent.MOUSE_WHEEL, scrollContent);
+		}
+		
+		private function initAutoHiding(e:Event = null):void {
+			removeEventListener(Event.ADDED_TO_STAGE, initAutoHiding);
+			autoHideTimer = new Timer(3000, 1);
+			autoHideTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideByTimer);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, flushAutoHideTimer);
+			autoHideTimer.start();
+		}
+		
+		private function hideByTimer(e:TimerEvent):void {
+			alpha = 0;
+			blendMode = BlendMode.ALPHA;
+			autoHideTimer.stop();
+		}
+		
+		private function flushAutoHideTimer(e:MouseEvent):void {
+			autoHideTimer.reset();
+			autoHideTimer.start();
+			alpha = 1;
+			blendMode = BlendMode.NORMAL;
 		}
 		
 		private function prepareContentContainer():void {
@@ -321,8 +351,10 @@ package org.osmf.player.chrome.widgets {
 			showArrows();
 		}
 		
-		public function hide():void {
-			_isHided = true;
+		public function hide(e:Event = null):void {
+			if (!e) {
+				_isHided = true;
+			}
 			_contentContainer.visible = false;
 			back.visible = false;
 			closeButton.visible = false;
