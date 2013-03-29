@@ -21,8 +21,9 @@ package {
 		private var _srcId:int;
 		private var _src:String;
 		
-		static public const RECORDED_DATA_REQUEST:String = "http://tvbreak.ru/api/movies/|SRCID|/source.json";
-		static public const LIVE_DATA_REQUEST:String = "http://tvbreak.ru/api/tv/|SRCID|/source.json";
+		static public const RECORDED_DATA_REQUEST:String = "http://new.tvbreak.ru/api/player/movies/|SRCID|/source.json";
+		static public const LIVE_DATA_REQUEST:String = "http://new.tvbreak.ru/api/player/tv/|SRCID|/source.json";
+		
 		static public const STREAM_CHANGED:String = "streamChanged";
 		private var versionsArray:Array;
 		private var dispatcher:EventDispatcher;
@@ -42,7 +43,7 @@ package {
 			urlLoader.addEventListener(Event.COMPLETE, parseLoadedData);
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, loadFailed);
 			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadFailed);
-			urlLoader.load(new URLRequest(requestURL));
+			urlLoader.load(new URLRequest(requestURL + '?time=' + new Date().getTime()));
 		}
 		
 		private function parseLoadedData(e:Event):void {

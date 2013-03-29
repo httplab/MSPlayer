@@ -24,7 +24,7 @@ package org.osmf.player.elements {
 		static private const MIN_EXPANDED_WIDTH:Number = 500;
 		static public const CHANNEL_CHANGED:String = "channelChanged";
 		static public const ALL_CHANNELS:String = "Все каналы";
-		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://tvbreak.ru/api/tvslice";
+		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://new.tvbreak.ru/api/player/tvslice";
 		private var channelListDialog:ChannelListDialog;
 		private var chromeProvider:ChromeProvider;
 		private var _configuration:PlayerConfiguration;
@@ -62,7 +62,7 @@ package org.osmf.player.elements {
 		
 		public function renewContent(url:String):void {
 			var loader:URLLoader = new URLLoader();
-			var request:URLRequest = new URLRequest(url);
+			var request:URLRequest = new URLRequest(url + '?time=' + new Date().getTime());
 			loader.addEventListener(Event.COMPLETE, parseLoadedData);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, loadFailed);
 			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadFailed);
