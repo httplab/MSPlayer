@@ -180,7 +180,8 @@
 				flashvars.javascriptCallbackFunction = "$.fn.strobemediaplayback.triggerHandler";
                 var params = {
                     allowFullScreen: "true",
-					wmode: "opaque"
+					wmode: "opaque",
+					allowFullScreenInteractive: true
                 };
                 var attributes = {
                     id: this.options.id,

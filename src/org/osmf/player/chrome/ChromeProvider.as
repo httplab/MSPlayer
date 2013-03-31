@@ -31,6 +31,7 @@ package org.osmf.player.chrome
 	import org.osmf.layout.ScaleMode;
 	import org.osmf.player.chrome.assets.FontAsset;
 	import org.osmf.player.chrome.widgets.ChannelListDialog;
+	import org.osmf.player.chrome.widgets.HotkeysWidget;
 	import org.osmf.player.chrome.widgets.TitleWidget;
 	
 	import org.osmf.layout.HorizontalAlign;
@@ -261,6 +262,15 @@ package org.osmf.player.chrome
 			channelListDialog.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
 			configureWidgets([channelListDialog]);
 			return channelListDialog;
+		}
+		
+		public function createHotkeyScreen():HotkeysWidget {
+			var hotkeysWidget:HotkeysWidget = new HotkeysWidget();
+			hotkeysWidget.id = WidgetIDs.HOTKEYS_SCREEN;
+			hotkeysWidget.layoutMetadata.verticalAlign = VerticalAlign.MIDDLE;
+			hotkeysWidget.layoutMetadata.horizontalAlign = HorizontalAlign.CENTER;
+			configureWidgets([hotkeysWidget]);
+			return hotkeysWidget;
 		}
 		
 		public function createErrorWidget():ErrorWidget

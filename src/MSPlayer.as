@@ -232,6 +232,8 @@ package {
 		private function initializeView():void {
 			configureStage();
 			viewHelper = new ViewHelper(configuration, player);
+			//viewHelper.hotkeysScreen.stage = stage;
+			//HotkeysScreenElement.registerButtonCall(HotkeysScreenElement.HELPER_CALL, placeHelperOnScreen);
 			viewHelper.mainContainer.addEventListener(MouseEvent.DOUBLE_CLICK, onFullScreenRequest);
 			viewHelper.mainContainer.addEventListener(MouseEvent.CLICK, onMainClick);
 			addChild(viewHelper.mainContainer);
@@ -479,7 +481,15 @@ package {
 		* User actions
 		*/
 		
-		private function onMainClick(event:MouseEvent):void {
+		private function placeHelperOnScreen(e:Event):void {
+			if (viewHelper.mainContainer.containsMediaElement(viewHelper.hotkeysScreen)) {
+				viewHelper.mainContainer.removeMediaElement(viewHelper.hotkeysScreen);
+			} else {
+				viewHelper.mainContainer.addMediaElement(viewHelper.hotkeysScreen);
+			}
+		}
+		
+		private function onMainClick(event:MouseEvent):void {	
 			if (stage.displayState == StageDisplayState.NORMAL) {
 				if (configuration.controlBarType == ControlBarType.SMARTPHONE) {
 					onFullScreenRequest();
@@ -542,6 +552,7 @@ package {
 					logger.qos.rendering.screenAspectRatio = logger.qos.rendering.screenWidth / logger.qos.rendering.screenHeight;
 				}
 				try {
+					//stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 					stage.displayState = StageDisplayState.FULL_SCREEN;
 				} catch (error:SecurityError) {
 					CONFIG::LOGGING {

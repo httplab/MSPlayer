@@ -48,5 +48,6 @@ package org.osmf.player.chrome.widgets
 		public static const QUALITY_SWITCHER_WIDGET:String = "qualitySwitcherWidget";
 		public static const CHANNEL_LIST_DIALOG:String = "channelListDialog";
 		public static const CHANNEL_LIST_BUTTON:String = "channelListButton";
+		static public const HOTKEYS_SCREEN:String = "hotkeysScreen";
     }
 }

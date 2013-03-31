@@ -16,6 +16,7 @@ package {
 	import org.osmf.player.elements.AuthenticationDialogElement;
 	import org.osmf.player.elements.ChannelListDialogElement;
 	import org.osmf.player.elements.ControlBarElement;
+	import org.osmf.player.elements.HotkeysScreenElement;
 	import org.osmf.player.elements.PlayerTitleElement;
 	import org.osmf.player.media.StrobeMediaPlayer;
 
@@ -43,7 +44,7 @@ package {
 		private var _adBlockHeader:AdBlockHeader;
 		private var _channelList:ChannelListDialogElement;
 		private var _playerTitle:PlayerTitleElement;
-		;
+		private var _hotkeysScreen:HotkeysScreenElement;
 		
 		public function ViewHelper(configuration:PlayerConfiguration, player:StrobeMediaPlayer) {
 			_configuration = configuration;
@@ -73,6 +74,11 @@ package {
 			initQosOverlay();
 			initAdBlockHeader();
 			initChanneList();
+			initHotkeysScreen()
+		}
+		
+		private function initHotkeysScreen():void {
+			_hotkeysScreen = new HotkeysScreenElement();
 		}
 		
 		private function initMainContainer():void {
@@ -290,6 +296,10 @@ package {
 		
 		public function get channelList():ChannelListDialogElement {
 			return _channelList;
+		}
+		
+		public function get hotkeysScreen():HotkeysScreenElement {
+			return _hotkeysScreen;
 		}
 	}
 }
