@@ -5,7 +5,7 @@
 :: http://livedocs.adobe.com/flex/3/html/help.html?content=CommandLineTools_5.html#1035959
 
 :: Path to Flex SDK binaries
-set PATH=%PATH%;C:\Program Files\FlashDevelop\Tools\airsdk\bin
+set PATH=%PATH%;C:\Program Files (x86)\FlashDevelop\Tools\airsdk\bin
 
 :: Signature (see 'CreateCertificate.bat')
 set CERTIFICATE="osmfair.pfx"

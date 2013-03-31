@@ -6,7 +6,7 @@
 :: http://livedocs.adobe.com/flex/3/html/distributing_apps_4.html#1037515
 
 :: Path to Flex SDK binaries
-set PATH=%PATH%;C:\Program Files\FlashDevelop\Tools\airsdk\bin
+set PATH=%PATH%;C:\Program Files (x86)\FlashDevelop\Tools\airsdk\bin
 
 :: Certificate information
 set NAME="osmf-air"

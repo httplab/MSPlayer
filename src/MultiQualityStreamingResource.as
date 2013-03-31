@@ -28,6 +28,7 @@ package {
 		private var dispatcher:EventDispatcher;
 		private var _shedulesArray:Array;
 		private var _currentTitle:String = '';
+		private var _checkingUrl:String;
 		
 		public function MultiQualityStreamingResource(srcId:int, streamType:String = '') {
 			super('', streamType);
@@ -37,53 +38,58 @@ package {
 		}
 		
 		public function initialize():void {
-			var requestURL:String = ((streamType == StreamType.RECORDED) ? RECORDED_DATA_REQUEST : LIVE_DATA_REQUEST).split("|SRCID|").join(_srcId);
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.addEventListener(Event.COMPLETE, parseLoadedData);
-			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, loadFailed);
-			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadFailed);
-			urlLoader.load(new URLRequest(requestURL));
+			//var requestURL:String = ((streamType == StreamType.RECORDED) ? RECORDED_DATA_REQUEST : LIVE_DATA_REQUEST).split("|SRCID|").join(_srcId);
+			//var urlLoader:URLLoader = new URLLoader();
+			//urlLoader.addEventListener(Event.COMPLETE, parseLoadedData);
+			//urlLoader.addEventListener(IOErrorEvent.IO_ERROR, loadFailed);
+			//urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadFailed);
+			//urlLoader.load(new URLRequest(requestURL));
+		}
+		
+		public function checkStream(url:String):void {
+			_checkingUrl = url;
+			dispatchEvent(new Event(STREAM_CHANGED));
 		}
 		
 		private function parseLoadedData(e:Event):void {
-			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
-			versionsArray = [];
-			var versionsContainer:Object = data;
-			versionsContainer = data.versions;
-			for each (var versionData:Object in versionsContainer) {
-				var version:Object = { };
-				for (var key:String in versionData) {
-					version[key] =versionData[key];
-				}
-				versionsArray.push(versionData);
-			}
-			_currentTitle = (data.info ? data.info.title : '') || '';
-			var shedules:Object = (data.info ? data.info.shedule : { } ) || { }
-			_shedulesArray = [];
-			for each (var sheduleData:Object in shedules) {
-				var shedule:Object = {
-					start: DateUtils.formatToClientTime(Date.parse(sheduleData.start_at.split('-').join('/'))),
-					title: sheduleData.title
-				}
-				_shedulesArray.push(shedule);
-			}
-			loadStream();
+			//var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
+			//versionsArray = [];
+			//var versionsContainer:Object = data;
+			//versionsContainer = data.versions;
+			//for each (var versionData:Object in versionsContainer) {
+				//var version:Object = { };
+				//for (var key:String in versionData) {
+					//version[key] =versionData[key];
+				//}
+				//versionsArray.push(versionData);
+			//}
+			//_currentTitle = (data.info ? data.info.title : '') || '';
+			//var shedules:Object = (data.info ? data.info.shedule : { } ) || { }
+			//_shedulesArray = [];
+			//for each (var sheduleData:Object in shedules) {
+				//var shedule:Object = {
+					//start: DateUtils.formatToClientTime(Date.parse(sheduleData.start_at.split('-').join('/'))),
+					//title: sheduleData.title
+				//}
+				//_shedulesArray.push(shedule);
+			//}
+			//loadStream();
 		}
 		
 		private function loadStream(e:Event = null):void {
-			var versionIdx:Number = 0;
-			if (e) {
-				versionIdx = e.currentTarget.currentStreamIdx;
-			}
-			for (var key:String in versionsArray[versionIdx]) {
-				addMetadataValue(key, versionsArray[versionIdx][key]);
-			}
-			if (getMetadataValue('dvr')) {
-				streamType = StreamType.DVR;
-			} else {
-				streamType = StreamType.LIVE;
-			}
-			dispatchEvent(new Event(STREAM_CHANGED));
+			//var versionIdx:Number = 0;
+			//if (e) {
+				//versionIdx = e.currentTarget.currentStreamIdx;
+			//}
+			//for (var key:String in versionsArray[versionIdx]) {
+				//addMetadataValue(key, versionsArray[versionIdx][key]);
+			//}
+			//if (getMetadataValue('dvr')) {
+				//streamType = StreamType.DVR;
+			//} else {
+				//streamType = StreamType.LIVE;
+			//}
+			//dispatchEvent(new Event(STREAM_CHANGED));
 		}
 		
 		private function loadFailed(e:Event):void {
@@ -92,27 +98,28 @@ package {
 		}
 		
 		public function registerOwnButton(controlBar:ControlBarElement):void {
-			controlBar.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, loadStream);
-			var qualities:Array = [];
-			for each (var version:Object in versionsArray) {
-				if (version.resolution) {
-					qualities.push(version.resolution.split("x")[1]);
-				} else if (version.quality) {
-					version.quality = version.quality.replace('low', 'Низкое');
-					version.quality = version.quality.replace('medium', 'Хорошее');
-					version.quality = version.quality.replace('hight', 'Высокое');
-					version.quality = version.quality.replace('high', 'Высокое');
-					qualities.push(version.quality);
-				}
-			}
-			controlBar.configureStreamQualitySwitcher(qualities);
+			//controlBar.addEventListener(QualitySwitcherContainer.STREAM_SWITCHED, loadStream);
+			//var qualities:Array = [];
+			//for each (var version:Object in versionsArray) {
+				//if (version.resolution) {
+					//qualities.push(version.resolution.split("x")[1]);
+				//} else if (version.quality) {
+					//version.quality = version.quality.replace('low', 'Низкое');
+					//version.quality = version.quality.replace('medium', 'Хорошее');
+					//version.quality = version.quality.replace('hight', 'Высокое');
+					//version.quality = version.quality.replace('high', 'Высокое');
+					//qualities.push(version.quality);
+				//}
+			//}
+			//controlBar.configureStreamQualitySwitcher(qualities);
 		}
 		
 		override public function get url():String {
-			if (streamType == StreamType.RECORDED) {
-				return getMetadataValue('filepath').toString();
-			}
-			return getMetadataValue('url').toString();
+			return _checkingUrl;
+			//if (streamType == StreamType.RECORDED) {
+				//return getMetadataValue('filepath').toString();
+			//}
+			//return getMetadataValue('url').toString();
 		}
 		
 		public function get shotsURL():String {

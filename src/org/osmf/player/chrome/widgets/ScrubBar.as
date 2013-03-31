@@ -101,7 +101,7 @@ package org.osmf.player.chrome.widgets {
 					break;
 				case StreamType.RECORDED: 
 					currentSubWidget = vodScrub;
-					vodScrub.shotsURL = shotsURL;
+					//vodScrub.shotsURL = shotsURL;
 					break;
 				default: 
 					break;

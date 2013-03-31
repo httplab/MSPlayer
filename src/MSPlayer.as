@@ -21,6 +21,11 @@ package {
 	import flash.events.*;
 	import flash.external.ExternalInterface;
 	import flash.net.drm.DRMManager;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
 	import flash.system.Capabilities;
 	import flash.ui.Mouse;
 	import flash.utils.ByteArray;
@@ -54,6 +59,7 @@ package {
 	import org.osmf.traits.PlayTrait;
 	import org.osmf.utils.OSMFSettings;
 	import org.osmf.vast.media.VASTMediaGenerator;
+	import com.adobe.serialization.json.JSON;
 
 	CONFIG::LOGGING {
 		import org.osmf.player.debug.DebugStrobeMediaPlayer;
@@ -74,7 +80,8 @@ package {
 			
 		[Embed(source='../assets/GAConfig.xml', mimeType="application/octet-stream")]
 			private static const GAConfigClass:Class;
-			
+		
+		static public const CHANNEL_CHECKING_URL:String = "http://mp.httplab.ru:3000/api/live_check_url";
 		public static const RATCHET_ACCESS_TOKEN:String = "584b28b15c44406884afbeab3709761f";
 		public static const chosenPlacement:String = VASTMediaGenerator.PLACEMENT_LINEAR;
 		private static const MAX_OVER_WIDTH:int = 400;
@@ -114,8 +121,13 @@ package {
 		private var _mainVideoTimeSetted:Boolean;
 		private var _liveResuming:Boolean;
 		private var _reconnectTimer:Timer;
-		private var _channelsData:Array;
 		private var _checkingTimer:Timer;
+		private var _checkingUrl:String;
+		private var _reconnectCount:int = 0;
+		private var _channelStatus:Boolean;
+		private var _lastBufferingStart:Number = 0;
+		private var _initialBufferingTime:Number = 0;
+		private var _playBufferingTime:Number = 0;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -336,52 +348,87 @@ package {
 		*/
 		
 		private function startCheckingSequence(e:Event):void {
-			if (viewHelper.channelList.contentRenewed) {
-				contentListGettedHandler(null);
-			} else {
-				viewHelper.channelList.addEventListener(Event.COMPLETE, contentListGettedHandler);
-			}
-		}
-		
-		private function contentListGettedHandler(e:Event):void {
-			e && e.currentTarget.removeEventListener(e.type, arguments.callee);
-			_channelsData = viewHelper.channelList.allChannelsData;
 			_checkingTimer = new Timer(parararapms.checkingTimerDelay, 1);
 			_checkingTimer.addEventListener(TimerEvent.TIMER_COMPLETE, sendCheckingInfo)
 			checkNextChannel();
 		}
 		
+		public function checkNextChannel():void {
+			var urlLoader:URLLoader = new URLLoader();
+			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, checkingFailedHandler);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, checkingFailedHandler);
+			urlLoader.addEventListener(Event.COMPLETE, nextChannelInfoLoaded);
+			urlLoader.load(new URLRequest(CHANNEL_CHECKING_URL));
+		}
+		
+		private function nextChannelInfoLoaded(e:Event):void {
+			player.removeEventListener(BufferEvent.BUFFERING_CHANGE, processBufferChange);
+			player.addEventListener(BufferEvent.BUFFERING_CHANGE, processBufferChange);
+			var urlLoader:URLLoader = e.currentTarget as URLLoader;
+			var data:Object = com.adobe.serialization.json.JSON.decode(String(urlLoader.data));
+			_checkingUrl = data.url;
+			_reconnectCount = 0;
+			_channelStatus = false;
+			_lastBufferingStart = (new Date()).getTime();
+			_initialBufferingTime = 0;
+			_playBufferingTime = 0;
+			loadMedia();
+		}
+		
+		private function processBufferChange(e:BufferEvent):void {
+			var currentTime:Number = (new Date()).getTime();
+			if (e.buffering) { 
+				_lastBufferingStart = currentTime;
+			} else {
+				_channelStatus = true;
+				var bufferingTime:int = currentTime - _lastBufferingStart;
+				_lastBufferingStart = currentTime;
+				if (!_initialBufferingTime) { 
+					_initialBufferingTime = bufferingTime;
+				} else {
+					_playBufferingTime += bufferingTime;
+				}
+			}
+			
+		}
+		
+		private function checkingFailedHandler(e:ErrorEvent):void {
+			trace('Sry, gyus, i\'ve tried to do my best');
+		}
+		
 		private function sendCheckingInfo(e:TimerEvent):void {
-			//TODO: Here will be info sending
+			var urlLoader:URLLoader = new URLLoader();
+			var vars:URLVariables = new URLVariables();
+			vars.url = _checkingUrl;
+			vars.status = _channelStatus;
+			vars.reconnects = _reconnectCount;
+			vars.initial_bufering_time = _initialBufferingTime;
+			vars.play_bufering_time = _playBufferingTime;
+			urlLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
+			var request:URLRequest = new URLRequest('http://mp.httplab.ru:3000/api/live_check_logs');
+			request.method = URLRequestMethod.POST;
+			request.data = vars;
+			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, checkingFailedHandler);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, checkingFailedHandler);
+			urlLoader.load(request);
 			checkNextChannel();
 		}
 		
-		private function checkNextChannel():void {
-			var nextChannel:Object = _channelsData.shift();
-			configuration.srcId = (nextChannel.title) ? (nextChannel.id) : (nextChannel.url.split('/#tv/')[1]);
-			configuration.type = StreamType.LIVE;
-			configuration.resource.streamType = StreamType.LIVE;
-			_channelsData.push(nextChannel);
-			loadMedia();
+		private function loadMedia():void {
+			viewHelper.controlBar.hide();
+			// Try to load the URL set on the configuration:
+			var resource:MediaResourceBase = injector.getInstance(MediaResourceBase);
+			if (resource is MultiQualityStreamingResource) {
+				(resource as MultiQualityStreamingResource).addEventListener(MultiQualityStreamingResource.STREAM_CHANGED, continueMediaLoad);
+				(resource as MultiQualityStreamingResource).checkStream(_checkingUrl);
+				return;
+			}
 		}
 		
 		/**
 		* Loads the media or displays an error message on fail.
 		*/
 		
-		public function loadMedia(e:Event = null):void {
-			trace("Load media");
-			viewHelper.controlBar.hide();
-			// Try to load the URL set on the configuration:
-			var resource:MediaResourceBase = injector.getInstance(MediaResourceBase);
-			if (resource is MultiQualityStreamingResource) {
-				(resource as MultiQualityStreamingResource).addEventListener(MultiQualityStreamingResource.STREAM_CHANGED, continueMediaLoad);
-				(resource as MultiQualityStreamingResource).initialize();
-				return;
-			} else {
-				continueMediaLoad(null, resource);
-			}
-        }
 		
 		private function continueMediaLoad(e:Event = null, resource:MediaResourceBase = null):void {
 			if (e) {
@@ -430,7 +477,7 @@ package {
 			if (resource && (resource.streamType == StreamType.LIVE)) {
 				_liveResuming = true;
 				media = null;
-				loadMedia(e);
+				loadMedia();
 			}
 		}
 		
@@ -901,6 +948,7 @@ package {
 		}
 		
 		private function processReconnect(e:TimerEvent):void {
+			_reconnectCount++;
 			_reconnectTimer.stop();
 			_reconnectTimer.reset();
 			//if (viewHelper.alert) {
@@ -1015,7 +1063,7 @@ package {
 				//pauseRoll: "http://data.videonow.ru/?profile_id=1%26format=vast%26container=pauseroll",
 				//postRoll: "http://data.videonow.ru/?profile_id=1%26format=vast%26container=postroll",
 				reconnectDelay: 1000,
-				checkingTimerDelay: 5000
+				checkingTimerDelay: 10000
 			}
 		}
 	}
