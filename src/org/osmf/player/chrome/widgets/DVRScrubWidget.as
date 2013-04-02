@@ -82,6 +82,7 @@ package org.osmf.player.chrome.widgets {
 			seeker.addEventListener(Seeker.SEEK_START, onSeekerStart);
 			seeker.addEventListener(Seeker.SEEK_UPDATE, onSeekerUpdate);
 			seeker.addEventListener(Seeker.SEEK_END, onSeekerEnd);
+			seeker.initJSHandlers();
 			addChild(seeker);
 			
 			addEventListener(MouseEvent.ROLL_OVER, callShowHint);

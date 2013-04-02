@@ -2,6 +2,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.external.ExternalInterface;
 	import flash.geom.Point;
 	import flash.ui.Mouse;
 
@@ -13,6 +14,16 @@ package org.osmf.player.chrome.widgets {
 		
 		public function Seeker() {
 			addEventListener(MouseEvent.MOUSE_DOWN, startSeekHandler);
+		}
+		
+		public function initJSHandlers():void {
+			if (ExternalInterface.available) {
+				ExternalInterface.addCallback('seekInDVR', seekFromJSHandler);
+			}
+		}
+		
+		private function seekFromJSHandler(offset:Number):void {
+			setPosition(1 - (offset / 7200));
 		}
 		
 		private function startSeekHandler(e:MouseEvent):void {
