@@ -3,6 +3,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.display.BlendMode;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
@@ -335,7 +336,7 @@ package org.osmf.player.chrome.widgets {
 			back.visible = false;
 			_dragger.visible = false;
 			closeButton.visible = false;
-			_arrowsContainer.visible = !_isHided;
+			_arrowsContainer.visible = !_isHided && stage && (stage.displayState != StageDisplayState.NORMAL);
 			parent && placeArrows();
 		}
 		
