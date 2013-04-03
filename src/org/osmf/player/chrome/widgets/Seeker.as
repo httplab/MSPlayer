@@ -22,8 +22,9 @@ package org.osmf.player.chrome.widgets {
 			}
 		}
 		
-		private function seekFromJSHandler(offset:Number):void {
+		public function seekFromJSHandler(offset:Number):void {
 			setPosition(1 - (offset / 7200));
+			dispatchEvent(new Event(SEEK_END));
 		}
 		
 		private function startSeekHandler(e:MouseEvent):void {
