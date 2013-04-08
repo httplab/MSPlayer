@@ -112,7 +112,7 @@ package {
 		
 		private function correspondContainerSize(e:Event):void {
 			var providedWidth:Number = _container.width;
-			if (providedWidth < ControlBar.COLLAPSED_WIDTH) {
+			if (providedWidth < ControlBar.MIN_EXPANDED_WIDTH) {
 				adBlockTF.width = adBlockTF.textWidth + 10;
 				if (secondsTF) {
 					secondsTF.x = adBlockTF.width;
