@@ -284,7 +284,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function checkForDraggerAvailability():void {
-			if (_arrowsContainer.visible || _isHided) { return; }
+			if (!_contentContainer.visible || _isHided) { return; }
 			_dragger.visible = (_contentContainer.height > _mask.height);
 			if (!_dragger.visible) { return; }
 			var maxListDeltaY:Number = maxListY - TOP_GAP;
