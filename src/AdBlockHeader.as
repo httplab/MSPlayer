@@ -1,6 +1,7 @@
 package {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -13,8 +14,9 @@ package {
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.assets.FontAsset;
 	import org.osmf.player.chrome.ChromeProvider;
+	import org.osmf.player.chrome.ControlBar;
 	
-	public class AdBlockHeader extends Sprite {	
+	public class AdBlockHeader extends EventDispatcher {	
 		static public const PASS_AD_REQUEST:String = "passAdRequest";
 		static public const HEIGHT:Number= 20;
 		static public const WIDTH:Number = 150;
@@ -109,10 +111,18 @@ package {
 		
 		
 		private function correspondContainerSize(e:Event):void {
-			adBlockTF.width = _container.width;
-			if (secondsTF) {
-				adBlockTF.width -= secondsTF.width;
-				secondsTF.x = _container.width - secondsTF.width;
+			var providedWidth:Number = _container.width;
+			if (providedWidth < ControlBar.COLLAPSED_WIDTH) {
+				adBlockTF.width = adBlockTF.textWidth + 10;
+				if (secondsTF) {
+					secondsTF.x = adBlockTF.width;
+				}
+			} else {
+				adBlockTF.width = providedWidth;
+				if (secondsTF) {
+					adBlockTF.width -= secondsTF.width;
+					secondsTF.x = providedWidth - secondsTF.width;
+				}
 			}
 		}
 		
