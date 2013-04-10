@@ -33,6 +33,7 @@ package {
 		private var adBlockTF:TextField;
 		private var boldFormat:TextFormat;
 		private var regularFormat:TextFormat;
+		private var providedWidth:Number;
 		
 		/**
 		* Init-time methods
@@ -111,17 +112,24 @@ package {
 		
 		
 		private function correspondContainerSize(e:Event):void {
-			var providedWidth:Number = _container.width;
+			if (providedWidth == _container.width) { return; }
+			providedWidth = _container.width;
 			if (providedWidth < ControlBar.MIN_EXPANDED_WIDTH) {
-				adBlockTF.width = adBlockTF.textWidth + 10;
+				adBlockTF.width = adBlockTF.textWidth + 25;
+				adBlockTF.x = 16;
+				adBlockTF.y = 25;
 				if (secondsTF) {
-					secondsTF.x = adBlockTF.width;
+					secondsTF.x = adBlockTF.x + adBlockTF.width;
+					secondsTF.y = adBlockTF.y;
 				}
 			} else {
 				adBlockTF.width = providedWidth;
+				adBlockTF.x = 0;
+				adBlockTF.y = 0;
 				if (secondsTF) {
 					adBlockTF.width -= secondsTF.width;
 					secondsTF.x = providedWidth - secondsTF.width;
+					secondsTF.y = adBlockTF.y;
 				}
 			}
 		}
