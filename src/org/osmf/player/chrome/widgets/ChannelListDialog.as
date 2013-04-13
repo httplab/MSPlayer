@@ -11,6 +11,7 @@ package org.osmf.player.chrome.widgets {
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	import flash.utils.Timer;
+	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.elements.Channel;
@@ -336,7 +337,7 @@ package org.osmf.player.chrome.widgets {
 			back.visible = false;
 			_dragger.visible = false;
 			closeButton.visible = false;
-			_arrowsContainer.visible = !_isHided && stage && (stage.displayState != StageDisplayState.NORMAL);
+			_arrowsContainer.visible = !_isHided && (State.displayState != StageDisplayState.NORMAL) && (State.streamType != StreamType.RECORDED);
 			parent && placeArrows();
 		}
 		
