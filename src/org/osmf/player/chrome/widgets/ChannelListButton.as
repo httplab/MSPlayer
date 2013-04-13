@@ -56,7 +56,7 @@ package org.osmf.player.chrome.widgets {
 			super.media = value;
 			if (media && media.metadata) {
 				processListState(_opened);
-				var vis:Boolean = !media.metadata.getValue("Advertisement") && (streamType != StreamType.RECORDED);
+				var vis:Boolean = !State.isAd() && (State.streamType != StreamType.RECORDED);
 				mouseChildren = mouseEnabled = vis;
 				setSuperVisible(vis);
 			}
@@ -91,7 +91,7 @@ package org.osmf.player.chrome.widgets {
 		override public function get layoutMetadata():LayoutMetadata {
 			var toReturn:LayoutMetadata = super.layoutMetadata;
 			toReturn.includeInLayout = true;
-			toReturn.width = (streamType == StreamType.RECORDED) ? 0 : toReturn.width;
+			toReturn.width = (State.streamType == StreamType.RECORDED) ? 0 : toReturn.width;
 			return toReturn;
 		}
 		
@@ -104,14 +104,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		public function get isExpanded():Boolean {
-			return streamType != StreamType.DVR;
-		}
-		
-		private function get streamType():String {			
-			if (!media || !media.resource || !(media.resource as StreamingURLResource)) {
-				return "";
-			}
-			return (media.resource as StreamingURLResource).streamType;
+			return State.streamType != StreamType.DVR;
 		}
 	}		
 }

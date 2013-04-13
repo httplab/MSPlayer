@@ -50,12 +50,15 @@ package {
 		private var posterImage:ImageElement;
 		private var _linearAdsQueue:Array = [];
 		private var _linearSlotBusy:Boolean = false;
+		private var _state:State;
 		
 		public function AdController(
 			player:StrobeMediaPlayer, 
 			viewHelper:ViewHelper, 
-			factory:StrobeMediaFactory
+			factory:StrobeMediaFactory,
+			state:State
 		) {
+			_state = state;
 			_player = player;
 			_viewHelper = viewHelper;
 			_factory = factory;
@@ -130,6 +133,7 @@ package {
 				resumePlaybackAfterAd: resumePlaybackAfterAd,
 				mediaPlayer:adMediaPlayer
 			}
+			
 			adMediaPlayer.media = adMediaElement;
 			SOWrapper.processPlayer(adMediaPlayer, false);
 			adMediaPlayer.media.metadata.addValue("Advertisement", "1");
@@ -140,8 +144,10 @@ package {
 			var mediaMetadata:MediaMetadata = new MediaMetadata();
 			mediaMetadata.mediaPlayer = adMediaPlayer;
 			adMediaElement.metadata.addValue(MediaMetadata.ID, mediaMetadata);
+			_state.media = adMediaElement;
 			_viewHelper.controlBar && (_viewHelper.controlBar.target = adMediaElement);
 			_viewHelper.playerTitle && (_viewHelper.playerTitle.target = adMediaElement);
+			_viewHelper.channelList && (_viewHelper.channelList.media = adMediaElement);
 			adMediaPlayer.removeEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.addEventListener(TimeEvent.COMPLETE, adCompleteHandler);
 			adMediaPlayer.play();

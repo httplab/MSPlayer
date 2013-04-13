@@ -131,8 +131,8 @@ package org.osmf.player.chrome.widgets {
 		override public function set media(value:MediaElement):void {
 			super.media = value;
 			if (media && media.metadata) {
-				mouseChildren = mouseEnabled = !media.metadata.getValue("Advertisement");
-				setSuperVisible(!media.metadata.getValue("Advertisement"));
+				mouseChildren = mouseEnabled = !State.isAd();
+				setSuperVisible(!State.isAd());
 			}
 		}		
 	}

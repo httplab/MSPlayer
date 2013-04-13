@@ -114,6 +114,7 @@ package {
 		private var _mainVideoTimeSetted:Boolean;
 		private var _liveResuming:Boolean;
 		private var _reconnectTimer:Timer;
+		private var _state:State;
 		
 		public function MSPlayer() {
 			CONFIG::LOGGING {
@@ -152,6 +153,8 @@ package {
 		public function initialize(parameters:Object, stage:Stage, loaderInfo:LoaderInfo, pluginHostWhitelist:Array):void {
 			var environment:String = isDebug() ? "development" : "production";
 			Ratchet.init(this, RATCHET_ACCESS_TOKEN, environment);
+			_state = State.obtain();
+			_state.stage = stage;
 			injector = new InjectorModule();
 			initUncaughtErrorsHandler();
 			initPluginsWhitelist(pluginHostWhitelist);
@@ -365,7 +368,7 @@ package {
 			}
 			viewHelper.controlBar.show();
 			resource.addMetadataValue("timeWatched", { pageURL: "Analytics Test Video" } );
-			_adController = new AdController(player, viewHelper, factory);
+			_adController = new AdController(player, viewHelper, factory, _state);
 			media = factory.createMediaElement(resource);
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
@@ -436,6 +439,8 @@ package {
 			} else {
 				player.play();
 			}
+			_state.media = _media;
+			viewHelper.channelList && (viewHelper.channelList.media = _media);
 			viewHelper.controlBar && (viewHelper.controlBar.target = player.media);
 			viewHelper.playerTitle && (viewHelper.playerTitle.target = _media);
 		}
@@ -766,6 +771,7 @@ package {
 				processNewMedia(value);
 				// Set the new main media element:
 				SOWrapper.releasePlayer(player);
+				_state.media = value;
 				_media = player.media = value;
                 if (_media) {
 					viewHelper.mediaContainer.addMediaElement(_media);

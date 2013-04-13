@@ -10,7 +10,6 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.events.TimeEvent;
 	import org.osmf.layout.LayoutMetadata;
 	import org.osmf.media.MediaElement;
-	import org.osmf.net.StreamingURLResource;
 	import org.osmf.net.StreamType;
 	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
@@ -21,12 +20,8 @@ package org.osmf.player.chrome.widgets {
 	import org.osmf.player.chrome.widgets.TimeHintWidget;
 	import org.osmf.player.chrome.widgets.Widget;
 	import org.osmf.player.metadata.MediaMetadata;
-	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
 	import org.osmf.traits.PlayState;
-	import org.osmf.traits.PlayTrait;
-	import org.osmf.traits.SeekTrait;
-	import org.osmf.traits.TimeTrait;
 
 	public class ScrubBar extends Widget {
 		private static const CURRENT_POSITION_UPDATE_INTERVAL:int = 100;
@@ -90,7 +85,7 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function updateCurrentWidget():void {
-			switch(streamType) {
+			switch(State.streamType) {
 				case StreamType.DVR: 
 					currentSubWidget = dvrScrub;
 					var mediaMetadata:MediaMetadata = media.metadata.getValue(MediaMetadata.ID) as MediaMetadata;
@@ -112,8 +107,8 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function addShedules():void {
-			if ((media.resource) && (media.resource is MultiQualityStreamingResource) && _currentSubWidget.hasOwnProperty('programPositions')) {
-				_currentSubWidget['programPositions'] = (media.resource as MultiQualityStreamingResource).shedulesArray;
+			if (State.mQSR && _currentSubWidget.hasOwnProperty('programPositions')) {
+				_currentSubWidget['programPositions'] = State.mQSR.shedulesArray;
 			}
 		}
 		
@@ -122,14 +117,14 @@ package org.osmf.player.chrome.widgets {
 		*/
 		
 		private function currentTimeChangedHandler(e:Event):void {
-			playTrait && 
-				timeTrait &&
-				playTrait.playState == PlayState.PLAYING &&
-				(vodScrub.playedPosition = timeTrait.currentTime / timeTrait.duration);
+			State.playTrait && 
+				State.timeTrait &&
+				State.playTrait.playState == PlayState.PLAYING &&
+				(vodScrub.playedPosition = State.timeTrait.currentTime / State.timeTrait.duration);
 		}
 		
 		private function bytesLoadedChangedHandler(e:Event):void {
-			loadTrait && (vodScrub.loadedPosition = loadTrait.bytesLoaded / loadTrait.bytesTotal); 
+			State.loadTrait && (vodScrub.loadedPosition = State.loadTrait.bytesLoaded / State.loadTrait.bytesTotal); 
 		}
 		
 		private function addSubWidgetHandlers(currentSubWidget:Widget):void {
@@ -155,13 +150,13 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function playCallHandler(e:Event):void {
-			if (playTrait && _pausedByCall) {
-				playTrait.play();
+			if (State.playTrait && _pausedByCall) {
+				State.playTrait.play();
 				_pausedByCall = false;
 			}
 			if (!isNaN(_timeToSeek)) {
-				seekTrait.seek(_timeToSeek);
-				seekTrait.addEventListener(SeekEvent.SEEKING_CHANGE, seekingCompletedHandler);
+				State.seekTrait.seek(_timeToSeek);
+				State.seekTrait.addEventListener(SeekEvent.SEEKING_CHANGE, seekingCompletedHandler);
 				_timeToSeek = NaN;
 			} else {
 				currentPositionTimer.start();
@@ -174,17 +169,17 @@ package org.osmf.player.chrome.widgets {
 		}
 		
 		private function pauseCallHandler(e:Event):void {
-			if (playTrait && playTrait.canPause && playTrait.playState == PlayState.PLAYING) {
-				playTrait.pause();
+			if (State.playTrait && State.playTrait.canPause && State.playTrait.playState == PlayState.PLAYING) {
+				State.playTrait.pause();
 				_pausedByCall = true;
 			}
 			currentPositionTimer.stop();
 		}
 		
 		private function seekCallHandler(e:Event):void {
-			if (!timeTrait || !seekTrait || !_currentSubWidget.hasOwnProperty('seekTo')) { return; }
-			var time:Number = timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
-			if (seekTrait.canSeekTo(time)) {
+			if (!State.timeTrait || !State.seekTrait || !_currentSubWidget.hasOwnProperty('seekTo')) { return; }
+			var time:Number = State.timeTrait.duration * (_currentSubWidget['seekTo'] || 0);
+			if (State.seekTrait.canSeekTo(time)) {
 				_timeToSeek = time;
 				_currentSubWidget.hasOwnProperty('playedPosition') && (_currentSubWidget['playedPosition'] = _currentSubWidget['seekTo'] || 0);
 			}
@@ -197,8 +192,8 @@ package org.osmf.player.chrome.widgets {
 			if (_currentSubWidget == dvrScrub) {
 				timeHint.text = dvrScrub.programText;
 			} else {
-				if (!timeTrait) { return;}
-				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * timeTrait.duration, timeTrait.duration)[0];	
+				if (!State.timeTrait) { return;}
+				timeHint.text = FormatUtils.formatTimeStatus(_currentSubWidget['hintPosition'] * State.timeTrait.duration, State.timeTrait.duration)[0];	
 				if (_currentSubWidget == vodScrub && vodScrub.shotsLoaded) {
 					timeHint.content = vodScrub.getShotAt(_currentSubWidget['hintPosition']);
 				}
@@ -221,17 +216,17 @@ package org.osmf.player.chrome.widgets {
 		override protected function onMediaElementTraitAdd(event:MediaElementEvent):void {
 			switch (event.traitType) {
 				case MediaTraitType.TIME:
-					timeTrait.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, currentTimeChangedHandler);
-					timeTrait.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, currentTimeChangedHandler);
+					State.timeTrait.removeEventListener(TimeEvent.CURRENT_TIME_CHANGE, currentTimeChangedHandler);
+					State.timeTrait.addEventListener(TimeEvent.CURRENT_TIME_CHANGE, currentTimeChangedHandler);
 					currentTimeChangedHandler(null);
 					break;
 				case MediaTraitType.LOAD:
-					loadTrait.removeEventListener(LoadEvent.BYTES_LOADED_CHANGE, bytesLoadedChangedHandler);
-					loadTrait.addEventListener(LoadEvent.BYTES_LOADED_CHANGE, bytesLoadedChangedHandler);
+					State.loadTrait.removeEventListener(LoadEvent.BYTES_LOADED_CHANGE, bytesLoadedChangedHandler);
+					State.loadTrait.addEventListener(LoadEvent.BYTES_LOADED_CHANGE, bytesLoadedChangedHandler);
 					bytesLoadedChangedHandler(null);
 					break;
 				case MediaTraitType.SEEK:
-					visible = Boolean(seekTrait);
+					visible = Boolean(State.seekTrait);
 					break;
 			}
 		}
@@ -267,22 +262,6 @@ package org.osmf.player.chrome.widgets {
 			super.setSuperVisible(value);
 		}
 		
-		public function get timeTrait():TimeTrait {
-			return media ? media.getTrait(MediaTraitType.TIME) as TimeTrait : null;
-		}
-		
-		public function get loadTrait():LoadTrait {
-			return media ? media.getTrait(MediaTraitType.LOAD) as LoadTrait : null;
-		}
-		
-		public function get seekTrait():SeekTrait {
-			return media ? media.getTrait(MediaTraitType.SEEK) as SeekTrait : null;
-		}
-		
-		public function get playTrait():PlayTrait {
-			return media ? media.getTrait(MediaTraitType.PLAY) as PlayTrait : null;
-		}
-		
 		private function set currentSubWidget(value:Widget):void {
 			if (_currentSubWidget) {
 				removeSubWidgetHandlers(_currentSubWidget);
@@ -306,18 +285,11 @@ package org.osmf.player.chrome.widgets {
 			return toReturn;
 		}
 		
-		private function get streamType():String {			
-			if (!media || !media.resource || !(media.resource as StreamingURLResource)) {
-				return "";
-			}
-			return (media.resource as StreamingURLResource).streamType;
-		}
-		
 		private function get shotsURL():String {
-			if (!media || !media.resource || !(media.resource as MultiQualityStreamingResource)) {
+			if (!State.mQSR) {
 				return "";
 			}
-			return (media.resource as MultiQualityStreamingResource).shotsURL;
+			return State.mQSR.shotsURL;
 		}
 		
 		override public function get measuredHeight():Number {

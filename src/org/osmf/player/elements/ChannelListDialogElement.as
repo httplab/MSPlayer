@@ -151,7 +151,7 @@ package org.osmf.player.elements {
 		}
 		
 		public function set width(value:Number):void {
-			if (value < MIN_EXPANDED_WIDTH) {
+			if (value < MIN_EXPANDED_WIDTH || State.isAd()) {
 				channelListDialog && channelListDialog.hide();
 			} else {
 				channelListDialog && channelListDialog.show();
@@ -163,7 +163,7 @@ package org.osmf.player.elements {
 				return;
 			}
             if (value && value.metadata) {
-                if (!value.metadata.getValue("Advertisement")) {
+                if (!State.isAd()) {
 					channelListDialog && channelListDialog.show();
 				} else {
 					channelListDialog && channelListDialog.hide();

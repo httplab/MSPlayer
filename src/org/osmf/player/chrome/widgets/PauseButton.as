@@ -56,7 +56,7 @@ package org.osmf.player.chrome.widgets {
 			visible = (playable && playable.playState == PlayState.PLAYING && _contentVisible)
 			if (media && media.metadata) {
 				//visible ||= media.metadata.getValue("Advertisement") != null;
-				visible &&= media.metadata.getValue("Advertisement") == null;
+				visible &&= State.isAd();
             }
 		}
 		

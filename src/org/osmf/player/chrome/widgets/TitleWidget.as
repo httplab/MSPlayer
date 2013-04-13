@@ -1,10 +1,8 @@
 package org.osmf.player.chrome.widgets {
-	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	import org.osmf.events.MediaElementEvent;
 	import org.osmf.media.MediaElement;
 	import org.osmf.net.StreamType;
-	import org.osmf.player.chrome.assets.AssetIDs;
 	import org.osmf.player.chrome.assets.AssetsManager;
 	import org.osmf.player.chrome.widgets.AutoHideWidget;
 	import org.osmf.player.chrome.widgets.WidgetIDs;
@@ -14,7 +12,7 @@ package org.osmf.player.chrome.widgets {
 
 	public class TitleWidget extends AutoHideWidget {
 		private var playTrait:PlayTrait;
-		static public const MIN_WITDH:Number = 770;
+		static public const MIN_WIDTH:Number = 770;
 		private static const _requiredTraits:Vector.<String> = new Vector.<String>;
 		private var titleDisplayObject:ASSET_player_title;
 		private var resource:MultiQualityStreamingResource;
@@ -36,7 +34,7 @@ package org.osmf.player.chrome.widgets {
 		
 		override public function set width(value:Number):void {
 			//super.width = value;
-			if (value < MIN_WITDH) {
+			if (value < MIN_WIDTH) {
 				titleDisplayObject.parent && removeChild(titleDisplayObject);
 			} else {
 				addChild(titleDisplayObject);
@@ -57,10 +55,10 @@ package org.osmf.player.chrome.widgets {
 		override public function set media(value:MediaElement):void {
 			super.media = value;
 			if (value && value.metadata) {
-                setSuperVisible(!value.metadata.getValue("Advertisement"));
+                setSuperVisible(!State.isAd());
             }
-			if (media && (media.resource) && (media.resource is MultiQualityStreamingResource)) {
-				resource = (media.resource as MultiQualityStreamingResource)
+			if (State.mQSR) {
+				resource = State.mQSR;
 			}
 			renewTexts();
 		}
