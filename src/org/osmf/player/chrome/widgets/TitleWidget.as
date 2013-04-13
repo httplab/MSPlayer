@@ -67,12 +67,12 @@ package org.osmf.player.chrome.widgets {
 			titleDisplayObject.titleTxt.wordWrap = titleDisplayObject.nameTxt.wordWrap = true;
 			titleDisplayObject.titleTxt.multiline = titleDisplayObject.nameTxt.multiline = true;
 			titleDisplayObject.nameTxt.text = resource ? resource.currentTitle : '';
-			if (timeTrait && resource.streamType != StreamType.RECORDED) {
+			if (State.timeTrait && State.streamType != StreamType.RECORDED) {
 				//Перебираем массив задач и ищем наиболее близкую к текущему просматриваемому времени в прошлом
 				var date:Date = new Date();
 				date.setTime(date.time - (1 - (timeTrait.currentTime / timeTrait.duration)) * thims);
 				var currentShedule:Object;
-				for each (var shedule:Object in resource.shedulesArray) {
+				for each (var shedule:Object in State.shedulesArray) {
 					if (shedule.start > date) { break; }
 					!currentShedule && (currentShedule = shedule);
 					(currentShedule.start < shedule.start) && (currentShedule = shedule);

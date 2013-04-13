@@ -24,6 +24,14 @@ package {
 			return _media && _media.metadata.getValue("Advertisement");
 		}
 		
+		public static function shedulesArray():Array {
+			if (!mQSR) {
+				return null;
+			} else {
+				return mQSR.shedulesArray;
+			}
+		}
+		
 		public function set stage(value:Stage):void {
 			_stage = value;
 		}
