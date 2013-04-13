@@ -207,6 +207,11 @@ package org.osmf.player.chrome.widgets {
 			}
 		}
 		
+		override public function set programPositions(value:Array):void {
+			super.programPositions = value;
+			playedPosition = _seekTo;
+		}
+		
 		protected function get backDropRecorded():DisplayObject {
 			return _isExpanded ? backDropRecordedRight : backDropRecordedCollapsedRight;
 		}
