@@ -50,9 +50,7 @@ package org.osmf.player.chrome.widgets {
 		override protected function visibilityDeterminingEventHandler(event:Event = null):void {
 			visible = playable && playable.playState != PlayState.PLAYING && _contentVisible;
 			
-			if (media && media.metadata) {
-				visible &&= !State.isAd();
-			}
+			visible &&= !State.isAd();
 		}
 		
         public function set contentVisible(value:Boolean):void {
