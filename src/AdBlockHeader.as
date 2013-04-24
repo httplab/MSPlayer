@@ -1,5 +1,6 @@
 package {
 	import flash.display.Sprite;
+	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
@@ -115,7 +116,7 @@ package {
 		private function correspondContainerSize(e:Event):void {
 			if (providedWidth == _container.width) { return; }
 			providedWidth = _container.width;
-			if (providedWidth < ControlBar.MIN_EXPANDED_WIDTH) {
+			if (State.displayState == StageDisplayState.NORMAL) {
 				adBlockTF.width = adBlockTF.textWidth + 25;
 				adBlockTF.x = 16;
 				adBlockTF.y = 25;
