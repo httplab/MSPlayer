@@ -344,6 +344,9 @@ package {
 		public function loadMedia(e:Event = null):void {
 			trace("Load media");
 			viewHelper.controlBar.hide();
+			if (State.mQSR) {
+				State.mQSR.destroy();
+			}
 			// Try to load the URL set on the configuration:
 			var resource:MediaResourceBase = injector.getInstance(MediaResourceBase);
 			if (resource is MultiQualityStreamingResource) {

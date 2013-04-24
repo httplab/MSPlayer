@@ -29,6 +29,7 @@ package {
 		private var dispatcher:EventDispatcher;
 		private var _shedulesArray:Array;
 		private var _currentTitle:String = '';
+		private var _destroyed:Boolean;
 		
 		public function MultiQualityStreamingResource(srcId:int, streamType:String = '') {
 			super('', streamType);
@@ -47,6 +48,7 @@ package {
 		}
 		
 		private function parseLoadedData(e:Event):void {
+			if (_destroyed) { return; }
 			var data:Object = com.adobe.serialization.json.JSON.decode(String(e.currentTarget.data));
 			versionsArray = [];
 			var versionsContainer:Object = data;
@@ -72,6 +74,7 @@ package {
 		}
 		
 		private function loadStream(e:Event = null):void {
+			if (_destroyed) { return; }
 			var versionIdx:Number = 0;
 			if (e) {
 				versionIdx = e.currentTarget.currentStreamIdx;
@@ -156,6 +159,10 @@ package {
 		
 		public function willTrigger (type:String):Boolean {
 			return dispatcher.willTrigger(type);
+		}
+		
+		public function destroy():void {
+			_destroyed = true;
 		}
 	}
 }

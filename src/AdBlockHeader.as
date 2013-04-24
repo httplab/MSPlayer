@@ -105,6 +105,7 @@ package {
 			}
 			_container.addChild(adBlockTF);
 			correspondContainerSize(null);
+			providedWidth = 0;
 			adBlockTF.addEventListener(Event.ENTER_FRAME, correspondContainerSize);
 		}
 		
