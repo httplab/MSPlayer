@@ -34,6 +34,7 @@ package {
 		private var boldFormat:TextFormat;
 		private var regularFormat:TextFormat;
 		private var providedWidth:Number;
+		private var _isReadyToWork:Boolean;
 		
 		/**
 		* Init-time methods
@@ -151,6 +152,7 @@ package {
 		
 		private function readyToWork(e:Event):void {
 			if (secondsTF) {
+				_isReadyToWork = true;
 				secondsTF.removeEventListener(MouseEvent.ROLL_OVER, setOveredState);
 				secondsTF.removeEventListener(MouseEvent.ROLL_OUT, setReadyState);
 				secondsTF.text = READY_SECONDS_TEXT;
@@ -183,6 +185,7 @@ package {
 			secondsTF.removeEventListener(MouseEvent.MOUSE_DOWN, processUserPassAdRequest);
 			e.updateAfterEvent();
 			dispatchEvent(new Event(PASS_AD_REQUEST));
+			_isReadyToWork = false;
 		}
 		
 		/**
@@ -197,7 +200,6 @@ package {
 				_container.removeChild(adBlockTF);
 			}
 			removeAllPossibeHandlers();
-			
 			secondsTF = null;
 		}
 		
@@ -208,6 +210,10 @@ package {
 				secondsTF.removeEventListener(MouseEvent.ROLL_OUT, setReadyState);
 				secondsTF.removeEventListener(MouseEvent.MOUSE_DOWN, processUserPassAdRequest);
 			}
+		}
+		
+		public function get isReadyToWork():Boolean {
+			return _isReadyToWork;
 		}
 	}
 }

@@ -51,17 +51,30 @@ package {
 		private var _linearAdsQueue:Array = [];
 		private var _linearSlotBusy:Boolean = false;
 		private var _state:State;
+		private var _destroyed:Boolean;
+		private var _adIsInWork:Boolean;
 		
 		public function AdController(
 			player:StrobeMediaPlayer, 
 			viewHelper:ViewHelper, 
 			factory:StrobeMediaFactory,
-			state:State
+			state:State,
+			skipAdsFunction:String
 		) {
 			_state = state;
 			_player = player;
 			_viewHelper = viewHelper;
 			_factory = factory;
+			ExternalInterface.marshallExceptions = true;
+			skipAdsFunction && ExternalInterface.available && ExternalInterface.addCallback(skipAdsFunction, skipAdsJSCall);
+		}
+		
+		public function skipAdsJSCall():Boolean {
+			if (_destroyed ||  !_adIsInWork || !_viewHelper.adBlockHeader.isReadyToWork) {
+				return false;
+			}
+			interruptAllRolls(null);
+			return true;
 		}
 		
 		public function checkForAd(loaderParams:Object, streamType:String, liveResumingHack:Boolean = false):void {
@@ -154,6 +167,7 @@ package {
 			interruptInterval = interruptInterval || adMediaElement.metadata.getValue('canBeSkipped') || 0;
 			_viewHelper.adBlockHeader.startCountdown(interruptInterval, adMediaPlayer);
 			_viewHelper.adBlockHeader.addEventListener(AdBlockHeader.PASS_AD_REQUEST, interruptAllRolls);
+			_adIsInWork = true;
 		}
 		
 		public function processPoster(posterUrl:String, scaleMode:String):void {
@@ -211,6 +225,10 @@ package {
 			}
 		}
 		
+		public function destroy():void {
+			_destroyed = true;
+		}
+		
 		/**
 		* Playback event handlers
 		*/
@@ -248,6 +266,7 @@ package {
 				displayAd(delayedLinearAd[0] as MediaElement, delayedLinearAd[1], delayedLinearAd[2], delayedLinearAd[3]);
 			} else {
 				dispatchEvent(new Event(RESUME_MAIN_VIDEO_REQUEST));
+				_adIsInWork = false;
 			}
 		}
 		

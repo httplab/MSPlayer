@@ -368,7 +368,8 @@ package {
 			}
 			viewHelper.controlBar.show();
 			resource.addMetadataValue("timeWatched", { pageURL: "Analytics Test Video" } );
-			_adController = new AdController(player, viewHelper, factory, _state);
+			_adController && _adController.destroy();
+			_adController = new AdController(player, viewHelper, factory, _state, loaderInfo.parameters.skipAdsCallbackFunction);
 			media = factory.createMediaElement(resource);
 			_adController.addEventListener(AdController.PAUSE_MAIN_VIDEO_REQUEST, pauseMainVideoForAd);
 			_adController.addEventListener(AdController.RESTORE_MAIN_VIDEO_REQUEST, restoreMainVideoAfterAd);
