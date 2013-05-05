@@ -25,6 +25,7 @@ package {
 	import org.osmf.traits.LoadState;
 	import org.osmf.traits.LoadTrait;
 	import org.osmf.traits.MediaTraitType;
+	import org.osmf.traits.TimeTrait;
 	import org.osmf.vast.loader.VASTLoader;
 	import org.osmf.vast.loader.VASTLoadTrait;
 	import org.osmf.vast.media.VASTMediaGenerator;
@@ -254,7 +255,7 @@ package {
 		private function interruptAllRolls(e:Event):void {
 			for each(var obj:Object in adPlayers) {
 				var mp:StrobeMediaPlayer = obj.mediaPlayer as StrobeMediaPlayer;
-				mp && mp.dispatchEvent(new TimeEvent(TimeEvent.COMPLETE));
+				(mp.media.getTrait(MediaTraitType.TIME) as TimeTrait).dispatchEvent(new TimeEvent(TimeEvent.COMPLETE));
 			}
 		}
 		
