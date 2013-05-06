@@ -399,11 +399,11 @@ package {
 		private function sendCheckingInfo(e:TimerEvent):void {
 			var urlLoader:URLLoader = new URLLoader();
 			var vars:URLVariables = new URLVariables();
-			vars.url = _checkingUrl;
-			vars.status = _channelStatus;
-			vars.reconnects = _reconnectCount;
-			vars.initial_bufering_time = _initialBufferingTime;
-			vars.play_bufering_time = _playBufferingTime;
+			vars["live_check_log[url]"] = _checkingUrl;
+			vars["live_check_log[status]"] = _channelStatus;
+			vars["live_check_log[reconnects]"] = _reconnectCount;
+			vars["live_check_log[initial_bufering_time]"] = _initialBufferingTime;
+			vars["live_check_log[play_bufering_time]"] = _playBufferingTime;
 			urlLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
 			var request:URLRequest = new URLRequest('http://mp.httplab.ru:3000/api/live_check_logs');
 			request.method = URLRequestMethod.POST;
