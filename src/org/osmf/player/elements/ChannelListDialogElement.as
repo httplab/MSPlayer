@@ -24,7 +24,7 @@ package org.osmf.player.elements {
 		private var _jsCallbackFunctionName:String = '';
 		static public const CHANNEL_CHANGED:String = "channelChanged";
 		static public const ALL_CHANNELS:String = "Все каналы";
-		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://www.tvbreak.ru/api/tvslice";
+		static public const DEFAULT_CHANNELS_LIST_URL:String = "http://new.tvbreak.ru/api/player/tvslice";
 		private var channelListDialog:ChannelListDialog;
 		private var chromeProvider:ChromeProvider;
 		private var _configuration:PlayerConfiguration;

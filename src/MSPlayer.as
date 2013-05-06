@@ -404,7 +404,7 @@ package {
 			vars["live_check_log[reconnects]"] = _reconnectCount;
 			vars["live_check_log[initial_bufering_time]"] = _initialBufferingTime;
 			vars["live_check_log[play_bufering_time]"] = _playBufferingTime;
-			urlLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
+			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
 			var request:URLRequest = new URLRequest('http://mp.httplab.ru:3000/api/live_check_logs');
 			request.method = URLRequestMethod.POST;
 			request.data = vars;
@@ -890,7 +890,7 @@ package {
 			new Ratchet().handleOtherEvent(event);
 			if (
 				event.error.errorID == MediaErrorCodes.NETSTREAM_STREAM_NOT_FOUND ||
-				event.error.detail.indexOf("2032") > -1
+				(event.error.detail && event.error.detail.indexOf("2032") > -1)
 			) {
 				reconnectRequest();
 				return;
